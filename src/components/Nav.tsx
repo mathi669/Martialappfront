@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "../static/css/main.css";
 
 function NavbarMartial() {
@@ -25,35 +26,41 @@ function NavbarMartial() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="list-unstyled full-width navbar-nav">
               <li className="nav-item">
-                <a className="nav-link" href="index.html">
-                  <i
-                    className="fa fa-home fa-fw hidden-md hidden-lg"
-                    aria-hidden="true"
-                  ></i>
-                  INICIO
+                <a className="nav-link">
+                  <Link to="/">
+                    <i
+                      className="fa fa-home fa-fw hidden-md hidden-lg"
+                      aria-hidden="true"
+                    ></i>
+                    INICIO
+                  </Link>
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="about.html">
-                  <i
-                    className="fa fa-life-ring fa-fw hidden-md hidden-lg"
-                    aria-hidden="true"
-                  ></i>
-                  ACERCA DE NOSOTROS
+                <a className="nav-link">
+                  <Link to="/about">
+                    <i
+                      className="fa fa-life-ring fa-fw hidden-md hidden-lg"
+                      aria-hidden="true"
+                    ></i>
+                    ACERCA DE NOSOTROS
+                  </Link>
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="newaccount.html">
-                  <i
-                    className="fa fa-life-ring fa-fw hidden-md hidden-lg"
-                    aria-hidden="true"
-                  ></i>
-                  REGISTRATE
+                <a className="nav-link">
+                  <Link to="/registro">
+                    <i
+                      className="fa fa-life-ring fa-fw hidden-md hidden-lg"
+                      aria-hidden="true"
+                    ></i>
+                    REGISTRATE
+                  </Link>
                 </a>
               </li>
               <li className="nav-item hidden-xs hidden-sm">
-                <a className="nav-link btn-PopUpLogin" href="#!">
-                  INICIAR SESIÓN
+                <a className="nav-link btn-PopUpLogin">
+                  <Link to="/login">INICIAR SESIÓN</Link>
                 </a>
               </li>
               <li className="nav-item hidden-xs hidden-sm">
@@ -80,8 +87,12 @@ function NavbarMartial() {
           </li>
         </ul>
         <div className="tab-content">
-          <div role="tabpanel" className="tab-pane fade in active" id="LoginTab1">
-            <form action="login.html" style={{paddingTop: "15px"}}>
+          <div
+            role="tabpanel"
+            className="tab-pane fade in active"
+            id="LoginTab1"
+          >
+            <form action="login.html" style={{ paddingTop: "15px" }}>
               <div className="form-group">
                 <select
                   className="form-control input-lg"
@@ -153,6 +164,29 @@ function NavbarMartial() {
             </a>
           </div>
         </div>
+      </section>
+      <section className="full-width hidden-md hidden-lg Search-mobile">
+        <form action="commercial.html" style={{ paddingTop: "15px" }}>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control input-lg"
+              placeholder="Estoy buscando..."
+              required
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control input-lg"
+              placeholder="Provincia, ciudad, distrito..."
+              required
+            />
+          </div>
+          <button className="btn btn-danger btn-lg" type="submit">
+            BUSCAR
+          </button>
+        </form>
       </section>
     </>
   );

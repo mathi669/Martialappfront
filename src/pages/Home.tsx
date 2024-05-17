@@ -1,10 +1,8 @@
 import '../static/css/main.css'
-import NavbarMartial from '../components/Nav';
 
 function Home() {
   return (
     <div>
-      <NavbarMartial />
       <header
         className="full-width header-index"
         style={{
