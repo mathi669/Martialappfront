@@ -5,10 +5,11 @@ import axios from "axios";
 
 const Login: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [dc_correo_electronico, setEmail] = useState<string>("");
+  const [dc_contrasena, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleUserTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setUserType(event.target.value);
@@ -16,13 +17,25 @@ const Login: React.FC = () => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(""); // Limpiar el mensaje de error al intentar iniciar sesión
+
     axios
-      .post("http://127.0.0.1:5000/login", { email, password })
+      .post("http://127.0.0.1:5000/login", { dc_correo_electronico, dc_contrasena })
       .then((res) => {
-        console.log(res)
-        navigate("/");
+        console.log(res);
+        if(res.data.success){
+          navigate("/")
+        }else {
+          setError("Usuario o contraseña incorrectos. Por favor, inténtelo de nuevo.");
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          setError("Credenciales inválidas. Por favor, inténtelo de nuevo.");
+        } else {
+          setError("Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde.");
+        }
+      });
   };
 
   return (
@@ -37,6 +50,7 @@ const Login: React.FC = () => {
               ></i>
               <h4 className="text-center text-light">INICIAR SESIÓN</h4>
               <br />
+              {error && <p className="text-center text-danger">{error}</p>}
               <form id="loginForm" onSubmit={handleSubmit}>
                 <div className="form-group">
                   <select
@@ -60,7 +74,7 @@ const Login: React.FC = () => {
                         className="form-control input-lg"
                         name="emailUsuario"
                         placeholder="Correo electrónico"
-                        value={email}
+                        value={dc_correo_electronico}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
@@ -71,7 +85,7 @@ const Login: React.FC = () => {
                         className="form-control input-lg"
                         name="passwordUsuario"
                         placeholder="Contraseña"
-                        value={password}
+                        value={dc_contrasena}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                       />
@@ -87,7 +101,7 @@ const Login: React.FC = () => {
                         className="form-control input-lg"
                         name="emailGimnasio"
                         placeholder="Correo electrónico"
-                        value={email}
+                        value={dc_correo_electronico}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
@@ -98,7 +112,7 @@ const Login: React.FC = () => {
                         className="form-control input-lg"
                         name="passwordGimnasio"
                         placeholder="Contraseña"
-                        value={password}
+                        value={dc_contrasena}
                         onChange={(e) => setPassword(e.target.value)}
                         required
                       />
