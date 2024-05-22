@@ -1,105 +1,221 @@
-import "../static/css/main.css";
+import { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Grid,
+  GridItem,
+  Heading,
+  Image,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 
-const Gymbanner = () => {
+
+const GymBanner = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const {
+    isOpen: isDateOpen,
+    onOpen: onDateOpen,
+    onClose: onDateClose,
+  } = useDisclosure();
+
+  const times = [
+    "08:00",
+    "08:30",
+    "09:00",
+    "09:30",
+    "10:00",
+    "10:30",
+    "11:00",
+    "11:30",
+    "12:00",
+    "12:30",
+    "13:00",
+    "13:30",
+    "14:00",
+    "14:30",
+    "15:00",
+    "15:30",
+    "16:00",
+    "16:30",
+    "17:00",
+    "17:30",
+    "18:00",
+    "18:30",
+    "19:00",
+    "19:30",
+    "20:00",
+    "20:30",
+    "21:00",
+    "21:30",
+  ];
+
   return (
-    <section className="full-width section">
-      {/* Banner del gimnasio */}
-      <div className="container">
-        <div className="row">
-          <div className="col-xs-12">
-            <div className="text-center position-relative">
-              {/* Imagen del gimnasio con degradado y texto */}
-              <div className="banner-overlay">
-                <img
-                  src="./src/static/img/banner ejemplo.jpg"
-                  alt="Imagen del Gimnasio"
-                  className="img-responsive"
-                />
-                <div className="banner-text">
-                  <h2 id="claseNombre">Clase</h2>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Contenedor para los dos rectángulos grandes */}
-      <div className="container">
-        <div className="row">
-          {/* Primer rectángulo grande */}
-          <div className="col-md-6">
-            <div className="rectangle1">
-              {/* Modal */}
-              <div id="myModal" className="modal fade" role="dialog">
-                <div className="modal-dialog">
-                  {/* Contenido del modal */}
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <button
-                        type="button"
-                        className="close"
-                        data-dismiss="modal"
-                      >
-                        &times;
-                      </button>
-                      <h4 className="modal-title">Perfil del Profesor</h4>
-                    </div>
-                    <div className="modal-body">
-                      <div className="text-center">
-                        <img
-                          src="./src/static/img/user.png"
-                          className="img-circle"
-                          alt="Imagen del Profesor"
-                          style={{ width: "100px", height: "100px" }}
-                        />
-                        <h4>Nombre del Profesor</h4>
-                        <p>Descripción del Profesor</p>
-                      </div>
-                    </div>
-                    <div className="modal-footer">
-                      <button
-                        type="button"
-                        className="btn btn-default"
-                        data-dismiss="modal"
-                      >
-                        Cerrar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="rectangle2">
-                <h3>Descripción del Gimnasio</h3>
-                <p>
-                  Esta es la descripción del gimnasio que proviene de
-                  perfilgimnasio.html.
-                </p>
-                <div className="class-item">
-                  <a href="#" data-toggle="modal" data-target="#myModal">
-                    Profesor
-                  </a>
-                </div>
-                <div className="class-item">
-                  <p>Cupos Disponibles: 20</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Segundo rectángulo grande */}
-          <div className="col-md-6">
-            <div className="rectangle3">
-              <h2>Tomar clase</h2>
-              <div id="calendar">{/* Aquí irá el calendario */}</div>
-              <div className="time-slots">
-                {/* Aquí irán los cuadros de selección de horas */}
-              </div>
-              <button id="btnTomarClase">Tomar clase</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <Box as="section" w="full" py={10}>
+      <Center w="full" h="300px" position="relative" bg="">
+        <Image
+          src="assets/img/banner.jpg"
+          alt="Imagen del Gimnasio"
+          objectFit="cover"
+          w="full"
+          h="full"
+          position="absolute"
+          top="0"
+          left="0"
+          zIndex="-1"
+        />
+        <Box
+          bg="rgba(0, 0, 0, 0.5)"
+          w="full"
+          h="full"
+          position="absolute"
+          top="0"
+          left="0"
+        />
+        <Heading color="white" zIndex="1">
+          Clase
+        </Heading>
+      </Center>
+
+      <Box w="full" maxW="1200px" mx="auto" mt={10}>
+        <Flex wrap="wrap" justify="space-between">
+          <Box
+            w={{ base: "full", md: "48%" }}
+            bg="gray.100"
+            p={5}
+            borderRadius="md"
+            boxShadow="md"
+            mb={{ base: 5, md: 0 }}
+          >
+            <Heading as="h3" size="lg" mb={4}>
+              Descripción del Gimnasio
+            </Heading>
+            <Text mb={4}>
+              Esta es la descripción del gimnasio que proviene de
+              perfilgimnasio.html.
+            </Text>
+            <Box mb={4}>
+              <Button
+                colorScheme="blue"
+                border="2px"
+                borderColor="blue.500"
+                onClick={onOpen}
+              >
+                Profesor
+              </Button>
+            </Box>
+            <Box bg="gray.200" p={3} borderRadius="md" boxShadow="sm">
+              <Text>Cupos Disponibles: 20</Text>
+            </Box>
+
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Perfil del Profesor</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Center flexDirection="column">
+                    <Image
+                      src="src/assets/img/user.png"
+                      borderRadius="full"
+                      boxSize="100px"
+                      alt="Imagen del Profesor"
+                    />
+                    <Heading as="h4" size="md" mt={4}>
+                      Nombre del Profesor
+                    </Heading>
+                    <Text>Descripción del Profesor</Text>
+                  </Center>
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="ghost" onClick={onClose}>
+                    Cerrar
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </Box>
+
+          <Box
+            w={{ base: "full", md: "48%" }}
+            bg="gray.100"
+            p={5}
+            borderRadius="md"
+            boxShadow="md"
+          >
+            <Heading as="h2" size="lg" mb={4}>
+              Tomar clase
+            </Heading>
+            <Button colorScheme="blue" onClick={onDateOpen} mb={4}>
+              Seleccione fecha
+            </Button>
+            {selectedDate && (
+              <Text mb={4}>
+                Fecha seleccionada: {selectedDate.toLocaleDateString()}
+              </Text>
+            )}
+            <Modal isOpen={isDateOpen} onClose={onDateClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Seleccione una fecha</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Center>
+                    <DatePicker
+                      selected={selectedDate}
+                      onChange={(date: Date) => setSelectedDate(date)}
+                      inline
+                    />
+                  </Center>
+                </ModalBody>
+                <ModalFooter>
+                  <Button variant="ghost" onClick={onDateClose}>
+                    Cerrar
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+            <Heading as="h3" size="md" mb={4}>
+              Horarios disponibles
+            </Heading>
+            <Grid templateColumns="repeat(4, 1fr)" gap={2} mb={4}>
+              {times.map((time) => (
+                <GridItem
+                  key={time}
+                  w="full"
+                  p={2}
+                  textAlign="center"
+                  bg={selectedTime === time ? "blue.500" : "gray.200"}
+                  color={selectedTime === time ? "white" : "black"}
+                  borderRadius="md"
+                  cursor="pointer"
+                  onClick={() => setSelectedTime(time)}
+                >
+                  {time}
+                </GridItem>
+              ))}
+            </Grid>
+            <Button colorScheme="blue" id="btnTomarClase">
+              Tomar clase
+            </Button>
+          </Box>
+        </Flex>
+      </Box>
+    </Box>
   );
 };
 
-export default Gymbanner;
+export default GymBanner;

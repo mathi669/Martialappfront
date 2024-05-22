@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
-
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
