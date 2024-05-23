@@ -7,6 +7,7 @@ import {
   IconButton,
   Input,
   Select,
+  Spacer,
   Stack,
   Text,
   useBreakpointValue,
@@ -28,7 +29,7 @@ function NavbarMartial() {
 
   return (
     <>
-      <Box bg="gray.100" px={4} className="full-width">
+      <Box bg="gray.100" px={2} className="full-width">
         <Flex h={16} alignItems="center" justifyContent="space-between">
           <Box className="text-semi-bold">MartialApps</Box>
           <IconButton
@@ -38,8 +39,12 @@ function NavbarMartial() {
             display={{ md: "none" }}
             onClick={onToggle}
           />
-          <Flex alignItems="center">
-            <Stack direction="row" spacing={7} display={{ base: "none", md: "flex" }}>
+          <Flex alignItems="center" mt={2}>
+            <Stack
+              direction="row"
+              spacing={4}
+              display={{ base: "none", md: "flex" }}
+            >
               <Link to="/">
                 <Button leftIcon={<FaHome />} variant="link">
                   INICIO
@@ -55,12 +60,21 @@ function NavbarMartial() {
                   REGISTRATE
                 </Button>
               </Link>
-              <Link to="/login">
-                <Button variant="solid" colorScheme="red" className="btn-PopUpLogin">
-                  INICIAR SESIÓN
-                </Button>
-              </Link>
-              <FaUser className="NavBar-Nav-icon btn-PopUpLogin" />
+              <Spacer />
+              <Flex alignItems="center" mt={-2}>
+                <Link to="/login">
+                  <Button
+                    variant="solid"
+                    colorScheme="red"
+                    className="btn-PopUpLogin"
+                  >
+                    INICIAR SESIÓN
+                  </Button>
+                </Link>
+                <Link to="/login">
+                  <FaUser className="NavBar-Nav-icon btn-PopUpLogin" />
+                </Link>
+              </Flex>
             </Stack>
           </Flex>
         </Flex>
@@ -83,7 +97,11 @@ function NavbarMartial() {
                 </Button>
               </Link>
               <Link to="/login">
-                <Button variant="solid" colorScheme="red" className="btn-PopUpLogin">
+                <Button
+                  variant="solid"
+                  colorScheme="red"
+                  className="btn-PopUpLogin"
+                >
                   INICIAR SESIÓN
                 </Button>
               </Link>
@@ -97,17 +115,41 @@ function NavbarMartial() {
             ¡Bienvenido!
           </Text>
           <form action="login.html">
-            <Select placeholder="Seleccione tipo de inicio de sesión" id="userType" name="userType">
+            <Select
+              placeholder="Seleccione tipo de inicio de sesión"
+              id="userType"
+              name="userType"
+            >
               <option value="usuario">Iniciar sesión como usuario</option>
               <option value="gimnasio">Iniciar sesión como gimnasio</option>
             </Select>
             <Box id="usuarioForm" display="none">
-              <Input type="email" placeholder="Correo electrónico" required name="emailUsuario" />
-              <Input type="password" placeholder="Contraseña" required name="passwordUsuario" />
+              <Input
+                type="email"
+                placeholder="Correo electrónico"
+                required
+                name="emailUsuario"
+              />
+              <Input
+                type="password"
+                placeholder="Contraseña"
+                required
+                name="passwordUsuario"
+              />
             </Box>
             <Box id="gimnasioForm" display="none">
-              <Input type="email" placeholder="Correo electrónico" required name="emailGimnasio" />
-              <Input type="password" placeholder="Contraseña" required name="passwordGimnasio" />
+              <Input
+                type="email"
+                placeholder="Correo electrónico"
+                required
+                name="emailGimnasio"
+              />
+              <Input
+                type="password"
+                placeholder="Contraseña"
+                required
+                name="passwordGimnasio"
+              />
             </Box>
             <Link to="#!" className="text-left text-light">
               No recuerdo mi contraseña
@@ -131,7 +173,11 @@ function NavbarMartial() {
         <form action="commercial.html" style={{ paddingTop: "15px" }}>
           <Stack spacing={4}>
             <Input type="text" placeholder="Estoy buscando..." required />
-            <Input type="text" placeholder="Provincia, ciudad, distrito..." required />
+            <Input
+              type="text"
+              placeholder="Provincia, ciudad, distrito..."
+              required
+            />
             <Button type="submit" colorScheme="red" size="lg">
               BUSCAR
             </Button>
