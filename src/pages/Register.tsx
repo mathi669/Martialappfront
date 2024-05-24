@@ -1,4 +1,18 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Heading,
+  Image,
+  Input,
+  Select,
+  Stack,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import { useState, ChangeEvent, FormEvent } from "react";
 import {
   Box,
@@ -11,13 +25,13 @@ import {
   Text,
 } from "@chakra-ui/react";
 import axios from "axios";
-
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [error, setError] = useState<string>("");
 
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleUserTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setUserType(event.target.value);
@@ -62,136 +76,223 @@ const Register: React.FC = () => {
             "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
           );
         }
+        toast({
+          title: "Error",
+          description: error,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
       });
   };
 
   return (
-    <Box mt={8} mb={8}>
-      <Box p={4} maxW="600px" mx="auto" bg="gray.100" borderRadius="lg">
-        <Heading as="h2" mb={4} textAlign="center" color="red.500">
-          Tu cuenta
-        </Heading>
-        <Text mb={4} textAlign="center">
-          Bienvenido a MartialApps, tu acceso directo a una comunidad de
-          gimnasios locales. Descubre, entrena y alcanza tus metas con nosotros.
-        </Text>
-        <form onSubmit={handleSubmit}>
-          {error && (
-            <Text color="red.500" textAlign="center">
-              {error}
+    <Box as="section" width="100%">
+      <Container maxW="container.xl" py={8}>
+        <Stack direction={{ base: "column", md: "row" }} spacing={8}>
+          <Box flex={1} display={{ base: "none", md: "block" }}>
+            <Heading as="h2" size="xl" textAlign="center" color="red.500">
+              Tu cuenta
+            </Heading>
+            <Text textAlign="center" fontSize="lg" mt={4}>
+              Bienvenido a MartialApps, tu acceso directo a una comunidad de
+              gimnasios locales. Descubre, entrena y alcanza tus metas con
+              nosotros.
             </Text>
-          )}
-          <FormControl mb={4}>
-            <FormLabel htmlFor="tipoRegistro">Registrarse como:</FormLabel>
-            <Select
-              id="tipoRegistro"
-              value={userType}
-              onChange={handleUserTypeChange}
-              placeholder="Selecciona una opción"
-              required
-            >
-              <option value="Gimnasio">Gimnasio</option>
-              <option value="Usuario">Usuario</option>
-            </Select>
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel htmlFor="fechaNacimiento">
-              Fecha de nacimiento:
-            </FormLabel>
-            <Input
-              type="date"
-              id="fechaNacimiento"
-              value={formData.fechaNacimiento || ""}
-              onChange={handleInputChange}
-              required
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel htmlFor="correo">Correo:</FormLabel>
-            <Input
-              type="email"
-              id="correo"
-              placeholder="ejemplo@ejemplo.cl"
-              value={formData.correo || ""}
-              onChange={handleInputChange}
-              required
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel htmlFor="contrasena">Contraseña:</FormLabel>
-            <Input
-              type="password"
-              id="contrasena"
-              placeholder="Contraseña"
-              value={formData.contrasena || ""}
-              onChange={handleInputChange}
-              required
-            />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel htmlFor="repetirContraseña">
-              Repetir contraseña:
-            </FormLabel>
-            <Input
-              type="password"
-              id="repetirContraseña"
-              placeholder="Repetir contraseña"
-              value={formData.repetirContraseña || ""}
-              onChange={handleInputChange}
-              required
-            />
-          </FormControl>
-          {userType === "Gimnasio" && (
-            <>
-              <FormControl mb={4}>
-                <FormLabel htmlFor="nombreGimnasio">
-                  Nombre del Gimnasio:
-                </FormLabel>
-                <Input
-                  type="text"
-                  id="nombreGimnasio"
-                  placeholder="Nombre del Gimnasio"
-                  value={formData.nombreGimnasio || ""}
-                  onChange={handleInputChange}
-                  required
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel htmlFor="telefonoGimnasio">
-                  Teléfono del Gimnasio:
-                </FormLabel>
-                <Input
-                  type="text"
-                  id="telefonoGimnasio"
-                  placeholder="Teléfono del Gimnasio"
-                  value={formData.telefonoGimnasio || ""}
-                  onChange={handleInputChange}
-                  required
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel htmlFor="ubicacionGimnasio">
-                  Ubicación del Gimnasio:
-                </FormLabel>
-                <Input
-                  type="text"
-                  id="ubicacionGimnasio"
-                  placeholder="Ubicación del Gimnasio"
-                  value={formData.ubicacionGimnasio || ""}
-                  onChange={handleInputChange}
-                  required
-                />
-              </FormControl>
-            </>
-          )}
-          <Button colorScheme="red" type="submit" mt={4} width="full" size="lg">
-            CREAR CUENTA
-          </Button>
-        </form>
-        <Box mt={4} textAlign="center">
-          <Link to="/login">Ya tengo una cuenta</Link>
-        </Box>
-      </Box>
+            <Image src="./src/static/img/Devices.png" alt="Devices" mt={4} />
+          </Box>
+          <Box flex={1}>
+            <Box p={8} borderRadius="lg" boxShadow="lg" bg="white">
+              <Heading
+                as="h4"
+                size="md"
+                textAlign="center"
+                mb={4}
+                color="gray.700"
+              >
+                CREA UNA CUENTA
+              </Heading>
+              {error && (
+                <Text textAlign="center" color="red.500">
+                  {error}
+                </Text>
+              )}
+              <form id="registerForm" onSubmit={handleSubmit}>
+                <FormControl id="tipoRegistro" mb={4} isRequired>
+                  <FormLabel>Registrarse como:</FormLabel>
+                  <Select value={userType} onChange={handleUserTypeChange}>
+                    <option value="">Selecciona una opción</option>
+                    <option value="Gimnasio">Gimnasio</option>
+                    <option value="Usuario">Usuario</option>
+                  </Select>
+                </FormControl>
+                {userType && userType === "Usuario" && (
+                  <>
+                    <FormControl id="nombre" mb={4} isRequired>
+                      <FormLabel>Nombre:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Juan"
+                        value={formData.nombre || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="apellidoPaterno" mb={4} isRequired>
+                      <FormLabel>Apellido Paterno:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Rodriguez"
+                        value={formData.apellidoPaterno || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="apellidoMaterno" mb={4} isRequired>
+                      <FormLabel>Apellido Materno:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Perez"
+                        value={formData.apellidoMaterno || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="genero" mb={4} isRequired>
+                      <FormLabel>Género:</FormLabel>
+                      <Select
+                        value={formData.genero || ""}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">Selecciona tu género</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                        <option value="otro">Otro</option>
+                      </Select>
+                    </FormControl>
+                    <FormControl id="fechaNacimiento" mb={4} isRequired>
+                      <FormLabel>Fecha de nacimiento:</FormLabel>
+                      <Input
+                        type="date"
+                        value={formData.fechaNacimiento || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="correo" mb={4} isRequired>
+                      <FormLabel>Correo:</FormLabel>
+                      <Input
+                        type="email"
+                        placeholder="ejemplo@ejemplo.cl"
+                        value={formData.correo || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="contrasena" mb={4} isRequired>
+                      <FormLabel>Contraseña:</FormLabel>
+                      <Input
+                        type="password"
+                        placeholder="Contraseña"
+                        value={formData.contrasena || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="repetirContraseña" mb={4} isRequired>
+                      <FormLabel>Repetir contraseña:</FormLabel>
+                      <Input
+                        type="password"
+                        placeholder="Repetir contraseña"
+                        value={formData.repetirContraseña || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                  </>
+                )}
+                {userType === "Gimnasio" && (
+                  <>
+                    <FormControl id="nombreGimnasio" mb={4} isRequired>
+                      <FormLabel>Nombre del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Nombre del Gimnasio"
+                        value={formData.nombreGimnasio || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="correo" mb={4} isRequired>
+                      <FormLabel>Correo del Gimnasio:</FormLabel>
+                      <Input
+                        type="email"
+                        placeholder="ejemplo@ejemplo.cl"
+                        value={formData.correo || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="telefonoGimnasio" mb={4} isRequired>
+                      <FormLabel>Teléfono del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Teléfono del Gimnasio"
+                        value={formData.telefonoGimnasio || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="ubicacionGimnasio" mb={4} isRequired>
+                      <FormLabel>Ubicación del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Ubicación del Gimnasio"
+                        value={formData.ubicacionGimnasio || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="contrasena" mb={4} isRequired>
+                      <FormLabel>Contraseña:</FormLabel>
+                      <Input
+                        type="password"
+                        placeholder="Contraseña"
+                        value={formData.contrasena || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="repetirContraseña" mb={4} isRequired>
+                      <FormLabel>Repetir contraseña:</FormLabel>
+                      <Input
+                        type="password"
+                        placeholder="Repetir contraseña"
+                        value={formData.repetirContraseña || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                  </>
+                )}
+                <Text mt={4}>
+                  Al registrarte aceptas las
+                  <RouterLink
+                    to="#!"
+                    style={{
+                      display: "inline-block",
+                      marginLeft: "4px",
+                      color: "blue.500",
+                    }}
+                  >
+                    condiciones de uso y la Política de Privacidad
+                  </RouterLink>
+                </Text>
+                <Button
+                  id="btnRegistro"
+                  colorScheme="red"
+                  size="lg"
+                  mt={4}
+                  type="submit"
+                  width="full"
+                >
+                  CREAR CUENTA
+                </Button>
+                <Text textAlign="center" mt={4}>
+                  <RouterLink to="/login">Ya tengo una cuenta</RouterLink>
+                </Text>
+              </form>
+            </Box>
+          </Box>
+        </Stack>
+      </Container>
     </Box>
   );
 };
