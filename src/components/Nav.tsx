@@ -14,7 +14,6 @@ import {
 } from "@chakra-ui/react";
 import { FaBars, FaHome, FaLifeRing, FaUser } from "react-icons/fa";
 import { useEffect } from "react";
-import "../static/css/main.css";
 
 function NavbarMartial() {
   const { isOpen, onToggle, onClose } = useDisclosure();
@@ -28,7 +27,7 @@ function NavbarMartial() {
 
   return (
     <>
-      <Box bg="gray.100" px={4} className="full-width">
+      <Box bg="gray.100" px={4} className="full-width" >
         <Flex h={16} alignItems="center" justifyContent="space-between">
           <Box className="text-semi-bold">MartialApps</Box>
           <IconButton
@@ -38,7 +37,7 @@ function NavbarMartial() {
             display={{ md: "none" }}
             onClick={onToggle}
           />
-          <Flex alignItems="center">
+          <Flex alignItems="center" justifyContent="center">
             <Stack direction="row" spacing={7} display={{ base: "none", md: "flex" }}>
               <Link to="/">
                 <Button leftIcon={<FaHome />} variant="link">
