@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { FaBars, FaHome, FaLifeRing, FaUser } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 function NavbarMartial() {
   const { isOpen, onToggle, onClose } = useDisclosure();
@@ -26,6 +27,24 @@ function NavbarMartial() {
       onClose();
     }
   }, [isDesktop, onClose]);
+
+  const handleLogout = () => {
+    axios.post("http://127.0.0.1:5000/logout")
+      .then((res) => {
+        if (res.data.success) {
+          // Eliminar cualquier token de autenticación almacenado (si lo hay)
+          localStorage.removeItem('token');
+          
+          setIsLoggedIn(false); // Actualiza el estado de autenticación del usuario
+          // También podrías redirigir al usuario a la página de inicio o a donde desees
+        } else {
+          console.error("Error al cerrar sesión:", res.data.error);
+        }
+      })
+      .catch((err) => {
+        console.error("Error al cerrar sesión:", err);
+      });
+  };
 
   return (
     <>
@@ -63,7 +82,7 @@ function NavbarMartial() {
               <Spacer />
               <Flex alignItems="center" mt={-2}>
                 {isLoggedIn ? (
-                  <Button variant="solid" colorScheme="red" className="btn-PopUpLogin" onClick={() => setIsLoggedIn(true)}>
+                  <Button variant="solid" colorScheme="red" className="btn-PopUpLogin" onClick={handleLogout}>
                     CERRAR SESIÓN
                   </Button>
                 ):(
