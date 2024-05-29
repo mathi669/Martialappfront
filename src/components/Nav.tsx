@@ -14,11 +14,12 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FaBars, FaHome, FaLifeRing, FaUser } from "react-icons/fa";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function NavbarMartial() {
   const { isOpen, onToggle, onClose } = useDisclosure();
   const isDesktop = useBreakpointValue({ base: false, md: true });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     if (isDesktop) {
@@ -61,15 +62,22 @@ function NavbarMartial() {
               </Link>
               <Spacer />
               <Flex alignItems="center" mt={-2}>
-                <Link to="/login">
-                  <Button
-                    variant="solid"
-                    colorScheme="red"
-                    className="btn-PopUpLogin"
-                  >
-                    INICIAR SESIÓN
+                {isLoggedIn ? (
+                  <Button variant="solid" colorScheme="red" className="btn-PopUpLogin" onClick={() => setIsLoggedIn(true)}>
+                    CERRAR SESIÓN
                   </Button>
-                </Link>
+                ):(
+
+                  <Link to="/login">
+                    <Button
+                      variant="solid"
+                      colorScheme="red"
+                      className="btn-PopUpLogin"
+                    >
+                      INICIAR SESIÓN
+                    </Button>
+                  </Link>
+                )}
                 <Link to="/login">
                   <FaUser className="NavBar-Nav-icon btn-PopUpLogin" />
                 </Link>

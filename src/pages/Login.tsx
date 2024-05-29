@@ -35,21 +35,39 @@ const Login: React.FC = () => {
     event.preventDefault();
     setError(""); // Limpiar el mensaje de error al intentar iniciar sesión
 
+    if (userType === "usuario") {
+      loginUser("sp_AuthUser");
+    } else if (userType === "gimnasio") {
+      loginUser("sp_AuthGym");
+    } else {
+      setError("Por favor, seleccione un tipo de usuario.");
+    }
+  };
+
+  const loginUser = (procedure: string) => {
     axios
-      .post("http://127.0.0.1:5000/login", { dc_correo_electronico, dc_contrasena })
+      .post("http://127.0.0.1:5000/login", {
+        user_type: userType,
+        dc_correo_electronico,
+        dc_contrasena,
+      })
       .then((res) => {
         console.log(res);
-        if(res.data.success){
+        if (res.data.success) {
           navigate("/");
         } else {
-          setError("Usuario o contraseña incorrectos. Por favor, inténtelo de nuevo.");
+          setError(
+            "Usuario o contraseña incorrectos. Por favor, inténtelo de nuevo."
+          );
         }
       })
       .catch((err) => {
         if (err.response && err.response.status === 401) {
           setError("Credenciales inválidas. Por favor, inténtelo de nuevo.");
         } else {
-          setError("Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde.");
+          setError(
+            "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
+          );
         }
       });
   };
@@ -57,13 +75,32 @@ const Login: React.FC = () => {
   const isDesktop = useBreakpointValue({ base: false, md: true });
 
   return (
-    <Box className="full-width section" bg="gray.50" minH="100vh" py={12} display="flex" alignItems="center" justifyContent="center">
-      <Box maxW="md" mx="auto" bg="white" p={6} rounded="md" shadow="md">
+    <Box
+      className="full-width section"
+      bg="gray.50"
+      minH="100vh"
+      py={12}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Box
+        maxW="md"
+        mx="auto"
+        bg="white"
+        p={6}
+        rounded="md"
+        shadow="md"
+      >
         <Stack spacing={4}>
           <Heading as="h4" size="lg" textAlign="center" color="gray.700">
             INICIAR SESIÓN
           </Heading>
-          {error && <Text color="red.500" textAlign="center">{error}</Text>}
+          {error && (
+            <Text color="red.500" textAlign="center">
+              {error}
+            </Text>
+          )}
           <form id="loginForm" onSubmit={handleSubmit}>
             <FormControl id="userType" isRequired>
               <FormLabel>Seleccione tipo de inicio de sesión</FormLabel>
@@ -78,7 +115,7 @@ const Login: React.FC = () => {
             </FormControl>
 
             {userType === "usuario" && (
-              <Box>
+              <>
                 <FormControl id="emailUsuario" isRequired>
                   <FormLabel>Correo electrónico</FormLabel>
                   <Input
@@ -107,11 +144,11 @@ const Login: React.FC = () => {
                     </InputRightElement>
                   </InputGroup>
                 </FormControl>
-              </Box>
+              </>
             )}
 
             {userType === "gimnasio" && (
-              <Box>
+              <>
                 <FormControl id="emailGimnasio" isRequired>
                   <FormLabel>Correo electrónico</FormLabel>
                   <Input
@@ -140,7 +177,7 @@ const Login: React.FC = () => {
                     </InputRightElement>
                   </InputGroup>
                 </FormControl>
-              </Box>
+              </>
             )}
 
             <Button

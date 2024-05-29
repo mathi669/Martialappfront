@@ -14,16 +14,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useState, ChangeEvent, FormEvent } from "react";
-import {
-  Box,
-  Heading,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  Button,
-  Text,
-} from "@chakra-ui/react";
 import axios from "axios";
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
