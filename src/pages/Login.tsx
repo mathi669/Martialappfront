@@ -46,7 +46,7 @@ const Login: React.FC = () => {
 
   const loginUser = (procedure: string) => {
     axios
-      .post("http://127.0.0.1:5000/login", {
+      .post("http://127.0.0.1:8000/login", {
         user_type: userType,
         dc_correo_electronico,
         dc_contrasena,

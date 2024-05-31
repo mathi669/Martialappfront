@@ -79,6 +79,11 @@ function NavbarMartial() {
                   REGISTRATE
                 </Button>
               </Link>
+              <Link to="/createClass">
+                <Button leftIcon={<FaLifeRing />} variant="link">
+                  CREAR CLASE
+                </Button>
+              </Link>
               <Spacer />
               <Flex alignItems="center" mt={-2}>
                 {isLoggedIn ? (
