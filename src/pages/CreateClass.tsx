@@ -1,7 +1,78 @@
-import { Box, Button, Flex, Heading, Text, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormLabel, Input, Textarea, Center } from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { 
+  Box, 
+  Button, 
+  Flex, 
+  Heading, 
+  Text, 
+  useDisclosure, 
+  Modal, 
+  ModalOverlay, 
+  ModalContent, 
+  ModalHeader, 
+  ModalCloseButton, 
+  ModalBody, 
+  ModalFooter, 
+  FormControl, 
+  FormLabel, 
+  Input, 
+  Textarea, 
+  Center 
+} from "@chakra-ui/react";
 
 const CreateClass = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [formData, setFormData] = useState({
+    nombre_clase: '',
+    horario: '',
+    cupos_disponibles: 0,
+    fecha: '',
+    hora: '',
+    imagen_url: '',
+    categoria_id: 0,
+    clase_estado_id: 0,
+    gimnasio_id: 0,
+    arte_marcial_id: 0,
+    profesor_id: 0
+  });
+  const [message, setMessage] = useState<string>('');
+
+  // useEffect(() => {
+  //   const fetchAdditionalInfo = async () => {
+  //     try {
+  //       const response = await axios.get('http://127.0.0.1:8000/getAdditionalInfo');
+  //       setFormData(prevFormData => ({
+  //         ...prevFormData,
+  //         ...response.data.additional_info
+  //       }));
+  //     } catch (error: any) {
+  //       setMessage(error.response?.data?.error || "Error fetching additional information");
+  //     }
+  //   };
+
+  //   if (isOpen) {
+  //     fetchAdditionalInfo();
+  //   }
+  // }, [isOpen]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/create_class', formData);
+      setMessage(response.data.message);
+      onClose(); // Close the modal after successful submission
+    } catch (error: any) {
+      setMessage(error.response?.data?.error || "Error creating class");
+    }
+  };
 
   return (
     <Box as="section" w="full">
@@ -40,23 +111,37 @@ const CreateClass = () => {
           <ModalHeader>Crear Nueva Clase</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl id="tituloClase" mb={4}>
-              <FormLabel>Título de la Clase</FormLabel>
-              <Input placeholder="Ingrese el título de la clase" />
-            </FormControl>
-            <FormControl id="informacionClase" mb={4}>
-              <FormLabel>Información de la Clase</FormLabel>
-              <Textarea placeholder="Ingrese la información de la clase" rows={3} />
-            </FormControl>
-            <FormControl id="cantidadParticipantes" mb={4}>
-              <FormLabel>Cantidad de Participantes</FormLabel>
-              <Input type="number" placeholder="Ingrese la cantidad de participantes" />
-            </FormControl>
+            <form onSubmit={handleSubmit}>
+              <FormControl id="nombre_clase" mb={4}>
+                <FormLabel>Nombre de la Clase</FormLabel>
+                <Input name="nombre_clase" value={formData.nombre_clase} onChange={handleChange} placeholder="Ingrese el nombre de la clase" />
+              </FormControl>
+              <FormControl id="horario" mb={4}>
+                <FormLabel>Horario</FormLabel>
+                <Input name="horario" value={formData.horario} onChange={handleChange} placeholder="Ingrese el horario de la clase" />
+              </FormControl>
+              <FormControl id="cupos_disponibles" mb={4}>
+                <FormLabel>Cupos Disponibles</FormLabel>
+                <Input type="number" name="cupos_disponibles" value={formData.cupos_disponibles} onChange={handleChange} placeholder="Ingrese la cantidad de cupos disponibles" />
+              </FormControl>
+              <FormControl id="fecha" mb={4}>
+                <FormLabel>Fecha</FormLabel>
+                <Input type="date" name="fecha" value={formData.fecha} onChange={handleChange} />
+              </FormControl>
+              <FormControl id="hora" mb={4}>
+                <FormLabel>Hora</FormLabel>
+                <Input type="time" name="hora" value={formData.hora} onChange={handleChange} />
+              </FormControl>
+              <FormControl id="imagen_url" mb={4}>
+                <FormLabel>Imagen URL</FormLabel>
+                <Input name="imagen_url" value={formData.imagen_url} onChange={handleChange} placeholder="Ingrese la URL de la imagen" />
+              </FormControl>
+              <Button type="submit" colorScheme="blue" mr={3}>
+                Guardar Clase
+              </Button>
+            </form>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3}>
-              Guardar Clase
-            </Button>
             <Button variant="ghost" onClick={onClose}>
               Cancelar
             </Button>
@@ -89,6 +174,7 @@ const CreateClass = () => {
           </Box>
         </Center>
       ))}
+      {message && <Text>{message}</Text>}
     </Box>
   );
 };
