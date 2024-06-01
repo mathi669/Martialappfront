@@ -26,6 +26,7 @@ function NavbarMartial() {
   const { isOpen, onToggle, onClose } = useDisclosure();
   const isDesktop = useBreakpointValue({ base: false, md: true });
   const [user, setUser] = useState(null);
+  const [userType, setUserType] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,9 +37,10 @@ function NavbarMartial() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const userType = localStorage.getItem("userType");
+    if (storedUser && userType) {
       setUser(JSON.parse(storedUser));
-      console.log("user seteado");
+      setUserType(userType);
     }
   }, [localStorage.getItem("user")]);
 
@@ -81,17 +83,25 @@ function NavbarMartial() {
                 ACERCA DE NOSOTROS
               </Button>
             </Link>
-            <Link to="/registro">
-              <Button leftIcon={<FaLifeRing />} variant="link">
-                REGÍSTRATE
-              </Button>
-            </Link>
-            <Link to="/createClass">
-              <Button leftIcon={<FaLifeRing />} variant="link">
-                CREAR CLASE
-              </Button>
-            </Link>
-            <Spacer />
+            {!user ? (
+              <Link to="/registro">
+                <Button leftIcon={<FaLifeRing />} variant="link">
+                  REGÍSTRATE
+                </Button>
+              </Link>
+            ) : (
+              <></>
+            )}
+
+            {user && userType === "gimnasio" ? (
+              <Link to="/createClass">
+                <Button leftIcon={<FaLifeRing />} variant="link">
+                  CREAR CLASE
+                </Button>
+              </Link>
+            ) : (
+              <></>
+            )}
             <Flex alignItems="center" mt={-2}>
               {user ? (
                 <>
@@ -104,9 +114,11 @@ function NavbarMartial() {
                   >
                     CERRAR SESIÓN
                   </Button>
-                  <Link to="/profile">
-                    <FaUser className="NavBar-Nav-icon btn-PopUpLogin" />
-                  </Link>
+                  <Box ml={4}>
+                    <Link to="/profile" className="profileButton">
+                      <FaUser className="NavBar-Nav-icon btn-PopUpLogin" />
+                    </Link>
+                  </Box>
                 </>
               ) : (
                 <Link to="/login">
@@ -136,11 +148,24 @@ function NavbarMartial() {
                 ACERCA DE NOSOTROS
               </Button>
             </Link>
-            <Link to="/registro">
-              <Button leftIcon={<FaLifeRing />} variant="link">
-                REGÍSTRATE
-              </Button>
-            </Link>
+            {!user ? (
+              <Link to="/registro">
+                <Button leftIcon={<FaLifeRing />} variant="link">
+                  REGÍSTRATE
+                </Button>
+              </Link>
+            ) : (
+              <></>
+            )}
+            {user && userType === '"gimnasio"' ? (
+              <Link to="/createClass">
+                <Button leftIcon={<FaLifeRing />} variant="link">
+                  CREAR CLASE
+                </Button>
+              </Link>
+            ) : (
+              <></>
+            )}
             {user ? (
               <>
                 <Text>Bienvenido, {user?.dc_nombre}</Text>

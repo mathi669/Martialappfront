@@ -58,6 +58,7 @@ const Login: React.FC = () => {
       if (response.success) {
         localStorage.setItem("token", response.token);
         localStorage.setItem("user", JSON.stringify(response.user));
+        localStorage.setItem("userType", userType);
         toast({
           title: "Inicio de sesión exitoso.",
           description: `Bienvenido, ${response.user.dc_nombre}.`,
