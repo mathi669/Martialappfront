@@ -8,6 +8,7 @@ import CreateClass from "./CreateClass";
 import Profile from "./Profile";
 import UserIndex from "./UserIndex";
 import GymProfile from "./GymProfile";
+import AdminPage from "./AdminPage";
 
 export { Home }
 export { About }
@@ -19,3 +20,4 @@ export { CreateClass }
 export { Profile }
 export { UserIndex }
 export { GymProfile }
+export { AdminPage }
