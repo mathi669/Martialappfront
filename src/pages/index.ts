@@ -8,14 +8,16 @@ import CreateClass from "./CreateClass";
 import Profile from "./Profile";
 import UserIndex from "./UserIndex";
 import GymProfile from "./GymProfile";
+import AdminPage from "./AdminPage";
 
-export { Home };
-export { About };
-export { Gymbanner };
-export { Login };
-export { Register };
-export { ConfigAdminUser };
-export { CreateClass };
-export { Profile };
-export { UserIndex };
-export { GymProfile };
+export { Home }
+export { About }
+export { Gymbanner }
+export { Login }
+export { Register }
+export { ConfigAdminUser }
+export { CreateClass }
+export { Profile }
+export { UserIndex }
+export { GymProfile }
+export { AdminPage }
