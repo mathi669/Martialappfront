@@ -34,33 +34,43 @@ const Register: React.FC = () => {
     setFormData((prevFormData) => ({ ...prevFormData, [id]: value }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(""); // Clear error message before trying to register
 
-    const registrationData = {
-      dc_correo_electronico: formData.correo,
-      contrasena: formData.contrasena,
-      nombre: formData.nombre,
-      apellido: formData.apellidoPaterno + " " + formData.apellidoMaterno,
-      telefono: formData.telefono || "",
-      nivel_artes_marciales_id: formData.nivel_artes_marciales_id || "1",
-      tipo_usuario_id: userType === "Usuario" ? "2" : "3",
-      usuario_estado_id: "1",
-      nivel_id: formData.nivel_id || "1",
-      contacto_emergencia_id: formData.contacto_emergencia_id || "1",
-      es_gimnasio: userType === "Gimnasio",
-    };
+    if (userType === "Usuario") {
+      const registrationData = {
+        dc_correo_electronico: formData.correo,
+        dc_contrasena: formData.contrasena,
+        dc_nombre: formData.nombre,
+        dc_apellido: formData.nombre + " " + formData.nombre,
+        dc_telefono: formData.telefono || "",
+        tb_nivel_artes_marciales_id: formData.nivel_artes_marciales_id || "1",
+        tb_tipo_usuario_id: "2", // Usuario
+        tb_usuario_estado_id: "1",
+        tb_nivel_id: formData.nivel_id || "1",
+        tb_contacto_emergencia_id: formData.contacto_emergencia_id || "1",
+        es_gimnasio: false,
+      };
 
-    axios
-      .post("http://127.0.0.1:5000/register", registrationData)
-      .then((res) => {
+      try {
+        const res = await axios.post(
+          "http://127.0.0.1:5000/register",
+          registrationData
+        );
         console.log(res);
+        // Send confirmation email
+        //await axios.post("http://127.0.0.1:5000/send_email", { dc_correo_electronico: formData.correo });
         navigate("/");
-      })
-      .catch((err) => {
-        if (err.response && err.response.data.error) {
-          setError(err.response.data.error);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response && err.response.data.error) {
+            setError(err.response.data.error);
+          } else {
+            setError(
+              "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
+            );
+          }
         } else {
           setError(
             "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
@@ -73,7 +83,51 @@ const Register: React.FC = () => {
           duration: 9000,
           isClosable: true,
         });
-      });
+      }
+    } else if (userType === "Gimnasio") {
+      const registrationData = {
+        dc_nombre: formData.nombreGimnasio,
+        dc_correo_electronico: formData.correo,
+        dc_telefono: formData.telefonoGimnasio,
+        dc_ubicacion: formData.ubicacionGimnasio,
+        dc_horario: "09:00-21:00", // Example horario, adjust as needed
+        tb_gimnasio_estado_id: "1",
+        image: formData.image, // Ensure you handle the image upload in the backend
+        dc_contrasena: formData.contrasena,
+      };
+
+      try {
+        const res = await axios.post(
+          "http://127.0.0.1:5000/createGym",
+          registrationData
+        );
+        console.log(res);
+        // Send confirmation email
+        //await axios.post("http://127.0.0.1:5000/send_email", { dc_correo_electronico: formData.correo });
+        navigate("/");
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response && err.response.data.error) {
+            setError(err.response.data.error);
+          } else {
+            setError(
+              "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
+            );
+          }
+        } else {
+          setError(
+            "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
+          );
+        }
+        toast({
+          title: "Error",
+          description: error,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    }
   };
 
   return (
@@ -248,6 +302,15 @@ const Register: React.FC = () => {
                         placeholder="Repetir contraseña"
                         value={formData.repetirContraseña || ""}
                         onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="imagen_url" mb={4}>
+                      <FormLabel>Imagen URL</FormLabel>
+                      <Input
+                        name="imagen_url"
+                        value={formData.imagen_url}
+                        onChange={handleInputChange}
+                        placeholder="Ingrese la URL de la imagen"
                       />
                     </FormControl>
                   </>
