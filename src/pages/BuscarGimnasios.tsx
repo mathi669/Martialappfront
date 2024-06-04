@@ -15,7 +15,7 @@ const center = {
 
 const BuscarGimnasios = () => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "",
+    //googleMapsApiKey: "",
     libraries,
   });
 
