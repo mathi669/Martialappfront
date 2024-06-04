@@ -9,15 +9,17 @@ import Profile from "./Profile";
 import UserIndex from "./UserIndex";
 import GymProfile from "./GymProfile";
 import AdminPage from "./AdminPage";
+import BuscarGimnasios from "./BuscarGimnasios";
 
-export { Home }
-export { About }
-export { Gymbanner }
-export { Login }
-export { Register }
-export { ConfigAdminUser }
-export { CreateClass }
-export { Profile }
-export { UserIndex }
-export { GymProfile }
+export { Home };
+export { About };
+export { Gymbanner };
+export { Login };
+export { Register };
+export { ConfigAdminUser };
+export { CreateClass };
+export { Profile };
+export { UserIndex };
+export { GymProfile };
 export { AdminPage }
+export { BuscarGimnasios };
