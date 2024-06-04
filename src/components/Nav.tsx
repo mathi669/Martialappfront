@@ -83,6 +83,11 @@ function NavbarMartial() {
                 ACERCA DE NOSOTROS
               </Button>
             </Link>
+            <Link to="/buscargimnasio">
+              <Button leftIcon={<FaLifeRing />} variant="link">
+                GIMNASIOS
+              </Button>
+            </Link>
             {!user ? (
               <Link to="/registro">
                 <Button leftIcon={<FaLifeRing />} variant="link">
@@ -92,7 +97,6 @@ function NavbarMartial() {
             ) : (
               <></>
             )}
-
             {user && userType === "gimnasio" ? (
               <Link to="/createClass">
                 <Button leftIcon={<FaLifeRing />} variant="link">
@@ -146,6 +150,11 @@ function NavbarMartial() {
             <Link to="/about">
               <Button leftIcon={<FaLifeRing />} variant="link">
                 ACERCA DE NOSOTROS
+              </Button>
+            </Link>
+            <Link to="/buscargimnasio">
+              <Button leftIcon={<FaLifeRing />} variant="link">
+                GIMNASIOS
               </Button>
             </Link>
             {!user ? (

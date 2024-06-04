@@ -8,6 +8,7 @@ import CreateClass from "./CreateClass";
 import Profile from "./Profile";
 import UserIndex from "./UserIndex";
 import GymProfile from "./GymProfile";
+import BuscarGimnasios from "./BuscarGimnasios";
 
 export { Home };
 export { About };
@@ -19,3 +20,4 @@ export { CreateClass };
 export { Profile };
 export { UserIndex };
 export { GymProfile };
+export { BuscarGimnasios };
