@@ -1,5 +1,4 @@
-// src/Routerconfig.tsx
-import { Home, About, Gymbanner, Login, Register, ConfigAdminUser, CreateClass, UserIndex, Profile, GymProfile, BuscarGimnasios } from "./pages";
+import { Home, About, Gymbanner, Login, Register, ConfigAdminUser, CreateClass, UserIndex, Profile, GymProfile, AdminPage, BuscarGimnasios } from "./pages";
 
 export const routes = [
     {
@@ -41,6 +40,10 @@ export const routes = [
     {
         path: '/gymprofile',
         element: <GymProfile />
+    },
+    {
+        path: '/admin',
+        element: <AdminPage />
     },
     {
         path: '/buscargimnasio',
