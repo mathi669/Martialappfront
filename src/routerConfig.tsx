@@ -1,4 +1,4 @@
-import { Home, About, Gymbanner, Login, Register, ConfigAdminUser, CreateClass, UserIndex, Profile, GymProfile, AdminPage, BuscarGimnasios } from "./pages";
+import { Home, About, Gymbanner, Login, Register, ConfigAdminUser, CreateClass, UserIndex, EditarPerfil, GymProfile, AdminPage, BuscarGimnasios, Profiles } from "./pages";
 
 export const routes = [
     {
@@ -34,8 +34,8 @@ export const routes = [
         element: <UserIndex />
     },
     {
-        path: '/profile',
-        element: <Profile />
+        path: '/editarperfil',
+        element: <EditarPerfil />
     },
     {
         path: '/gymprofile',
@@ -48,5 +48,9 @@ export const routes = [
     {
         path: '/buscargimnasio',
         element: <BuscarGimnasios />
+    },
+    {
+        path: '/profiles',
+        element: <Profiles />
     }
 ];
