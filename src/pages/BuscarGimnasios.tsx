@@ -1,47 +1,77 @@
 // src/pages/BuscarGimnasios.tsx
-import { Box, Flex, FormControl, Input, Text, Image, SimpleGrid } from "@chakra-ui/react";
+import { Box, Flex, FormControl, Input, Text, SimpleGrid, Button } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import Maps from "../components/Maps";
+import GymBox from "../components/GymBox";
+import apiService from "../services/service.tsx";
 
 const BuscarGimnasios = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [gyms, setGyms] = useState<any[]>([]);
+  const [filteredGyms, setFilteredGyms] = useState<any[]>([]);
+
+  // const fetchGyms = async (filters: any = {}) => {
+  //   try {
+  //     const response = await apiService.getFilteredGyms(filters);
+  //     setGyms(response.gimnasios);
+  //   } catch (error) {
+  //     console.error("Error fetching gyms:", error);
+  //   }
+  // };
+
+  const fetchAllGyms = async () => {
+    try {
+      const response = await apiService.getAllGyms();
+      setGyms(response.gimnasios);
+      setFilteredGyms(response.gimnasios);
+    } catch (error) {
+      console.error("Error fetching all gyms:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllGyms();
+  }, []);
+
+  const handleSearch = () => {
+    const filtered = gyms.filter(gym =>
+      gym.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      gym.ubicacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      gym.horario.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredGyms(filtered);
+  };
+
   return (
     <Flex direction="column" align="center" w="full" h="full" p={8}>
       <Text fontSize="3xl" fontWeight="bold" mb={4}>Entonces, ¿dónde quieres entrenar?</Text>
-      <FormControl id="search" w="full" maxW="600px" mb={8}>
+      <FormControl w="full" maxW="600px" mb={8}>
         <Input
           type="text"
-          placeholder="Ingresa tu ciudad, comuna o Código Postal"
+          placeholder="Buscar gimnasios"
           size="lg"
           borderRadius="full"
           borderWidth={2}
           borderColor="gray.300"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          mb={4}
         />
+        <Button onClick={handleSearch} colorScheme="teal" size="lg" borderRadius="full" mb={4}>
+          Buscar
+        </Button>
       </FormControl>
       <SimpleGrid columns={{ sm: 1, md: 3 }} spacing={4} w="full" maxW="1200px">
-        <Box borderWidth={1} borderRadius="lg" overflow="hidden">
-          <Image src="/path-to-your-image1.jpg" alt="Gimnasio 1" />
-          <Box p={4}>
-            <Text fontWeight="bold">Catedral</Text>
-            <Text>Catedral 1850, Santiago, 1850 – , Santiago – Región Metropolitana</Text>
-          </Box>
-        </Box>
-        <Box borderWidth={1} borderRadius="lg" overflow="hidden">
-          <Image src="/path-to-your-image2.jpg" alt="Gimnasio 2" />
-          <Box p={4}>
-            <Text fontWeight="bold">Espacio M</Text>
-            <Text>Compañía de Jesús 1214, local 218, 1214 – Santiago, Santiago – Región Metropolitana</Text>
-          </Box>
-        </Box>
-        <Box borderWidth={1} borderRadius="lg" overflow="hidden">
-          <Image src="/path-to-your-image3.jpg" alt="Gimnasio 3" />
-          <Box p={4}>
-            <Text fontWeight="bold">Vivo El Centro</Text>
-            <Text>Calle Puente 689, Piso -1, Local 037-041, 689 – Santiago Centro, Santiago – Región Metropolitana</Text>
-          </Box>
-        </Box>
+        {filteredGyms.map((gym) => (
+          <GymBox
+            key={gym.id}
+            imageSrc={gym.imagen_url}
+            altText={gym.nombre}
+            gymName={gym.nombre}
+            gymAddress={gym.ubicacion}
+          />
+        ))}
       </SimpleGrid>
-      <Box w="full" h="400px" mt={8}>
-        <Maps />
-      </Box>
     </Flex>
   );
 };

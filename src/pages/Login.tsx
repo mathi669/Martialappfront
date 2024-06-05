@@ -61,7 +61,9 @@ const Login: React.FC = () => {
         localStorage.setItem("userType", userType);
         toast({
           title: "Inicio de sesión exitoso.",
-          description: `Bienvenido, ${response.user.dc_nombre}.`,
+          description: `Bienvenido, ${
+            response.user.dc_nombre ?? response.user.nombre
+          }.`,
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -83,7 +85,7 @@ const Login: React.FC = () => {
     } catch (err) {
       toast({
         title: "Error en el inicio de sesión.",
-        description: err.message,
+        description: err?.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -121,6 +123,9 @@ const Login: React.FC = () => {
               >
                 <option value="usuario">Iniciar sesión como usuario</option>
                 <option value="gimnasio">Iniciar sesión como gimnasio</option>
+                <option value="administrador">
+                  Iniciar sesión como Administrador
+                </option>
               </Select>
             </FormControl>
 
