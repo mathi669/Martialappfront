@@ -5,7 +5,6 @@ import {
   Collapse,
   Flex,
   IconButton,
-  Spacer,
   Stack,
   Image,
   Text,
@@ -48,7 +47,7 @@ function NavbarMartial() {
     try {
       localStorage.removeItem("user");
       setUser(null);
-      navigate("/");
+      navigate("/home");
     } catch (err) {
       console.error("Error al cerrar sesión:", err);
     }
@@ -78,11 +77,15 @@ function NavbarMartial() {
                 INICIO
               </Button>
             </Link>
-            <Link to="/about">
-              <Button leftIcon={<FaLifeRing />} variant="link">
-                ACERCA DE NOSOTROS
-              </Button>
-            </Link>
+            {!user ? (
+              <Link to="/about">
+                <Button leftIcon={<FaLifeRing />} variant="link">
+                  ACERCA DE NOSOTROS
+                </Button>
+              </Link>
+            ) : (
+              <></>
+            )}
             <Link to="/buscargimnasio">
               <Button leftIcon={<FaLifeRing />} variant="link">
                 GIMNASIOS
@@ -100,7 +103,7 @@ function NavbarMartial() {
             {user && userType === "gimnasio" ? (
               <Link to="/createClass">
                 <Button leftIcon={<FaLifeRing />} variant="link">
-                  CREAR CLASE
+                  ADMINISTRADOR DE CLASES
                 </Button>
               </Link>
             ) : (
@@ -147,11 +150,15 @@ function NavbarMartial() {
                 INICIO
               </Button>
             </Link>
-            <Link to="/about">
-              <Button leftIcon={<FaLifeRing />} variant="link">
-                ACERCA DE NOSOTROS
-              </Button>
-            </Link>
+            {!user ? (
+              <Link to="/about">
+                <Button leftIcon={<FaLifeRing />} variant="link">
+                  ACERCA DE NOSOTROS
+                </Button>
+              </Link>
+            ) : (
+              <></>
+            )}
             <Link to="/buscargimnasio">
               <Button leftIcon={<FaLifeRing />} variant="link">
                 GIMNASIOS

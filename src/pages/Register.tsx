@@ -14,12 +14,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useState, ChangeEvent, FormEvent } from "react";
-import axios from "axios";
+import apiService from "../services/service";
+
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [error, setError] = useState<string>("");
-
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -38,95 +38,35 @@ const Register: React.FC = () => {
     event.preventDefault();
     setError(""); // Clear error message before trying to register
 
-    if (userType === "Usuario") {
-      const registrationData = {
-        dc_correo_electronico: formData.correo,
-        dc_contrasena: formData.contrasena,
-        dc_nombre: formData.nombre,
-        dc_apellido: formData.nombre + " " + formData.nombre,
-        dc_telefono: formData.telefono || "",
-        tb_nivel_artes_marciales_id: formData.nivel_artes_marciales_id || "1",
-        tb_tipo_usuario_id: "2", // Usuario
-        tb_usuario_estado_id: "1",
-        tb_nivel_id: formData.nivel_id || "1",
-        tb_contacto_emergencia_id: formData.contacto_emergencia_id || "1",
-        es_gimnasio: false,
-      };
-
-      try {
-        const res = await axios.post(
-          "http://127.0.0.1:5000/register",
-          registrationData
-        );
-        console.log(res);
-        // Send confirmation email
-        //await axios.post("http://127.0.0.1:5000/send_email", { dc_correo_electronico: formData.correo });
-        navigate("/");
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          if (err.response && err.response.data.error) {
-            setError(err.response.data.error);
-          } else {
-            setError(
-              "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
-            );
-          }
-        } else {
-          setError(
-            "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
-          );
-        }
-        toast({
-          title: "Error",
-          description: error,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
+    try {
+      if (userType === "Usuario") {
+        await apiService.register(formData);
+      } else if (userType === "Gimnasio") {
+        await apiService.registerGym(formData);
       }
-    } else if (userType === "Gimnasio") {
-      const registrationData = {
-        dc_nombre: formData.nombreGimnasio,
-        dc_correo_electronico: formData.correo,
-        dc_telefono: formData.telefonoGimnasio,
-        dc_ubicacion: formData.ubicacionGimnasio,
-        dc_horario: "09:00-21:00", // Example horario, adjust as needed
-        tb_gimnasio_estado_id: "1",
-        image: formData.image, // Ensure you handle the image upload in the backend
-        dc_contrasena: formData.contrasena,
-      };
 
-      try {
-        const res = await axios.post(
-          "http://127.0.0.1:5000/createGym",
-          registrationData
-        );
-        console.log(res);
-        // Send confirmation email
-        //await axios.post("http://127.0.0.1:5000/send_email", { dc_correo_electronico: formData.correo });
-        navigate("/");
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          if (err.response && err.response.data.error) {
-            setError(err.response.data.error);
-          } else {
-            setError(
-              "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
-            );
-          }
-        } else {
-          setError(
-            "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
-          );
-        }
-        toast({
-          title: "Error",
-          description: error,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-      }
+      toast({
+        title: "Registro exitoso",
+        description:
+          "¡Nos comunicaremos con usted a la brevedad para confirmar el estado de su registro!",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+
+      navigate("/");
+    } catch (error) {
+      console.error("Error en el registro:", error);
+      setError(
+        "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
+      );
+      toast({
+        title: "Error",
+        description: error.message || "Ha ocurrido un error en el registro",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
@@ -316,7 +256,7 @@ const Register: React.FC = () => {
                   </>
                 )}
                 <Text mt={4}>
-                  Al registrarte aceptas las
+                  Al registrarte aceptas las{" "}
                   <RouterLink
                     to="#!"
                     style={{

@@ -1,3 +1,5 @@
+// apiService.js
+
 import axios, { AxiosResponse } from "axios";
 
 // Configuración base de Axios
@@ -89,7 +91,59 @@ const apiService = {
     }
   },
 
-  // Otras llamadas a la API...
+  // Registrar un usuario
+  register: async (formData: any) => {
+    try {
+      const response = await apiClient.post("/register", formData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Registrar un gimnasio
+  registerGym: async (formData: any) => {
+    try {
+      const response = await apiClient.post("/registerGym", formData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Obtener las solicitudes de registro
+  getSolicitudesRegistro: async () => {
+    try {
+      const response = await apiClient.get("/solicitudes_registro");
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Aceptar una solicitud de registro
+  aceptarSolicitud: async (idSolicitud: any) => {
+    try {
+      const response = await apiClient.post(
+        `/aceptar_solicitud/${idSolicitud}`
+      );
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Rechazar una solicitud de registro
+  rechazarSolicitud: async (idSolicitud: any) => {
+    try {
+      const response = await apiClient.post(
+        `/rechazar_solicitud/${idSolicitud}`
+      );
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
 };
 
 export default apiService;
