@@ -68,6 +68,26 @@ const apiService = {
       handleError(error);
     }
   },
+  
+  // Obtener gimnasios filtrados
+  getFilteredGyms: async (params: any) => {
+    try {
+      const response = await apiClient.get(`/filterGyms`, { params });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Obtener todos los gimnasios
+  getAllGyms: async () => {
+    try {
+      const response = await apiClient.get(`/gyms`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
 
   // Otras llamadas a la API...
 };
