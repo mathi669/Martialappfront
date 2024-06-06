@@ -70,7 +70,7 @@ const apiService = {
       handleError(error);
     }
   },
-  
+
   // Obtener gimnasios filtrados
   getFilteredGyms: async (params: any) => {
     try {

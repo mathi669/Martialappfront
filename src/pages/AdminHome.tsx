@@ -3,7 +3,7 @@ import { Button, Container, Flex, Text } from "@chakra-ui/react";
 
 const AdminHome = () => {
   // Obtener información del usuario administrador del localStorage
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user: any = JSON.parse(localStorage?.getItem("user"));
 
   return (
     <Container maxW="container.xl">

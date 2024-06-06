@@ -13,17 +13,15 @@ const center = {
 };
 
 const Maps: React.FC = () => {
-  const [markers, setMarkers] = useState<{ lat: number, lng: number }[]>([]);
+  const [marker, setMarker] = useState<{ lat: number, lng: number } | null>(null);
   const [selected, setSelected] = useState<{ lat: number, lng: number } | null>(null);
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
     if (event.latLng) {
       const lat = event.latLng.lat();
       const lng = event.latLng.lng();
-      setMarkers((current) => [
-        ...current,
-        { lat, lng },
-      ]);
+      setMarker({ lat, lng });
+      setSelected(null);  // Clear any existing selection
     }
   };
 
@@ -35,23 +33,28 @@ const Maps: React.FC = () => {
         center={center}
         onClick={handleMapClick}
       >
-        {markers.map((marker, index) => (
+        {marker && (
           <Marker 
-            key={index} 
             position={{ lat: marker.lat, lng: marker.lng }} 
             onClick={() => setSelected(marker)}
           />
-        ))}
-        {selected ? (
+        )}
+        {selected && (
           <InfoWindow
             position={{ lat: selected.lat, lng: selected.lng }}
             onCloseClick={() => setSelected(null)}
           >
-            <a href={`https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`} target="_blank" rel="noopener noreferrer">
-              Abrir en Google Maps
-            </a>
+            <div>
+              <a
+                href={`https://www.google.com/maps/@${selected.lat},${selected.lng},16z?hl=es-419&entry=ttu`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Abrir en Google Maps
+              </a>
+            </div>
           </InfoWindow>
-        ) : null}
+        )}
       </GoogleMap>
     </LoadScript>
   );
