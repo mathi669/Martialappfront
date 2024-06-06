@@ -9,18 +9,29 @@ import {
   Thead,
   Tr,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import apiService from "../services/service";
 
 const SolicitudesRegistro = () => {
   const [solicitudes, setSolicitudes] = useState([]);
+  const [selectedSolicitud, setSelectedSolicitud] = useState(null);
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const fetchSolicitudes = async () => {
       try {
         const data = await apiService.getSolicitudesRegistro();
-        setSolicitudes(data);
+        setSolicitudes(data.solicitudes_registro);
       } catch (error) {
         console.error("Error al obtener las solicitudes:", error);
       }
@@ -31,9 +42,8 @@ const SolicitudesRegistro = () => {
   const handleAceptarSolicitud = async (idSolicitud: any) => {
     try {
       await apiService.aceptarSolicitud(idSolicitud);
-      // Actualizar la lista de solicitudes después de aceptar una
       const data = await apiService.getSolicitudesRegistro();
-      setSolicitudes(data);
+      setSolicitudes(data.solicitudes_registro);
       toast({
         title: "Solicitud aceptada",
         status: "success",
@@ -55,9 +65,8 @@ const SolicitudesRegistro = () => {
   const handleRechazarSolicitud = async (idSolicitud: any) => {
     try {
       await apiService.rechazarSolicitud(idSolicitud);
-      // Actualizar la lista de solicitudes después de rechazar una
       const data = await apiService.getSolicitudesRegistro();
-      setSolicitudes(data);
+      setSolicitudes(data.solicitudes_registro);
       toast({
         title: "Solicitud rechazada",
         status: "success",
@@ -76,37 +85,52 @@ const SolicitudesRegistro = () => {
     }
   };
 
+  const handleRowClick = (solicitud: React.SetStateAction<null>) => {
+    setSelectedSolicitud(solicitud);
+    onOpen();
+  };
+
   return (
     <Box>
       <Box mb={4}>
-        <h2>Solicitudes de Registro</h2>
+        <Text fontSize="2xl" fontWeight="bold">
+          Solicitudes de Registro
+        </Text>
       </Box>
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th>Nombre</Th>
-            <Th>Correo Electrónico</Th>
+            <Th>ID</Th>
+            <Th>Estado</Th>
+            <Th>Fecha de Solicitud</Th>
             <Th>Acciones</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {solicitudes.map((solicitud: any) => (
-            <Tr key={solicitud.id}>
-              <Td>{solicitud.nombre}</Td>
-              <Td>{solicitud.correo}</Td>
+          {solicitudes.map((solicitud) => (
+            <Tr key={solicitud[0]} onClick={() => handleRowClick(solicitud)}>
+              <Td>{solicitud[0]}</Td>
+              <Td>{solicitud[1]}</Td>
+              <Td>{new Date(solicitud[3]).toLocaleString()}</Td>
               <Td>
                 <Button
                   colorScheme="green"
                   size="sm"
                   mr={2}
-                  onClick={() => handleAceptarSolicitud(solicitud.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAceptarSolicitud(solicitud[0]);
+                  }}
                 >
                   Aceptar
                 </Button>
                 <Button
                   colorScheme="red"
                   size="sm"
-                  onClick={() => handleRechazarSolicitud(solicitud.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRechazarSolicitud(solicitud[0]);
+                  }}
                 >
                   Rechazar
                 </Button>
@@ -115,6 +139,42 @@ const SolicitudesRegistro = () => {
           ))}
         </Tbody>
       </Table>
+
+      {selectedSolicitud && (
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Detalles de la Solicitud</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text>
+                <strong>ID Solicitud:</strong> {selectedSolicitud[0]}
+              </Text>
+              <Text>
+                <strong>Estado:</strong> {selectedSolicitud[1]}
+              </Text>
+              <Text>
+                <strong>ID Gimnasio:</strong> {selectedSolicitud[2]}
+              </Text>
+              <Text>
+                <strong>Fecha de Solicitud:</strong>{" "}
+                {new Date(selectedSolicitud[3]).toLocaleString()}
+              </Text>
+              <Text>
+                <strong>Fecha de Aprobación:</strong>{" "}
+                {selectedSolicitud[4]
+                  ? new Date(selectedSolicitud[4]).toLocaleString()
+                  : "No aprobada"}
+              </Text>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={onClose}>
+                Cerrar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </Box>
   );
 };

@@ -244,6 +244,15 @@ const Register: React.FC = () => {
                         onChange={handleInputChange}
                       />
                     </FormControl>
+                    <FormControl id="imagen_url" mb={4}>
+                      <FormLabel>Imagen URL</FormLabel>
+                      <Input
+                        name="imagen_url"
+                        value={formData.imagen_url}
+                        onChange={handleInputChange}
+                        placeholder="Ingrese la URL de la imagen"
+                      />
+                    </FormControl>
                   </>
                 )}
                 <Text mt={4}>

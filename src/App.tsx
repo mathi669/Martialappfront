@@ -1,21 +1,24 @@
-
-import NavbarMartial from './components/Nav'
-import { BrowserRouter as Router } from 'react-router-dom';
+// src/App.tsx
+import NavbarMartial from './components/Nav';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { routes } from './routerConfig';
 import { Suspense } from 'react';
-import { AppRouter } from './Router';
 import Footer from './components/Footer';
 
 function App() {
-
   return (
-      <Router>
-        <Suspense>
-          <NavbarMartial />
-          <AppRouter />
-          <Footer />
-        </Suspense>
-      </Router>
-  )
+    <Router>
+      <Suspense>
+        <NavbarMartial />
+        <Routes>
+          {routes.map((route, index) => (
+            <Route key={index} path={route.path} element={route.element} />
+          ))}
+        </Routes>
+        <Footer />
+      </Suspense>
+    </Router>
+  );
 }
 
-export default App
+export default App;
