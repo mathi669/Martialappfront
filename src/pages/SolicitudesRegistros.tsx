@@ -100,7 +100,6 @@ const SolicitudesRegistro = () => {
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th>ID</Th>
             <Th>Estado</Th>
             <Th>Fecha de Solicitud</Th>
             <Th>Acciones</Th>
@@ -109,8 +108,17 @@ const SolicitudesRegistro = () => {
         <Tbody>
           {solicitudes.map((solicitud) => (
             <Tr key={solicitud[0]} onClick={() => handleRowClick(solicitud)}>
-              <Td>{solicitud[0]}</Td>
-              <Td>{solicitud[1]}</Td>
+              <Td>
+                {
+                  <Text>
+                    {solicitud[1] === 1
+                      ? "Pendiente"
+                      : solicitud[1] === 2
+                      ? "Aceptado"
+                      : "Rechazado"}
+                  </Text>
+                }
+              </Td>
               <Td>{new Date(solicitud[3]).toLocaleString()}</Td>
               <Td>
                 <Button
@@ -148,13 +156,14 @@ const SolicitudesRegistro = () => {
             <ModalCloseButton />
             <ModalBody>
               <Text>
-                <strong>ID Solicitud:</strong> {selectedSolicitud[0]}
-              </Text>
-              <Text>
-                <strong>Estado:</strong> {selectedSolicitud[1]}
-              </Text>
-              <Text>
-                <strong>ID Gimnasio:</strong> {selectedSolicitud[2]}
+                <strong>Estado:</strong>{" "}
+                <Text>
+                  {selectedSolicitud[1] === 1
+                    ? "Pendiente"
+                    : selectedSolicitud[1] === 2
+                    ? "Aceptado"
+                    : "Rechazado"}
+                </Text>
               </Text>
               <Text>
                 <strong>Fecha de Solicitud:</strong>{" "}
