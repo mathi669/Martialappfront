@@ -14,9 +14,12 @@ import {
 import {
   FaBars,
   FaHome,
-  FaLifeRing,
+  FaInfoCircle,
+  FaDumbbell,
+  FaUserPlus,
   FaUser,
   FaSignOutAlt,
+  FaSignInAlt,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import logo from "../static/img/MartialApps.png";
@@ -41,7 +44,7 @@ function NavbarMartial() {
       setUser(JSON.parse(storedUser));
       setUserType(userType);
     }
-  }, [localStorage.getItem("user")]);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -56,21 +59,23 @@ function NavbarMartial() {
   return (
     <Box bg="gray.100" px={4} className="full-width">
       <Flex h={16} alignItems="center" justifyContent="space-between">
-        <Link to={"/"}>
+        <Link to="/">
           <Image src={logo} alt="MartialApps Logo" boxSize="77px" />
         </Link>
-        <IconButton
-          size="md"
-          icon={<FaBars />}
-          aria-label="Open Menu"
-          display={{ md: "none" }}
-          onClick={onToggle}
-        />
-        <Flex alignItems="center" mt={2}>
+        <Flex alignItems="center" ml="auto">
+          <IconButton
+            size="md"
+            icon={<FaBars />}
+            aria-label="Open Menu"
+            display={{ md: "none" }}
+            onClick={onToggle}
+          />
           <Stack
             direction="row"
             spacing={4}
             display={{ base: "none", md: "flex" }}
+            alignItems="center"
+            ml={4} // Añade margen a la izquierda para separarlo del borde
           >
             <Link to="/">
               <Button leftIcon={<FaHome />} variant="link">
@@ -79,36 +84,30 @@ function NavbarMartial() {
             </Link>
             {!user ? (
               <Link to="/about">
-                <Button leftIcon={<FaLifeRing />} variant="link">
+                <Button leftIcon={<FaInfoCircle />} variant="link">
                   ACERCA DE NOSOTROS
                 </Button>
               </Link>
-            ) : (
-              <></>
-            )}
+            ) : null}
             <Link to="/buscargimnasio">
-              <Button leftIcon={<FaLifeRing />} variant="link">
+              <Button leftIcon={<FaDumbbell />} variant="link">
                 GIMNASIOS
               </Button>
             </Link>
             {!user ? (
               <Link to="/registro">
-                <Button leftIcon={<FaLifeRing />} variant="link">
+                <Button leftIcon={<FaUserPlus />} variant="link">
                   REGÍSTRATE
                 </Button>
               </Link>
-            ) : (
-              <></>
-            )}
+            ) : null}
             {user && userType === "gimnasio" ? (
               <Link to="/createClass">
-                <Button leftIcon={<FaLifeRing />} variant="link">
+                <Button leftIcon={<FaDumbbell />} variant="link">
                   ADMINISTRADOR DE CLASES
                 </Button>
               </Link>
-            ) : (
-              <></>
-            )}
+            ) : null}
             <Flex alignItems="center" mt={-2}>
               {user ? (
                 <>
@@ -133,6 +132,7 @@ function NavbarMartial() {
                     variant="solid"
                     colorScheme="red"
                     className="btn-PopUpLogin"
+                    leftIcon={<FaSignInAlt />}
                   >
                     INICIAR SESIÓN
                   </Button>
@@ -143,8 +143,8 @@ function NavbarMartial() {
         </Flex>
       </Flex>
       <Collapse in={isOpen} animateOpacity>
-        <Box pb={4}>
-          <Stack as={"nav"} spacing={4}>
+        <Box pb={4} textAlign="center"> {/* Alinea el contenido al centro */}
+          <Stack as={"nav"} spacing={4} align="center"> {/* Alinea el Stack al centro */}
             <Link to="/">
               <Button leftIcon={<FaHome />} variant="link">
                 INICIO
@@ -152,36 +152,30 @@ function NavbarMartial() {
             </Link>
             {!user ? (
               <Link to="/about">
-                <Button leftIcon={<FaLifeRing />} variant="link">
+                <Button leftIcon={<FaInfoCircle />} variant="link">
                   ACERCA DE NOSOTROS
                 </Button>
               </Link>
-            ) : (
-              <></>
-            )}
+            ) : null}
             <Link to="/buscargimnasio">
-              <Button leftIcon={<FaLifeRing />} variant="link">
+              <Button leftIcon={<FaDumbbell />} variant="link">
                 GIMNASIOS
               </Button>
             </Link>
             {!user ? (
               <Link to="/registro">
-                <Button leftIcon={<FaLifeRing />} variant="link">
+                <Button leftIcon={<FaUserPlus />} variant="link">
                   REGÍSTRATE
                 </Button>
               </Link>
-            ) : (
-              <></>
-            )}
-            {user && userType === '"gimnasio"' ? (
+            ) : null}
+            {user && userType === "gimnasio" ? (
               <Link to="/createClass">
-                <Button leftIcon={<FaLifeRing />} variant="link">
+                <Button leftIcon={<FaDumbbell />} variant="link">
                   CREAR CLASE
                 </Button>
               </Link>
-            ) : (
-              <></>
-            )}
+            ) : null}
             {user ? (
               <>
                 <Text>Bienvenido, {user?.dc_nombre}</Text>
@@ -201,6 +195,7 @@ function NavbarMartial() {
                   variant="solid"
                   colorScheme="red"
                   className="btn-PopUpLogin"
+                  leftIcon={<FaSignInAlt />}
                 >
                   INICIAR SESIÓN
                 </Button>
