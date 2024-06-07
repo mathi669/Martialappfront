@@ -1,167 +1,169 @@
 import { Link } from "react-router-dom";
-import "../static/css/main.css";
+import { Box, Button, Input, Text, VStack } from "@chakra-ui/react";
 
 const GymProfile = () => {
   return (
-    <section className="full-width section">
-      <div className="container">
-        <div className="row">
-          <div className="col-xs-12 col-sm-4 col-md-3">
-            <button
+    <VStack className="full-width section" align="stretch" spacing="4">
+      <Box className="container">
+        <Box className="row" alignItems="flex-start">
+          <Box className="col-xs-12 col-sm-4 col-md-3">
+            <Button
               className="btn btn-default btn-block visible-xs btn-dropdown-container"
               data-drop-cont=".user-menu-xs"
             >
               <i className="fa fa-user fa-fw" aria-hidden="true"></i> MOSTRAR
               MENÚ <i className="fa fa-sort pull-right" aria-hidden="true"></i>
-            </button>
-            <div className="full-width post-user-info">
+            </Button>
+            <VStack className="full-width post-user-info" spacing="4">
               <img
                 src="./src/static/img/user.png"
                 className="NavBar-Nav-icon"
                 alt="User"
               />
-              <p className="full-width">
+              <Text>
                 <small id="nombreGimnasio"></small>
-              </p>
-              <div className="full-width div-table">
-                <div className="full-width div-table-row">
-                  <div
+              </Text>
+              <VStack className="full-width div-table" spacing="4">
+                <Box className="div-table-row">
+                  <Box
                     className="div-table-cell div-table-cell-xs"
                     id="ubicacionGimnasio"
                   >
                     Ubicación <br />
                     <small>Ciudad, País</small>
-                  </div>
-                  <div
+                  </Box>
+                  <Box
                     className="div-table-cell div-table-cell-xs"
                     id="telefonoGimnasio"
                   >
                     Teléfono <br />
                     <small>Número de contacto</small>
-                  </div>
-                </div>
-              </div>
-              <div
+                  </Box>
+                </Box>
+              </VStack>
+              <VStack
                 className="full-width list-group"
-                style={{ borderRadius: "0" }}
+                borderRadius="0"
+                spacing="4"
               >
-                <div className="list-group-item text-center">
+                <Text className="list-group-item text-center">
                   <small>Desde Fecha de Registro</small>
-                </div>
-                <a className="list-group-item active">
-                    <Link to="/profile">
-                        <i className="fa fa-user fa-fw" aria-hidden="true"></i> TU
-                        PERFIL
-                    
-                    </Link>
-                </a>
-                <a className="list-group-item">
-                    <Link to="/adminPage">
-                        <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>{" "}
-                        CONFIGURACIÓN
-                    </Link>
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="col-xs-12 col-sm-8 col-md-9">
-            <div className="full-width bar-info-user">
+                </Text>
+                <Link to="/profile">
+                  <Button className="list-group-item active">
+                    <i className="fa fa-user fa-fw" aria-hidden="true"></i> TU
+                    PERFIL
+                  </Button>
+                </Link>
+                <Link to="/adminPage">
+                  <Button className="list-group-item">
+                    <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>{" "}
+                    CONFIGURACIÓN
+                  </Button>
+                </Link>
+              </VStack>
+            </VStack>
+          </Box>
+          <Box className="col-xs-12 col-sm-8 col-md-9">
+            <Box className="full-width bar-info-user" py="2" px="4">
               <i className="fa fa-user fa-fw" aria-hidden="true"></i>
-              <div>TU PERFIL</div>
-            </div>
+              <Text>TU PERFIL</Text>
+            </Box>
             {/* Contenido*/}
-            <div
+            <Box
               className="full-width"
-              style={{ padding: "15px", border: "1px solid #E1E1E1" }}
+              p="4"
+              border="1px solid #E1E1E1"
+              borderRadius="md"
             >
               <form action="">
-                <p className="text-muted text-center">Seleccione una imagen</p>
-                <div className="form-group">
-                  <div className="custom-input-file">
-                    <input type="file"  className="input-file" />
-                    <i className="fa fa-picture-o" aria-hidden="true"></i>
-                  </div>
-                  <br />
-                  <p className="text-muted text-center archivo">Archivo...</p>
-                </div>
-                <br />
-                <br />
-                <br />
-                <div className="form-group">
-                  <label>Nombre del Gimnasio</label>
-                  <input
+                <Text className="text-muted text-center">
+                  Seleccione una imagen
+                </Text>
+                <Box className="form-group">
+                  <Box className="custom-input-file">
+                    <Button as="label" htmlFor="fileInput">
+                      <Input type="file" id="fileInput" display="none" />
+                      <i className="fa fa-picture-o" aria-hidden="true"></i>
+                    </Button>
+                  </Box>
+                  <Text className="text-muted text-center archivo">
+                    Archivo...
+                  </Text>
+                </Box>
+                <Box className="form-group">
+                  <Text>Nombre del Gimnasio</Text>
+                  <Input
                     type="text"
                     placeholder="Nombre del Gimnasio"
                     className="form-control"
                   />
-                </div>
-                <div className="form-group">
-                  <label>
+                </Box>
+                <Box className="form-group">
+                  <Text>
                     Teléfono <small></small>
-                  </label>
-                  <input
+                  </Text>
+                  <Input
                     type="text"
                     placeholder="¿Cuál es tu teléfono?"
                     className="form-control"
                   />
-                </div>
-                <div className="form-group">
-                  <label>
+                </Box>
+                <Box className="form-group">
+                  <Text>
                     Ubicación <small>¿Cuál es tu ubicación?</small>
-                  </label>
-                  <input
+                  </Text>
+                  <Input
                     type="text"
                     placeholder="Ubicación"
                     className="form-control"
                   />
-                </div>
-                <div className="form-group">
-                  <label>Correo electrónico</label>
-                  <input
+                </Box>
+                <Box className="form-group">
+                  <Text>Correo electrónico</Text>
+                  <Input
                     type="email"
                     placeholder="Email"
                     className="form-control"
                   />
-                </div>
-                <div className="form-group">
-                  <label>Contraseña</label>
-                  <a
-                    href="#!"
+                </Box>
+                <Box className="form-group">
+                  <Text>Contraseña</Text>
+                  <Button
+                    ref="#!"
                     className="btn btn-default btn-xs pull-right btn-dropdown-container"
                     data-drop-cont=".perfil-password"
                   >
                     Mostrar/Ocultar{" "}
                     <i className="fa fa-sort" aria-hidden="true"></i>
-                  </a>
-                  <div className="full-width perfil-password">
-                    <input
+                  </Button>
+                  <VStack className="full-width perfil-password" spacing="4">
+                    <Input
                       type="password"
                       placeholder="Contraseña"
                       className="form-control"
                     />
-                    <br />
-                    <input
+                    <Input
                       type="password"
                       placeholder="Nueva Contraseña"
                       className="form-control"
                     />
-                    <br />
-                    <input
+                    <Input
                       type="password"
                       placeholder="Confirmar Contraseña"
                       className="form-control"
                     />
-                  </div>
-                </div>
-                <p className="text-center">
-                  <button className="btn btn-danger">GUARDAR</button>
-                </p>
+                  </VStack>
+                </Box>
+                <Text className="text-center">
+                  <Button colorScheme="red">GUARDAR</Button>
+                </Text>
               </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </VStack>
   );
 };
 

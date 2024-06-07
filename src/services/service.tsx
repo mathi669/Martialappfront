@@ -91,6 +91,15 @@ const apiService = {
     }
   },
 
+  getClassesByGym: async (gymId: number) => {
+    try {
+      const response = await apiClient.get(`/classes/${gymId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   // Registrar un usuario
   register: async (formData: any) => {
     try {
