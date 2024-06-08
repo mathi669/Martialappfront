@@ -1,36 +1,39 @@
-// src/components/GymBox.tsx
-import { Box, Text, Image } from "@chakra-ui/react";
-import { GymBoxProps } from "../interfaces/gymbox_interface";
-import { useNavigate } from "react-router-dom";
+// src/components/ClassBox.tsx
+import { Box, Text, Image, Button } from "@chakra-ui/react";
+import { ClassBoxProps } from "../interfaces/classbox_interface";
 
-const ClassBox: React.FC<GymBoxProps> = ({ imageSrc, altText, gymName, gymAddress, gymId }) => {
-  const navigate = useNavigate();
-
+const ClassBox: React.FC<ClassBoxProps> = ({ className, schedule, availableSpots, imageUrl }) => {
   return (
     <Box
       borderWidth="1px"
-      borderRadius="lg"
+      borderRadius="md"
       overflow="hidden"
       boxShadow="md"
-      _hover={{ boxShadow: "xl", cursor: "pointer" }}
+      p={4}
+      mb={4}
     >
-      <Image
-        src={imageSrc}
-        alt={altText}
-        objectFit="cover"
-        width="100%"
-        height="200px"
-        _hover={{ transform: "scale(1.05)" }}
-        transition="transform 0.3s ease-in-out"
-      />
-      <Box p="6">
-        <Text fontWeight="bold" fontSize="xl" mb="2">
-          {gymName}
-        </Text>
-        <Text fontSize="md" color="gray.500">
-          {gymAddress}
-        </Text>
-      </Box>
+      <Text fontWeight="bold" fontSize="lg" mb={2}>
+        {className}
+      </Text>
+      <Text fontSize="md" color="gray.500" mb={2}>
+        Horario: {schedule}
+      </Text>
+      <Text fontSize="md" color="gray.500" mb={2}>
+        Cupos Disponibles: {availableSpots}
+      </Text>
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          alt={className}
+          objectFit="cover"
+          width="100%"
+          height="150px"
+          mb={4}
+        />
+      )}
+      <Button size="sm" colorScheme="teal">
+        Modificar
+      </Button>
     </Box>
   );
 };
