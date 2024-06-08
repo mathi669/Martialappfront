@@ -121,7 +121,7 @@ function NavbarMartial() {
                     CERRAR SESIÓN
                   </Button>
                   <Box ml={4}>
-                    <Link to="/profile" className="profileButton">
+                    <Link to="/profiles" className="profileButton">
                       <FaUser className="NavBar-Nav-icon btn-PopUpLogin" />
                     </Link>
                   </Box>

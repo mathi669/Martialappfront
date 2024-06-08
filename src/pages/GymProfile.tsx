@@ -1,7 +1,38 @@
-import { Link } from "react-router-dom";
-import { Box, Button, Input, Text, VStack } from "@chakra-ui/react";
+import { Link, useParams } from "react-router-dom";
+import { Box, Button, Input, Text, VStack, Spinner } from "@chakra-ui/react";
+import { useEffect, useState } from 'react';
+import apiService from '../services/service';
 
 const GymProfile = () => {
+
+  const { gym_id } = useParams();
+  const [gym, setGym] = useState<any>(null);
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchGym = async () => {
+      try {
+        const data = await apiService.getGym(gym_id);
+        setGym(data);
+      } catch (error) {
+        console.error('Error fetching gym:', error);
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchGym();
+
+  }, [gym_id])
+
+  if (loading) {
+    return <Spinner size="xl" />;
+  }
+
+  if (!gym) {
+    return <Text>No se encontró el gimnasio.</Text>;
+  }
+  
   return (
     <VStack className="full-width section" align="stretch" spacing="4">
       <Box className="container">
@@ -21,7 +52,7 @@ const GymProfile = () => {
                 alt="User"
               />
               <Text>
-                <small id="nombreGimnasio"></small>
+                <small id="nombreGimnasio">{gym.nombre}</small>
               </Text>
               <VStack className="full-width div-table" spacing="4">
                 <Box className="div-table-row">
@@ -30,14 +61,14 @@ const GymProfile = () => {
                     id="ubicacionGimnasio"
                   >
                     Ubicación <br />
-                    <small>Ciudad, País</small>
+                    <small>{gym.dc_ubicacion}</small>
                   </Box>
                   <Box
                     className="div-table-cell div-table-cell-xs"
                     id="telefonoGimnasio"
                   >
                     Teléfono <br />
-                    <small>Número de contacto</small>
+                    <small>{gym.dc_telefono}</small>
                   </Box>
                 </Box>
               </VStack>
@@ -47,9 +78,9 @@ const GymProfile = () => {
                 spacing="4"
               >
                 <Text className="list-group-item text-center">
-                  <small>Desde Fecha de Registro</small>
+                  <small>Se unío en {gym.df_fecha_ingreso} </small>
                 </Text>
-                <Link to="/profile">
+                <Link to="/profiles">
                   <Button className="list-group-item active">
                     <i className="fa fa-user fa-fw" aria-hidden="true"></i> TU
                     PERFIL
@@ -130,7 +161,6 @@ const GymProfile = () => {
                 <Box className="form-group">
                   <Text>Contraseña</Text>
                   <Button
-                    ref="#!"
                     className="btn btn-default btn-xs pull-right btn-dropdown-container"
                     data-drop-cont=".perfil-password"
                   >

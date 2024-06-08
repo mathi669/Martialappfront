@@ -120,7 +120,7 @@ const BuscarGimnasios = () => {
                   altText={gym.nombre}
                   gymName={gym.nombre}
                   gymAddress={gym.ubicacion} 
-                  gymId={0}                
+                  gymId={gym.id}                
                 />
               ))
             : filteredClasses.map((clase) => (
@@ -130,7 +130,7 @@ const BuscarGimnasios = () => {
                   altText={clase.dc_nombre_clase}
                   gymName={clase.dc_nombre_clase}
                   gymAddress={clase.dc_horario}
-                  gymId={0}
+                  gymId={clase.gym_id}
                 />
               ))}
         </SimpleGrid>
