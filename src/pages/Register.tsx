@@ -14,22 +14,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useState, ChangeEvent, FormEvent } from "react";
-import {
-  Box,
-  Heading,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  Button,
-  Text,
-} from "@chakra-ui/react";
-import axios from "axios";
+import apiService from "../services/service";
+
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [error, setError] = useState<string>("");
-
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -44,46 +34,40 @@ const Register: React.FC = () => {
     setFormData((prevFormData) => ({ ...prevFormData, [id]: value }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(""); // Clear error message before trying to register
 
-    const registrationData = {
-      dc_correo_electronico: formData.correo,
-      contrasena: formData.contrasena,
-      nombre: formData.nombre,
-      apellido: formData.apellidoPaterno + " " + formData.apellidoMaterno,
-      telefono: formData.telefono || "",
-      nivel_artes_marciales_id: formData.nivel_artes_marciales_id || "1",
-      tipo_usuario_id: userType === "Usuario" ? "2" : "3",
-      usuario_estado_id: "1",
-      nivel_id: formData.nivel_id || "1",
-      contacto_emergencia_id: formData.contacto_emergencia_id || "1",
-      es_gimnasio: userType === "Gimnasio",
-    };
+    try {
+      if (userType === "Usuario") {
+        await apiService.register(formData);
+      } else if (userType === "Gimnasio") {
+        await apiService.registerGym(formData);
+      }
 
-    axios
-      .post("http://127.0.0.1:5000/register", registrationData)
-      .then((res) => {
-        console.log(res);
-        navigate("/");
-      })
-      .catch((err) => {
-        if (err.response && err.response.data.error) {
-          setError(err.response.data.error);
-        } else {
-          setError(
-            "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
-          );
-        }
-        toast({
-          title: "Error",
-          description: error,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
+      toast({
+        title: "Registro exitoso",
+        description:
+          "¡Nos comunicaremos con usted a la brevedad para confirmar el estado de su registro!",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
       });
+
+      navigate("/");
+    } catch (error) {
+      console.error("Error en el registro:", error);
+      setError(
+        "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
+      );
+      toast({
+        title: "Error",
+        description: error.message || "Ha ocurrido un error en el registro",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -260,10 +244,19 @@ const Register: React.FC = () => {
                         onChange={handleInputChange}
                       />
                     </FormControl>
+                    <FormControl id="imagen_url" mb={4}>
+                      <FormLabel>Imagen URL</FormLabel>
+                      <Input
+                        name="imagen_url"
+                        value={formData.imagen_url}
+                        onChange={handleInputChange}
+                        placeholder="Ingrese la URL de la imagen"
+                      />
+                    </FormControl>
                   </>
                 )}
                 <Text mt={4}>
-                  Al registrarte aceptas las
+                  Al registrarte aceptas las{" "}
                   <RouterLink
                     to="#!"
                     style={{
