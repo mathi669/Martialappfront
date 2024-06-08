@@ -29,7 +29,7 @@ export const routes = [
     element: <About />,
   },
   {
-    path: "/gymbanner/:gym_id",
+    path: "/gymbanner",
     element: <Gymbanner />,
   },
   {
@@ -57,7 +57,7 @@ export const routes = [
     element: <EditarPerfil />,
   },
   {
-    path: "/gymprofile",
+    path: "/gymprofile/:gym_id",
     element: <GymProfile />,
   },
   {

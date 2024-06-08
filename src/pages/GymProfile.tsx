@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -9,26 +9,74 @@ import {
   Avatar,
   Grid,
   GridItem,
+  Spinner,
+  Image,
 } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import apiService from "../services/service";
+import ClassBox from "../components/ClassBox";
 
 const GymProfile = () => {
+  const { gym_id } = useParams<{ gym_id: string }>();
+  const [gym, setGym] = useState<any>(null);
+
+  const [loadingClasses, setLoadingClasses] = useState(true);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGym = async () => {
+      try {
+        const data = await apiService.getGym(gym_id);
+        console.log('Gym data fetched:', data); // Debug log for fetched data
+        setGym(data);
+      } catch (error) {
+        console.error('Error fetching gym:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchClasses = async () => {
+      try {
+        const data = await apiService.getClassesByGym(Number(gym_id));
+        console.log('Classes data fetched:', data); // Debug log for fetched data
+        setClasses(data);
+      } catch (error) {
+        console.error('Error fetching classes:', error);
+      } finally {
+        setLoadingClasses(false);
+      }
+    };
+
+    fetchGym();
+    fetchClasses();
+  }, [gym_id]);
+
+  if (loading || loadingClasses) {
+    return <Spinner size="xl" />;
+  }
+
+  if (!gym) {
+    return <Text>No se encontró el gimnasio.</Text>;
+  }
+
   return (
     <Box p={4}>
       <Grid templateColumns="repeat(5, 1fr)" gap={6}>
         <GridItem colSpan={5}>
           <HStack spacing={4} alignItems="center">
-            <Avatar size="xl" name="Ignatius Keller" src="path/to/avatar.jpg" />
+            <Avatar size="xl" name={gym[1]} src={gym[8]} />
             <VStack align="start">
               <HStack>
-                <Text fontSize="2xl" fontWeight="bold">Ignatius Keller</Text>
+                <Text fontSize="2xl" fontWeight="bold">{gym[1]}</Text>
                 <FaCheckCircle color="blue" />
               </HStack>
-              <Text>Product Manager</Text>
-              <Text>Sausalito, California, United States</Text>
-              <Text>376 connect</Text>
+              <Text>Ubicación: {gym[4]}</Text>
+              <Text>Teléfono: {gym[3]}</Text>
+              <Text>Fecha de ingreso: {new Date(gym[6]).toLocaleDateString()}</Text>
             </VStack>
           </HStack>
           <HStack mt={4} spacing={2}>
@@ -43,14 +91,15 @@ const GymProfile = () => {
         <GridItem colSpan={4}>
           <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
             <Text fontWeight="bold" mb={2}>Actividad reciente</Text>
-            <Box borderWidth="1px" borderRadius="md" p={4} mb={4}>
-              <Text>Actividad 1</Text>
-              <Button size="sm" mt={2}>Modificar</Button>
-            </Box>
-            <Box borderWidth="1px" borderRadius="md" p={4}>
-              <Text>Actividad 2</Text>
-              <Button size="sm" mt={2}>Modificar</Button>
-            </Box>
+            {classes.map((clase) => (
+              <ClassBox
+                key={clase.id}
+                className={clase.dc_nombre_clase}
+                schedule={clase.dc_horario}
+                availableSpots={clase.nb_cupos_disponibles}
+                imageUrl={clase.dc_imagen_url}
+              />
+            ))}
           </Box>
         </GridItem>
         <GridItem colSpan={1}>

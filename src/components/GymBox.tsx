@@ -7,7 +7,7 @@ const GymBox: React.FC<GymBoxProps> = ({ imageSrc, altText, gymName, gymAddress,
   const navigate = useNavigate();
 
   const handleImageClick = () => {
-    navigate(`/gymbanner/${gymId}`);
+    navigate(`/gymprofile/${gymId}`);
   };
   return (
     <Box
@@ -16,14 +16,14 @@ const GymBox: React.FC<GymBoxProps> = ({ imageSrc, altText, gymName, gymAddress,
       overflow="hidden"
       boxShadow="md"
       _hover={{ boxShadow: "xl", cursor: "pointer" }}
-      onClick={handleImageClick}
-    >
+      >
       <Image
         src={imageSrc}
         alt={altText}
         objectFit="cover"
         width="100%"
         height="200px"
+        onClick={handleImageClick}
         _hover={{ transform: "scale(1.05)" }}
         transition="transform 0.3s ease-in-out"
       />
