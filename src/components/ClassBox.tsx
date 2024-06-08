@@ -3,12 +3,9 @@ import { Box, Text, Image } from "@chakra-ui/react";
 import { GymBoxProps } from "../interfaces/gymbox_interface";
 import { useNavigate } from "react-router-dom";
 
-const GymBox: React.FC<GymBoxProps> = ({ imageSrc, altText, gymName, gymAddress, gymId }) => {
+const ClassBox: React.FC<GymBoxProps> = ({ imageSrc, altText, gymName, gymAddress, gymId }) => {
   const navigate = useNavigate();
 
-  const handleImageClick = () => {
-    navigate(`/gymbanner/${gymId}`);
-  };
   return (
     <Box
       borderWidth="1px"
@@ -16,14 +13,13 @@ const GymBox: React.FC<GymBoxProps> = ({ imageSrc, altText, gymName, gymAddress,
       overflow="hidden"
       boxShadow="md"
       _hover={{ boxShadow: "xl", cursor: "pointer" }}
-      >
+    >
       <Image
         src={imageSrc}
         alt={altText}
         objectFit="cover"
         width="100%"
         height="200px"
-        onClick={handleImageClick}
         _hover={{ transform: "scale(1.05)" }}
         transition="transform 0.3s ease-in-out"
       />
@@ -39,4 +35,4 @@ const GymBox: React.FC<GymBoxProps> = ({ imageSrc, altText, gymName, gymAddress,
   );
 };
 
-export default GymBox;
+export default ClassBox;
