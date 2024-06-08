@@ -15,35 +15,6 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
 const GymProfile = () => {
-
-  const { gym_id } = useParams();
-  const [gym, setGym] = useState<any>(null);
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchGym = async () => {
-      try {
-        const data = await apiService.getGym(gym_id);
-        setGym(data);
-      } catch (error) {
-        console.error('Error fetching gym:', error);
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchGym();
-
-  }, [gym_id])
-
-  if (loading) {
-    return <Spinner size="xl" />;
-  }
-
-  if (!gym) {
-    return <Text>No se encontró el gimnasio.</Text>;
-  }
-  
   return (
     <Box p={4}>
       <Grid templateColumns="repeat(5, 1fr)" gap={6}>
