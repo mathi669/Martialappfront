@@ -94,7 +94,27 @@ const apiService = {
   getClassesByGym: async (gymId: number) => {
     try {
       const response = await apiClient.get(`/classes/${gymId}`);
-      return handleResponse(response);
+      const data = response.data;
+      if (data && data.classes) {
+        const convertedClasses = data.classes.map((c) => {
+          const convertedClass = { ...c };
+          for (const key in convertedClass) {
+            if (Object.prototype.hasOwnProperty.call(convertedClass, key)) {
+              if (
+                convertedClass[key] instanceof Object &&
+                "days" in convertedClass[key]
+              ) {
+                convertedClass[
+                  key
+                ] = `${convertedClass[key].days} days, ${convertedClass[key].seconds} seconds`;
+              }
+            }
+          }
+          return convertedClass;
+        });
+        return { ...data, classes: convertedClasses };
+      }
+      return data;
     } catch (error) {
       handleError(error);
     }

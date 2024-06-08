@@ -44,7 +44,7 @@ function NavbarMartial() {
       setUser(JSON.parse(storedUser));
       setUserType(userType);
     }
-  }, []);
+  }, [localStorage.getItem("user")]);
 
   const handleLogout = async () => {
     try {
@@ -89,11 +89,13 @@ function NavbarMartial() {
                 </Button>
               </Link>
             ) : null}
-            <Link to="/buscargimnasio">
-              <Button leftIcon={<FaDumbbell />} variant="link">
-                GIMNASIOS
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/buscargimnasio">
+                <Button leftIcon={<FaDumbbell />} variant="link">
+                  GIMNASIOS
+                </Button>
+              </Link>
+            ) : null}
             {!user ? (
               <Link to="/registro">
                 <Button leftIcon={<FaUserPlus />} variant="link">
@@ -143,8 +145,12 @@ function NavbarMartial() {
         </Flex>
       </Flex>
       <Collapse in={isOpen} animateOpacity>
-        <Box pb={4} textAlign="center"> {/* Alinea el contenido al centro */}
-          <Stack as={"nav"} spacing={4} align="center"> {/* Alinea el Stack al centro */}
+        <Box pb={4} textAlign="center">
+          {" "}
+          {/* Alinea el contenido al centro */}
+          <Stack as={"nav"} spacing={4} align="center">
+            {" "}
+            {/* Alinea el Stack al centro */}
             <Link to="/">
               <Button leftIcon={<FaHome />} variant="link">
                 INICIO

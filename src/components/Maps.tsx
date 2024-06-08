@@ -1,18 +1,37 @@
 // src/components/MapContainer.tsx
-import React, { useState, useRef } from 'react';
-import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api';
-import { Box, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, useDisclosure, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import React, { useState, useRef } from "react";
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+  Autocomplete,
+} from "@react-google-maps/api";
+import {
+  Box,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Button,
+  useDisclosure,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 
 const mapContainerStyle = {
-  width: '100%', // Adjust to full width
-  height: '200px', // Adjust height for square shape
-  maxWidth: '670px', // Ensure it's square on larger screens
+  width: "100%", // Adjust to full width
+  height: "200px", // Adjust height for square shape
+  maxWidth: "670px", // Ensure it's square on larger screens
 };
 
 const mapContainerStyleLarge = {
-  width: '100%',
-  height: '400px',
+  width: "100%",
+  height: "400px",
 };
 
 const center = {
@@ -21,7 +40,9 @@ const center = {
 };
 
 const MapContainer: React.FC = () => {
-  const [marker, setMarker] = useState<{ lat: number, lng: number } | null>(null);
+  const [marker, setMarker] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
   const [mapCenter, setMapCenter] = useState(center);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -49,12 +70,18 @@ const MapContainer: React.FC = () => {
   const handleMarkerClick = () => {
     if (marker) {
       const { lat, lng } = marker;
-      window.open(`https://www.google.com/maps/@${lat},${lng},17z?hl=es-419&entry=ttu`, '_blank');
+      window.open(
+        `https://www.google.com/maps/@${lat},${lng},17z?hl=es-419&entry=ttu`,
+        "_blank"
+      );
     }
   };
 
   return (
-    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={['places']}>
+    <LoadScript
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      libraries={["places"]}
+    >
       <Box>
         <Box onClick={onOpen} cursor="pointer">
           <GoogleMap
@@ -79,10 +106,17 @@ const MapContainer: React.FC = () => {
                 center={mapCenter}
                 onClick={handleMapClick}
               >
-                {marker && <Marker position={marker} onClick={handleMarkerClick} />}
+                {marker && (
+                  <Marker position={marker} onClick={handleMarkerClick} />
+                )}
               </GoogleMap>
               <Box mt={4} display="flex" justifyContent="center">
-                <Autocomplete onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)} onPlaceChanged={handlePlaceChanged}>
+                <Autocomplete
+                  onLoad={(autocomplete) =>
+                    (autocompleteRef.current = autocomplete)
+                  }
+                  onPlaceChanged={handlePlaceChanged}
+                >
                   <InputGroup width="80%">
                     <Input
                       type="text"
@@ -98,7 +132,9 @@ const MapContainer: React.FC = () => {
               </Box>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" onClick={onClose}>Cerrar</Button>
+              <Button colorScheme="blue" onClick={onClose}>
+                Cerrar
+              </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>

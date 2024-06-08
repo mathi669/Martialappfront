@@ -17,67 +17,107 @@ import {
   FormLabel,
   Input,
   Center,
+  Spinner,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  IconButton,
 } from "@chakra-ui/react";
+import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import apiService from "../services/service";
 
 const CreateClass = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [formData, setFormData] = useState({
     nombre_clase: "",
-    horario: "",
-    cupos_disponibles: 0,
+    horaInicio: "",
+    horaFin: "",
+    cupos_disponibles: "",
     fecha: "",
-    hora: "",
-    imagen: "",
-    categoria_id: 0,
-    clase_estado_id: 0,
-    gimnasio_id: 0,
-    arte_marcial_id: 0,
-    profesor_id: 0,
+    descripcion: "",
+    gimnasio_id: "",
+    categoria_id: 1,
+    clase_estado_id: 1,
+    arte_marcial_id: 1,
+    profesor_id: 1,
   });
-  const [message, setMessage] = useState<string>("");
-  const [gymImageUrl, setGymImageUrl] = useState<string>("");
+  const [message, setMessage] = useState("");
+  const [gymImageUrl, setGymImageUrl] = useState("");
+  const [classes, setClasses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
       setGymImageUrl(user.dc_imagen_url);
+      setFormData((prevData) => ({
+        ...prevData,
+        gimnasio_id: user.id,
+      }));
+      fetchClasses(user.id);
     }
   }, []);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const fetchClasses = async (gymId) => {
+    setIsLoading(true);
+    try {
+      const response = await apiService.getClassesByGym(gymId);
+      setClasses(response);
+    } catch (error) {}
+    setIsLoading(false);
+  };
+
+  const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData((prevData) => ({
           ...prevData,
-          imagen: reader.result?.split(",")[1] || "", // Remover el prefijo de base64
+          imagen: reader.result?.split(",")[1] || "",
         }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const { horaInicio, horaFin, ...rest } = formData;
+    const horario = `${horaInicio} - ${horaFin}`;
+    const hora = horaInicio;
+    const newData = { ...rest, horario, hora };
     try {
-      const response = await apiService.createClass(formData);
+      const response = await apiService.createClass(newData);
       setMessage(response.message);
-      onClose(); // Close the modal after successful submission
-    } catch (error: any) {
+      onClose();
+      fetchClasses(formData.gimnasio_id);
+    } catch (error) {
       setMessage(error.response?.data?.error || "Error creating class");
     }
+  };
+
+  const handleDelete = async (classId) => {
+    try {
+      await apiService.deleteClass(classId);
+      fetchClasses(formData.gimnasio_id);
+    } catch (error) {}
+  };
+
+  const handleEdit = (classData) => {
+    setFormData(classData);
+    onOpen();
   };
 
   return (
@@ -99,17 +139,60 @@ const CreateClass = () => {
         </Heading>
       </Flex>
 
-      <Flex w="full" justify="center">
+      <Flex w="full" justify="center" mt={5}>
         <Button
           colorScheme="blue"
           size="lg"
           leftIcon={<Box as="span" className="fa fa-plus" />}
           onClick={onOpen}
-          m={5}
         >
           Crear Clase
         </Button>
       </Flex>
+
+      <Box p={5}>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Nombre</Th>
+              <Th>Horario</Th>
+              <Th>Fecha</Th>
+              <Th>Acciones</Th>
+            </Tr>
+          </Thead>
+          {classes != [] ? (
+            <Tbody>
+              {isLoading ? (
+                <Center w="full" h="200px">
+                  <Spinner size="xl" />
+                </Center>
+              ) : (
+                classes?.map((classData) => (
+                  <Tr key={classData.id}>
+                    <Td>{classData.dc_nombre_clase}</Td>
+                    <Td>{classData.dc_horario}</Td>
+                    <Td>{new Date(classData.df_fecha).toLocaleDateString()}</Td>
+                    <Td>
+                      <IconButton
+                        icon={<EditIcon />}
+                        mr={2}
+                        onClick={() => handleEdit(classData)}
+                      />
+                      <IconButton
+                        icon={<DeleteIcon />}
+                        colorScheme="red"
+                        onClick={() => handleDelete(classData.id)}
+                      />
+                    </Td>
+                  </Tr>
+                ))
+              )}
+            </Tbody>
+          ) : (
+            <Text>Aún no existen clases, crea la primera</Text>
+          )}
+        </Table>
+      </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -127,13 +210,22 @@ const CreateClass = () => {
                   placeholder="Ingrese el nombre de la clase"
                 />
               </FormControl>
-              <FormControl id="horario" mb={4}>
-                <FormLabel>Horario</FormLabel>
+              <FormControl id="horaInicio" mb={4}>
+                <FormLabel>Hora de Inicio</FormLabel>
                 <Input
-                  name="horario"
-                  value={formData.horario}
+                  type="time"
+                  name="horaInicio"
+                  value={formData.horaInicio}
                   onChange={handleChange}
-                  placeholder="Ingrese el horario de la clase"
+                />
+              </FormControl>
+              <FormControl id="horaFin" mb={4}>
+                <FormLabel>Hora de Fin</FormLabel>
+                <Input
+                  type="time"
+                  name="horaFin"
+                  value={formData.horaFin}
+                  onChange={handleChange}
                 />
               </FormControl>
               <FormControl id="cupos_disponibles" mb={4}>
@@ -155,13 +247,13 @@ const CreateClass = () => {
                   onChange={handleChange}
                 />
               </FormControl>
-              <FormControl id="hora" mb={4}>
-                <FormLabel>Hora</FormLabel>
+              <FormControl id="descripcion" mb={4}>
+                <FormLabel>Descripción</FormLabel>
                 <Input
-                  type="time"
-                  name="hora"
-                  value={formData.hora}
+                  name="descripcion"
+                  value={formData.descripcion}
                   onChange={handleChange}
+                  placeholder="Ingrese la descripción de la clase"
                 />
               </FormControl>
               <FormControl id="imagen" mb={4}>
@@ -186,7 +278,11 @@ const CreateClass = () => {
         </ModalContent>
       </Modal>
 
-      {message && <Text>{message}</Text>}
+      {message && (
+        <Text color="red" textAlign="center" mt={5}>
+          {message}
+        </Text>
+      )}
     </Box>
   );
 };

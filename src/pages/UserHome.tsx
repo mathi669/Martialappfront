@@ -1,141 +1,158 @@
 import { Link } from "react-router-dom";
-import "../static/css/main.css";
+import { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Container,
+  Flex,
+  Image,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 
 const UserHome = () => {
+  const [user, setUser] = useState(null);
+  const [userType, setUserType] = useState(null);
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("user"));
+    const userTypeData = localStorage.getItem("userType");
+    setUser(userData);
+    setUserType(userTypeData);
+  }, []);
+
+  if (!user || !userType) {
+    return (
+      <Flex justify="center" align="center" height="100vh">
+        <Spinner size="xl" thickness="4px" speed="0.65s" color="blue.500" />
+      </Flex>
+    );
+  }
+
   return (
-    <section className="full-width section">
-      <div className="container">
-        <div className="row">
-          <div className="col-xs-12 col-sm-4 col-md-3">
-            <button
-              className="btn btn-default btn-block visible-xs btn-dropdown-conatiner"
-              data-drop-cont=".user-menu-xs"
-            >
-              <i className="fa fa-user fa-fw" aria-hidden="true"></i> MOSTRAR
-              MENÚ
-              <i className="fa fa-sort pull-right" aria-hidden="true"></i>
-            </button>
-            <div className="full-width user-menu-xs">
-              <div
-                className="full-width post-user-info"
-                style={{ margin: "0 !important" }}
+    <Container maxW="container.xl" py={6}>
+      <Flex direction={{ base: "column", md: "row" }} gap={6}>
+        <Box w={{ base: "full", md: "25%" }}>
+          <Button w="full" mb={4} display={{ base: "block", md: "none" }}>
+            <i className="fa fa-user fa-fw" aria-hidden="true"></i> MOSTRAR MENÚ
+          </Button>
+          <Box textAlign="center" mb={6}>
+            <Image
+              src="./src/static/img/user.png"
+              alt="User"
+              borderRadius="full"
+              boxSize="100px"
+              mx="auto"
+            />
+            <Text mt={2}>
+              <small>{user.dc_nombre}</small>
+            </Text>
+            <Flex justify="space-around" mt={2}>
+              <Box textAlign="center">
+                {userType === "gimnasio" ? "Gimnasio" : "Usuario"} <br />
+                <small>Tipo</small>
+              </Box>
+            </Flex>
+          </Box>
+          <Stack spacing={2}>
+            <Link to="/profiles">
+              <Button
+                w="full"
+                leftIcon={
+                  <i className="fa fa-user fa-fw" aria-hidden="true"></i>
+                }
               >
-                <img
-                  src="./src/static/img/user.png"
-                  className="NavBar-Nav-icon"
-                  alt="User"
-                />
-                <p className="full-width">
-                  <small>Nombre de usuario</small>
-                </p>
-                <div className="full-width div-table">
-                  <div className="full-width div-table-row">
-                    <div
-                      className="div-table-cell div-table-cell-xs"
-                      style={{
-                        height: "auto !important",
-                        lineHeight: "inherit",
-                        border: "none",
-                      }}
-                    >
-                      0 <br />
-                      <small>En venta</small>
-                    </div>
-                    <div
-                      className="div-table-cell div-table-cell-xs"
-                      style={{
-                        height: "auto !important",
-                        lineHeight: "inherit",
-                        border: "none",
-                      }}
-                    >
-                      0 <br />
-                      <small>Vendidos</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                className="full-width list-group"
-                style={{ borderRadius: "0" }}
+                TU PERFIL
+              </Button>
+            </Link>
+            <Link to="/configuracion">
+              <Button
+                w="full"
+                leftIcon={
+                  <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
+                }
               >
-                <div className="list-group-item text-center">
-                  <small>Desde Junio 2016</small>
-                </div>
-                <a className="list-group-item">
-                  <Link to="/profile">
-                    <i className="fa fa-user fa-fw" aria-hidden="true"></i> TU
-                    PERFIL
-                  </Link>
-                </a>
-                <a className="list-group-item active">
-                  <Link to="/adminPage">
-                    <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
-                    CONFIGURACIÓN
-                  </Link>
-                </a>
-                <a href="yourcommercial.html" className="list-group-item">
-                  <i
-                    className="fa fa-object-group fa-fw"
-                    aria-hidden="true"
-                  ></i>
-                  TUS ANUNCIOS
-                </a>
-                <a href="messages.html" className="list-group-item">
-                  <i
-                    className="fa fa-commenting-o fa-fw"
-                    aria-hidden="true"
-                  ></i>
-                  MENSAJES
-                </a>
-                <a href="favorites.html" className="list-group-item">
-                  <i className="fa fa-heart-o fa-fw" aria-hidden="true"></i>
-                  FAVORITOS
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="col-xs-12 col-sm-8 col-md-9">
-            <div className="full-width bar-info-user">
-              <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
-              <div>CONFIGURACIÓN</div>
-            </div>
-            <div
-              className="full-width"
-              style={{ padding: "15px", border: "1px solid #e1e1e1" }}
-            >
-              <p>
-                Ésta es la información que quieres recibir a través de tu correo
-                electrónico
-              </p>
-              <form action="">
-                <div className="checkbox">
-                  <label>
-                    <input type="checkbox" value="" />
-                    Recibir mensajes del chat por E-mail
-                  </label>
-                </div>
-                <hr />
-                <div className="checkbox">
-                  <label>
-                    <input type="checkbox" value="" />
-                    Recibir estadísticas de tus anuncios
-                  </label>
-                </div>
-                <hr />
-                <div className="checkbox">
-                  <label>
-                    <input type="checkbox" value="" />
-                    Recibir boletines y promociones
-                  </label>
-                </div>
-                <button className="btn btn-danger">GUARDAR</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                CONFIGURACIÓN
+              </Button>
+            </Link>
+            {userType === "gimnasio" ? (
+              <Link to="/createClass">
+                <Button
+                  w="full"
+                  leftIcon={
+                    <i className="fa fa-dumbbell" aria-hidden="true"></i>
+                  }
+                >
+                  MODULO DE CLASES
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/reservations">
+                <Button
+                  w="full"
+                  leftIcon={
+                    <i className="fa fa-calendar" aria-hidden="true"></i>
+                  }
+                >
+                  MIS SOLICITUDES DE RESERVA
+                </Button>
+              </Link>
+            )}
+          </Stack>
+        </Box>
+        <Box flex="1">
+          <Box borderBottom="1px" borderColor="gray.200" mb={6} pb={2}>
+            <Text fontSize="xl" fontWeight="bold">
+              INFORMACIÓN DEL USUARIO
+            </Text>
+          </Box>
+          <Box border="1px" borderColor="gray.200" p={6} borderRadius="md">
+            <Text mb={4}>Aquí está la información del usuario.</Text>
+            <Stack spacing={4}>
+              <Flex>
+                <Text fontWeight="bold" w="150px">
+                  Nombre:
+                </Text>
+                <Text>{user.dc_nombre}</Text>
+              </Flex>
+              <Flex>
+                <Text fontWeight="bold" w="150px">
+                  Correo electrónico:
+                </Text>
+                <Text>{user.dc_correo_electronico}</Text>
+              </Flex>
+              <Flex>
+                <Text fontWeight="bold" w="150px">
+                  Teléfono:
+                </Text>
+                <Text>{user.dc_telefono}</Text>
+              </Flex>
+              <Flex>
+                <Text fontWeight="bold" w="150px">
+                  ID de usuario:
+                </Text>
+                <Text>{user.id}</Text>
+              </Flex>
+            </Stack>
+          </Box>
+          <Box
+            mt={6}
+            p={6}
+            border="1px"
+            borderColor="gray.200"
+            borderRadius="md"
+          >
+            <Text mb={4} fontWeight="bold">
+              Cambiar Contraseña
+            </Text>
+            <Link to="/change-password">
+              <Button colorScheme="blue">CAMBIAR CONTRASEÑA</Button>
+            </Link>
+          </Box>
+        </Box>
+      </Flex>
+    </Container>
   );
 };
 
