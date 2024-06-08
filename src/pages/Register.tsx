@@ -18,10 +18,13 @@ import apiService from "../services/service";
 
 const Register: React.FC = () => {
   const [userType, setUserType] = useState<string>("");
-  const [formData, setFormData] = useState<{ [key: string]: string }>({});
+  const [formData, setFormData] = useState<{
+    [key: string]: string;
+  }>({});
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const toast = useToast();
+  const [loading, setLoading] = useState(false); // Estado para controlar el loading de los botones
 
   const handleUserTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setUserType(event.target.value);
@@ -34,13 +37,34 @@ const Register: React.FC = () => {
     setFormData((prevFormData) => ({ ...prevFormData, [id]: value }));
   };
 
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          imagen_base64: reader.result?.split(",")[1] || "",
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
     setError(""); // Clear error message before trying to register
 
     try {
       if (userType === "Usuario") {
-        await apiService.register(formData);
+        const newData = {
+          ...formData,
+          tb_tipo_usuario_id: 2,
+          tb_usuario_estado_id: 1,
+          tb_nivel_id: 1,
+        }; // Asignar el ID del tipo de usuario para usuarios
+        await apiService.register(newData);
       } else if (userType === "Gimnasio") {
         await apiService.registerGym(formData);
       }
@@ -52,6 +76,7 @@ const Register: React.FC = () => {
         status: "success",
         duration: 9000,
         isClosable: true,
+        position: "top",
       });
 
       navigate("/");
@@ -68,6 +93,7 @@ const Register: React.FC = () => {
         isClosable: true,
       });
     }
+    setLoading(false);
   };
 
   return (
@@ -112,30 +138,30 @@ const Register: React.FC = () => {
                 </FormControl>
                 {userType && userType === "Usuario" && (
                   <>
-                    <FormControl id="nombre" mb={4} isRequired>
+                    <FormControl id="dc_nombre" mb={4} isRequired>
                       <FormLabel>Nombre:</FormLabel>
                       <Input
                         type="text"
                         placeholder="Juan"
-                        value={formData.nombre || ""}
+                        value={formData.dc_nombre || ""}
                         onChange={handleInputChange}
                       />
                     </FormControl>
-                    <FormControl id="apellidoPaterno" mb={4} isRequired>
+                    <FormControl id="dc_apellido" mb={4} isRequired>
                       <FormLabel>Apellido Paterno:</FormLabel>
                       <Input
                         type="text"
                         placeholder="Rodriguez"
-                        value={formData.apellidoPaterno || ""}
+                        value={formData.dc_apellido || ""}
                         onChange={handleInputChange}
                       />
                     </FormControl>
-                    <FormControl id="apellidoMaterno" mb={4} isRequired>
+                    <FormControl id="dc_apellido_materno" mb={4} isRequired>
                       <FormLabel>Apellido Materno:</FormLabel>
                       <Input
                         type="text"
                         placeholder="Perez"
-                        value={formData.apellidoMaterno || ""}
+                        value={formData.dc_apellido_materno || ""}
                         onChange={handleInputChange}
                       />
                     </FormControl>
@@ -151,38 +177,54 @@ const Register: React.FC = () => {
                         <option value="otro">Otro</option>
                       </Select>
                     </FormControl>
-                    <FormControl id="fechaNacimiento" mb={4} isRequired>
+                    <FormControl id="fecha_nacimiento" mb={4} isRequired>
                       <FormLabel>Fecha de nacimiento:</FormLabel>
                       <Input
                         type="date"
-                        value={formData.fechaNacimiento || ""}
+                        value={formData.fecha_nacimiento || ""}
                         onChange={handleInputChange}
                       />
                     </FormControl>
-                    <FormControl id="correo" mb={4} isRequired>
+                    <FormControl id="dc_correo_electronico" mb={4} isRequired>
                       <FormLabel>Correo:</FormLabel>
                       <Input
                         type="email"
                         placeholder="ejemplo@ejemplo.cl"
-                        value={formData.correo || ""}
+                        value={formData.dc_correo_electronico || ""}
                         onChange={handleInputChange}
                       />
                     </FormControl>
-                    <FormControl id="contrasena" mb={4} isRequired>
+                    <FormControl id="dc_telefono" mb={4} isRequired>
+                      <FormLabel>Teléfono:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Teléfono"
+                        value={formData.dc_telefono || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="dc_contrasena" mb={4} isRequired>
                       <FormLabel>Contraseña:</FormLabel>
                       <Input
                         type="password"
                         placeholder="Contraseña"
-                        value={formData.contrasena || ""}
+                        value={formData.dc_contrasena || ""}
                         onChange={handleInputChange}
                       />
                     </FormControl>
-                    <FormControl id="repetirContraseña" mb={4} isRequired>
+                    <FormControl
+                      id="repetirContrasena"
+                      mb={4}
+                      isRequired
+                      isInvalid={
+                        formData.dc_contrasena !== formData.repetirContrasena
+                      }
+                    >
                       <FormLabel>Repetir contraseña:</FormLabel>
                       <Input
                         type="password"
                         placeholder="Repetir contraseña"
-                        value={formData.repetirContraseña || ""}
+                        value={formData.repetirContrasena || ""}
                         onChange={handleInputChange}
                       />
                     </FormControl>
@@ -208,24 +250,6 @@ const Register: React.FC = () => {
                         onChange={handleInputChange}
                       />
                     </FormControl>
-                    <FormControl id="telefonoGimnasio" mb={4} isRequired>
-                      <FormLabel>Teléfono del Gimnasio:</FormLabel>
-                      <Input
-                        type="text"
-                        placeholder="Teléfono del Gimnasio"
-                        value={formData.telefonoGimnasio || ""}
-                        onChange={handleInputChange}
-                      />
-                    </FormControl>
-                    <FormControl id="ubicacionGimnasio" mb={4} isRequired>
-                      <FormLabel>Ubicación del Gimnasio:</FormLabel>
-                      <Input
-                        type="text"
-                        placeholder="Ubicación del Gimnasio"
-                        value={formData.ubicacionGimnasio || ""}
-                        onChange={handleInputChange}
-                      />
-                    </FormControl>
                     <FormControl id="contrasena" mb={4} isRequired>
                       <FormLabel>Contraseña:</FormLabel>
                       <Input
@@ -244,13 +268,40 @@ const Register: React.FC = () => {
                         onChange={handleInputChange}
                       />
                     </FormControl>
-                    <FormControl id="imagen_url" mb={4}>
-                      <FormLabel>Imagen URL</FormLabel>
+                    <FormControl id="telefonoGimnasio" mb={4} isRequired>
+                      <FormLabel>Teléfono del Gimnasio:</FormLabel>
                       <Input
-                        name="imagen_url"
-                        value={formData.imagen_url}
+                        type="text"
+                        placeholder="Teléfono del Gimnasio"
+                        value={formData.telefonoGimnasio || ""}
                         onChange={handleInputChange}
-                        placeholder="Ingrese la URL de la imagen"
+                      />
+                    </FormControl>
+                    <FormControl id="ubicacionGimnasio" mb={4} isRequired>
+                      <FormLabel>Ubicación del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Ubicación del Gimnasio"
+                        value={formData.ubicacionGimnasio || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="descripcion" mb={4} isRequired>
+                      <FormLabel>Descripción del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Descripción del Gimnasio"
+                        value={formData.descripcion || ""}
+                        onChange={handleInputChange}
+                        maxLength={250}
+                      />
+                    </FormControl>
+                    <FormControl id="imagen" mb={4} isRequired>
+                      <FormLabel>Imagen del Gimnasio:</FormLabel>
+                      <Input
+                        type="file"
+                        onChange={handleImageChange}
+                        accept="image/*"
                       />
                     </FormControl>
                   </>
@@ -269,6 +320,7 @@ const Register: React.FC = () => {
                   </RouterLink>
                 </Text>
                 <Button
+                  isLoading={loading}
                   id="btnRegistro"
                   colorScheme="red"
                   size="lg"

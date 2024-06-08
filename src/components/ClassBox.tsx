@@ -2,7 +2,12 @@
 import { Box, Text, Image, Button } from "@chakra-ui/react";
 import { ClassBoxProps } from "../interfaces/classbox_interface";
 
-const ClassBox: React.FC<ClassBoxProps> = ({ className, schedule, availableSpots, imageUrl }) => {
+const ClassBox: React.FC<ClassBoxProps> = ({
+  className,
+  schedule,
+  availableSpots,
+  imageUrl,
+}) => {
   return (
     <Box
       borderWidth="1px"
@@ -31,9 +36,6 @@ const ClassBox: React.FC<ClassBoxProps> = ({ className, schedule, availableSpots
           mb={4}
         />
       )}
-      <Button size="sm" colorScheme="teal">
-        Modificar
-      </Button>
     </Box>
   );
 };
