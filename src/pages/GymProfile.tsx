@@ -1,7 +1,18 @@
-import { Link, useParams } from "react-router-dom";
-import { Box, Button, Input, Text, VStack, Spinner } from "@chakra-ui/react";
-import { useEffect, useState } from 'react';
-import apiService from '../services/service';
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  Box,
+  Button,
+  VStack,
+  HStack,
+  Text,
+  Avatar,
+  Grid,
+  GridItem,
+} from "@chakra-ui/react";
+import { FaCheckCircle } from "react-icons/fa";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 const GymProfile = () => {
 
@@ -34,166 +45,52 @@ const GymProfile = () => {
   }
   
   return (
-    <VStack className="full-width section" align="stretch" spacing="4">
-      <Box className="container">
-        <Box className="row" alignItems="flex-start">
-          <Box className="col-xs-12 col-sm-4 col-md-3">
-            <Button
-              className="btn btn-default btn-block visible-xs btn-dropdown-container"
-              data-drop-cont=".user-menu-xs"
-            >
-              <i className="fa fa-user fa-fw" aria-hidden="true"></i> MOSTRAR
-              MENÚ <i className="fa fa-sort pull-right" aria-hidden="true"></i>
-            </Button>
-            <VStack className="full-width post-user-info" spacing="4">
-              <img
-                src="./src/static/img/user.png"
-                className="NavBar-Nav-icon"
-                alt="User"
-              />
-              <Text>
-                <small id="nombreGimnasio">{gym.nombre}</small>
-              </Text>
-              <VStack className="full-width div-table" spacing="4">
-                <Box className="div-table-row">
-                  <Box
-                    className="div-table-cell div-table-cell-xs"
-                    id="ubicacionGimnasio"
-                  >
-                    Ubicación <br />
-                    <small>{gym.dc_ubicacion}</small>
-                  </Box>
-                  <Box
-                    className="div-table-cell div-table-cell-xs"
-                    id="telefonoGimnasio"
-                  >
-                    Teléfono <br />
-                    <small>{gym.dc_telefono}</small>
-                  </Box>
-                </Box>
-              </VStack>
-              <VStack
-                className="full-width list-group"
-                borderRadius="0"
-                spacing="4"
-              >
-                <Text className="list-group-item text-center">
-                  <small>Se unío en {gym.df_fecha_ingreso} </small>
-                </Text>
-                <Link to="/profiles">
-                  <Button className="list-group-item active">
-                    <i className="fa fa-user fa-fw" aria-hidden="true"></i> TU
-                    PERFIL
-                  </Button>
-                </Link>
-                <Link to="/adminPage">
-                  <Button className="list-group-item">
-                    <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>{" "}
-                    CONFIGURACIÓN
-                  </Button>
-                </Link>
-              </VStack>
+    <Box p={4}>
+      <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+        <GridItem colSpan={5}>
+          <HStack spacing={4} alignItems="center">
+            <Avatar size="xl" name="Ignatius Keller" src="path/to/avatar.jpg" />
+            <VStack align="start">
+              <HStack>
+                <Text fontSize="2xl" fontWeight="bold">Ignatius Keller</Text>
+                <FaCheckCircle color="blue" />
+              </HStack>
+              <Text>Product Manager</Text>
+              <Text>Sausalito, California, United States</Text>
+              <Text>376 connect</Text>
             </VStack>
-          </Box>
-          <Box className="col-xs-12 col-sm-8 col-md-9">
-            <Box className="full-width bar-info-user" py="2" px="4">
-              <i className="fa fa-user fa-fw" aria-hidden="true"></i>
-              <Text>TU PERFIL</Text>
+          </HStack>
+          <HStack mt={4} spacing={2}>
+            <Button size="sm">Open to</Button>
+            <Button size="sm">Add profile section</Button>
+            <Button size="sm">More</Button>
+            <Button size="sm">Disciplinas</Button>
+            <Button size="sm">Cancelar clase</Button>
+            <Button size="sm">Revisar horario</Button>
+          </HStack>
+        </GridItem>
+        <GridItem colSpan={4}>
+          <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
+            <Text fontWeight="bold" mb={2}>Actividad reciente</Text>
+            <Box borderWidth="1px" borderRadius="md" p={4} mb={4}>
+              <Text>Actividad 1</Text>
+              <Button size="sm" mt={2}>Modificar</Button>
             </Box>
-            {/* Contenido*/}
-            <Box
-              className="full-width"
-              p="4"
-              border="1px solid #E1E1E1"
-              borderRadius="md"
-            >
-              <form action="">
-                <Text className="text-muted text-center">
-                  Seleccione una imagen
-                </Text>
-                <Box className="form-group">
-                  <Box className="custom-input-file">
-                    <Button as="label" htmlFor="fileInput">
-                      <Input type="file" id="fileInput" display="none" />
-                      <i className="fa fa-picture-o" aria-hidden="true"></i>
-                    </Button>
-                  </Box>
-                  <Text className="text-muted text-center archivo">
-                    Archivo...
-                  </Text>
-                </Box>
-                <Box className="form-group">
-                  <Text>Nombre del Gimnasio</Text>
-                  <Input
-                    type="text"
-                    placeholder="Nombre del Gimnasio"
-                    className="form-control"
-                  />
-                </Box>
-                <Box className="form-group">
-                  <Text>
-                    Teléfono <small></small>
-                  </Text>
-                  <Input
-                    type="text"
-                    placeholder="¿Cuál es tu teléfono?"
-                    className="form-control"
-                  />
-                </Box>
-                <Box className="form-group">
-                  <Text>
-                    Ubicación <small>¿Cuál es tu ubicación?</small>
-                  </Text>
-                  <Input
-                    type="text"
-                    placeholder="Ubicación"
-                    className="form-control"
-                  />
-                </Box>
-                <Box className="form-group">
-                  <Text>Correo electrónico</Text>
-                  <Input
-                    type="email"
-                    placeholder="Email"
-                    className="form-control"
-                  />
-                </Box>
-                <Box className="form-group">
-                  <Text>Contraseña</Text>
-                  <Button
-                    className="btn btn-default btn-xs pull-right btn-dropdown-container"
-                    data-drop-cont=".perfil-password"
-                  >
-                    Mostrar/Ocultar{" "}
-                    <i className="fa fa-sort" aria-hidden="true"></i>
-                  </Button>
-                  <VStack className="full-width perfil-password" spacing="4">
-                    <Input
-                      type="password"
-                      placeholder="Contraseña"
-                      className="form-control"
-                    />
-                    <Input
-                      type="password"
-                      placeholder="Nueva Contraseña"
-                      className="form-control"
-                    />
-                    <Input
-                      type="password"
-                      placeholder="Confirmar Contraseña"
-                      className="form-control"
-                    />
-                  </VStack>
-                </Box>
-                <Text className="text-center">
-                  <Button colorScheme="red">GUARDAR</Button>
-                </Text>
-              </form>
+            <Box borderWidth="1px" borderRadius="md" p={4}>
+              <Text>Actividad 2</Text>
+              <Button size="sm" mt={2}>Modificar</Button>
             </Box>
           </Box>
-        </Box>
-      </Box>
-    </VStack>
+        </GridItem>
+        <GridItem colSpan={1}>
+          <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
+            <Text fontWeight="bold" mb={4}>Horarios:</Text>
+            <Calendar />
+            <Button size="sm" mt={4}>Agendar clase</Button>
+          </Box>
+        </GridItem>
+      </Grid>
+    </Box>
   );
 };
 
