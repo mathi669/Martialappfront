@@ -7,7 +7,7 @@ const GymBox: React.FC<GymBoxProps> = ({ imageSrc, altText, gymName, gymAddress,
   const navigate = useNavigate();
 
   const handleImageClick = () => {
-    navigate(`/gymbanner/${gymId}`);
+    navigate(`/gymprofile/${gymId}`);
   };
   return (
     <Box
