@@ -4,4 +4,5 @@ export interface GymBoxProps {
     altText: string;
     gymName: string;
     gymAddress: string;
+    gymId: number;
 }

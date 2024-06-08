@@ -29,7 +29,7 @@ export const routes = [
     element: <About />,
   },
   {
-    path: "/gymbanner",
+    path: "/gymbanner/:gym_id",
     element: <Gymbanner />,
   },
   {

@@ -34,9 +34,9 @@ const apiService = {
   },
 
   // Obtener información de un gimnasio
-  getGym: async (gymId: any) => {
+  getGym: async (gym_id: any) => {
     try {
-      const response = await apiClient.get(`/gym/${gymId}`);
+      const response = await apiClient.get(`/gym/${gym_id}`);
       return handleResponse(response);
     } catch (error) {
       handleError(error);
@@ -85,6 +85,15 @@ const apiService = {
   getAllGyms: async () => {
     try {
       const response = await apiClient.get(`/gyms`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getClassesByGym: async (gymId: number) => {
+    try {
+      const response = await apiClient.get(`/classes/${gymId}`);
       return handleResponse(response);
     } catch (error) {
       handleError(error);

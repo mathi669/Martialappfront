@@ -34,6 +34,7 @@ function Home() {
               align="center"
               justify="center"
             >
+              {/* Sección existente */}
               <Box
                 flex="1"
                 textAlign="center"
@@ -53,6 +54,7 @@ function Home() {
                   llegar a hacer.
                 </Text>
               </Box>
+              {/* Sección existente */}
               <Box
                 flex="1"
                 textAlign="center"
@@ -65,6 +67,7 @@ function Home() {
                   oportunidades que quieras, sin complejos.
                 </Text>
               </Box>
+              {/* Sección existente */}
               <Box flex="1" textAlign="center">
                 <Icon
                   as={FaMoneyBillWave}
@@ -78,6 +81,32 @@ function Home() {
                   rápida y cómoda que existe.
                 </Text>
               </Box>
+            </Flex>
+          </Box>
+          {/* Nuevas secciones */}
+          <Box p={8}>
+            <Text fontSize="xl" textAlign="center" mb={4}>
+              Recursos adicionales sobre artes marciales:
+            </Text>
+            <Flex
+              direction={{ base: "column", md: "row" }}
+              align="center"
+              justify="center"
+            >
+              {/* Puedes agregar aquí tus nuevas secciones */}
+              {/* Por ejemplo: */}
+              <Box
+                flex="1"
+                textAlign="center"
+                mb={{ base: 4, md: 0 }}
+                mr={{ md: 4 }}
+              >
+                <Text fontWeight="bold">Consejos de entrenamiento:</Text>
+                <Text>
+                  Descubre consejos útiles para mejorar tu técnica y rendimiento en las artes marciales.
+                </Text>
+              </Box>
+              {/* Aquí puedes agregar más secciones similares */}
             </Flex>
           </Box>
         </Box>
