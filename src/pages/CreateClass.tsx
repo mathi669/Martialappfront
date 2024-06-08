@@ -133,11 +133,7 @@ const CreateClass = () => {
         justify="center"
         color="white"
         position="relative"
-      >
-        <Heading as="h2" size="lg">
-          Banner del Gimnasio
-        </Heading>
-      </Flex>
+      ></Flex>
 
       <Flex w="full" justify="center" mt={5}>
         <Button

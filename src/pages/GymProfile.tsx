@@ -124,9 +124,9 @@ const GymProfile = () => {
               Horarios:
             </Text>
             <Calendar />
-            <Button size="sm" mt={4}>
+            {/* <Button size="sm" mt={4}>
               Agendar clase
-            </Button>
+            </Button> */}
           </Box>
         </GridItem>
       </SimpleGrid>

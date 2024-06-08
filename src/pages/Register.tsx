@@ -24,6 +24,7 @@ const Register: React.FC = () => {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const toast = useToast();
+  const [loading, setLoading] = useState(false); // Estado para controlar el loading de los botones
 
   const handleUserTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setUserType(event.target.value);
@@ -51,6 +52,7 @@ const Register: React.FC = () => {
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
     setError(""); // Clear error message before trying to register
 
@@ -74,6 +76,7 @@ const Register: React.FC = () => {
         status: "success",
         duration: 9000,
         isClosable: true,
+        position: "top",
       });
 
       navigate("/");
@@ -90,6 +93,7 @@ const Register: React.FC = () => {
         isClosable: true,
       });
     }
+    setLoading(false);
   };
 
   return (
@@ -289,6 +293,7 @@ const Register: React.FC = () => {
                         placeholder="Descripción del Gimnasio"
                         value={formData.descripcion || ""}
                         onChange={handleInputChange}
+                        maxLength={250}
                       />
                     </FormControl>
                     <FormControl id="imagen" mb={4} isRequired>
@@ -315,6 +320,7 @@ const Register: React.FC = () => {
                   </RouterLink>
                 </Text>
                 <Button
+                  isLoading={loading}
                   id="btnRegistro"
                   colorScheme="red"
                   size="lg"
