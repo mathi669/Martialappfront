@@ -1,5 +1,6 @@
+// src/pages/GymProfile.tsx
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Button,
@@ -10,13 +11,14 @@ import {
   Grid,
   GridItem,
   Spinner,
-  Image,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import apiService from "../services/service";
 import ClassBox from "../components/ClassBox";
+import MapContainer from "../components/Maps";
 
 const GymProfile = () => {
   const { gym_id } = useParams<{ gym_id: string }>();
@@ -65,8 +67,8 @@ const GymProfile = () => {
 
   return (
     <Box p={4}>
-      <Grid templateColumns="repeat(5, 1fr)" gap={6}>
-        <GridItem colSpan={5}>
+      <SimpleGrid columns={{ base: 1, md: 5 }} spacing={6}>
+        <GridItem colSpan={{ base: 1, md: 3 }}>
           <HStack spacing={4} alignItems="center">
             <Avatar size="xl" name={gym[1]} src={gym[8]} />
             <VStack align="start">
@@ -79,7 +81,7 @@ const GymProfile = () => {
               <Text>Fecha de ingreso: {new Date(gym[6]).toLocaleDateString()}</Text>
             </VStack>
           </HStack>
-          <HStack mt={4} spacing={2}>
+          <HStack mt={4} mb={2} spacing={2} wrap="wrap">
             <Button size="sm">Open to</Button>
             <Button size="sm">Add profile section</Button>
             <Button size="sm">More</Button>
@@ -88,8 +90,14 @@ const GymProfile = () => {
             <Button size="sm">Revisar horario</Button>
           </HStack>
         </GridItem>
-        <GridItem colSpan={4}>
+        <GridItem colSpan={{ base: 1, md: 2 }}>
           <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
+            <Text fontWeight="bold" mb={2}>Ubicación del Gimnasio</Text>
+            <MapContainer />
+          </Box>
+        </GridItem>
+        <GridItem colSpan={{ base: 1, md: 3 }}>
+          <Box mt={-4} p={4} borderWidth="1px" borderRadius="md">
             <Text fontWeight="bold" mb={2}>Actividad reciente</Text>
             {classes.map((clase) => (
               <ClassBox
@@ -102,14 +110,14 @@ const GymProfile = () => {
             ))}
           </Box>
         </GridItem>
-        <GridItem colSpan={1}>
-          <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
+        <GridItem colSpan={{ base: 1, md: 2 }}>
+          <Box mt={4} p={2} borderWidth="1px" borderRadius="md" maxW="fit-content" mx="auto">
             <Text fontWeight="bold" mb={4}>Horarios:</Text>
             <Calendar />
             <Button size="sm" mt={4}>Agendar clase</Button>
           </Box>
         </GridItem>
-      </Grid>
+      </SimpleGrid>
     </Box>
   );
 };
