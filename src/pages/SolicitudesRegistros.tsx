@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -24,11 +24,12 @@ import {
   Image,
 } from "@chakra-ui/react";
 import apiService from "../services/service";
+import { Solicitud } from "../interfaces/solicitud_interface";
 
 const SolicitudesRegistro = () => {
-  const [solicitudes, setSolicitudes] = useState([]);
-  const [selectedSolicitud, setSelectedSolicitud] = useState(null);
-  const [loading, setLoading] = useState({}); // Estado para controlar el loading de los botones
+  const [solicitudes, setSolicitudes] = useState<Solicitud[]>([]);
+  const [selectedSolicitud, setSelectedSolicitud] = useState<Solicitud | null>(null);
+  const [loading, setLoading] = useState<{ [key: string]: boolean }>({}); // Estado para controlar el loading de los botones
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -44,7 +45,7 @@ const SolicitudesRegistro = () => {
     fetchSolicitudes();
   }, []);
 
-  const handleAceptarSolicitud = async (idSolicitud) => {
+  const handleAceptarSolicitud = async (idSolicitud: string) => {
     setLoading((prev) => ({ ...prev, [idSolicitud]: true }));
     try {
       await apiService.aceptarSolicitud(idSolicitud);
@@ -72,7 +73,7 @@ const SolicitudesRegistro = () => {
     }
   };
 
-  const handleRechazarSolicitud = async (idSolicitud) => {
+  const handleRechazarSolicitud = async (idSolicitud: string) => {
     setLoading((prev) => ({ ...prev, [idSolicitud]: true }));
     try {
       await apiService.rechazarSolicitud(idSolicitud);
@@ -100,7 +101,7 @@ const SolicitudesRegistro = () => {
     }
   };
 
-  const handleRowClick = (solicitud) => {
+  const handleRowClick = (solicitud: SetStateAction<Solicitud | null>) => {
     setSelectedSolicitud(solicitud);
     onOpen();
   };

@@ -8,13 +8,10 @@ import {
   Input,
   Avatar,
   Text,
-  VStack,
-  HStack,
-  Icon,
   Select,
   Textarea,
 } from "@chakra-ui/react";
-import { FaUser, FaEnvelope, FaPhone, FaHome, FaSignOutAlt, FaSave } from "react-icons/fa";
+import { FaSignOutAlt, FaSave } from "react-icons/fa";
 
 const EditarPerfil: React.FC = () => {
   return (

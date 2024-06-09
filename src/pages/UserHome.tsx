@@ -10,16 +10,23 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { User } from "../interfaces/user_interface";
 
 const UserHome = () => {
-  const [user, setUser] = useState(null);
-  const [userType, setUserType] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("user"));
+    const userData = localStorage.getItem("user");
     const userTypeData = localStorage.getItem("userType");
-    setUser(userData);
-    setUserType(userTypeData);
+
+    if (userData) {
+
+      setUser(JSON.parse(userData));
+    }
+    if (userTypeData) {
+      setUserType(userTypeData);
+    }
   }, []);
 
   if (!user || !userType) {

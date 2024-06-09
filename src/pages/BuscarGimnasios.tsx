@@ -1,4 +1,4 @@
-import { Box, Flex, FormControl, Input, Text, SimpleGrid, Button, Spinner, Select } from "@chakra-ui/react";
+import { Flex, FormControl, Input, Text, SimpleGrid, Button, Spinner, Select } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import GymBox from "../components/GymBox";
 import apiService from "../services/service.tsx";
@@ -24,17 +24,6 @@ const BuscarGimnasios = () => {
     setIsLoading(false);
   };
 
-  const fetchClassesByGym = async (gymId: number) => {
-    setIsLoading(true);
-    try {
-      const response = await apiService.getClassesByGym(gymId);
-      setClasses(response);
-      setFilteredClasses(response); // Set filtered classes to all classes initially
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-    }
-    setIsLoading(false);
-  };
 
   useEffect(() => {
     fetchAllGyms();
