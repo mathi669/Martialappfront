@@ -17,12 +17,12 @@ const AdminHome = () => {
           minWidth="240px"
         >
           {/* Sidebar Content */}
-          <Button colorScheme="blue" mb={2} as={Link} to="/userModule">
+          {/* <Button colorScheme="blue" mb={2} as={Link} to="/userModule">
             Módulo de Usuarios
           </Button>
           <Button colorScheme="teal" mb={2} as={Link} to="/bookingRequests">
             Solicitudes de Reserva
-          </Button>
+          </Button> */}
           <Button
             colorScheme="green"
             mb={2}

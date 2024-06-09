@@ -1,199 +1,136 @@
-import { Link, useParams } from "react-router-dom";
-import { Box, Button, Input, Text, VStack, Spinner } from "@chakra-ui/react";
-import { useEffect, useState } from 'react';
-import apiService from '../services/service';
+// src/pages/GymProfile.tsx
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+  Box,
+  Button,
+  VStack,
+  HStack,
+  Text,
+  Avatar,
+  Grid,
+  GridItem,
+  Spinner,
+  SimpleGrid,
+} from "@chakra-ui/react";
+import { FaCheckCircle } from "react-icons/fa";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import apiService from "../services/service";
+import ClassBox from "../components/ClassBox";
+import MapContainer from "../components/Maps";
 
 const GymProfile = () => {
-
-  const { gym_id } = useParams();
+  const { gym_id } = useParams<{ gym_id: string }>();
   const [gym, setGym] = useState<any>(null);
-  const [loading, setLoading] = useState(true)
+
+  const [loadingClasses, setLoadingClasses] = useState(true);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchGym = async () => {
       try {
         const data = await apiService.getGym(gym_id);
+        console.log("Gym data fetched:", data); // Debug log for fetched data
         setGym(data);
       } catch (error) {
-        console.error('Error fetching gym:', error);
+        console.error("Error fetching gym:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
+
+    const fetchClasses = async () => {
+      try {
+        const data = await apiService.getClassesByGym(Number(gym_id));
+        console.log("Classes data fetched:", data); // Debug log for fetched data
+        setClasses(data);
+      } catch (error) {
+        console.error("Error fetching classes:", error);
+      } finally {
+        setLoadingClasses(false);
+      }
+    };
 
     fetchGym();
+    fetchClasses();
+  }, [gym_id]);
 
-  }, [gym_id])
-
-  if (loading) {
+  if (loading || loadingClasses) {
     return <Spinner size="xl" />;
   }
 
   if (!gym) {
     return <Text>No se encontró el gimnasio.</Text>;
   }
-  
+
   return (
-    <VStack className="full-width section" align="stretch" spacing="4">
-      <Box className="container">
-        <Box className="row" alignItems="flex-start">
-          <Box className="col-xs-12 col-sm-4 col-md-3">
-            <Button
-              className="btn btn-default btn-block visible-xs btn-dropdown-container"
-              data-drop-cont=".user-menu-xs"
-            >
-              <i className="fa fa-user fa-fw" aria-hidden="true"></i> MOSTRAR
-              MENÚ <i className="fa fa-sort pull-right" aria-hidden="true"></i>
-            </Button>
-            <VStack className="full-width post-user-info" spacing="4">
-              <img
-                src="./src/static/img/user.png"
-                className="NavBar-Nav-icon"
-                alt="User"
-              />
+    <Box p={4}>
+      <SimpleGrid columns={{ base: 1, md: 5 }} spacing={6}>
+        <GridItem colSpan={{ base: 1, md: 3 }}>
+          <HStack spacing={4} alignItems="center">
+            <Avatar size="xl" name={gym[1]} src={gym[8]} />
+            <VStack align="start">
+              <HStack>
+                <Text fontSize="2xl" fontWeight="bold">
+                  {gym[1]}
+                </Text>
+                <FaCheckCircle color="blue" />
+              </HStack>
+              <Text>Ubicación: {gym[4]}</Text>
+              <Text>Teléfono: {gym[3]}</Text>
               <Text>
-                <small id="nombreGimnasio">{gym.nombre}</small>
+                Fecha de ingreso: {new Date(gym[6]).toLocaleDateString()}
               </Text>
-              <VStack className="full-width div-table" spacing="4">
-                <Box className="div-table-row">
-                  <Box
-                    className="div-table-cell div-table-cell-xs"
-                    id="ubicacionGimnasio"
-                  >
-                    Ubicación <br />
-                    <small>{gym.dc_ubicacion}</small>
-                  </Box>
-                  <Box
-                    className="div-table-cell div-table-cell-xs"
-                    id="telefonoGimnasio"
-                  >
-                    Teléfono <br />
-                    <small>{gym.dc_telefono}</small>
-                  </Box>
-                </Box>
-              </VStack>
-              <VStack
-                className="full-width list-group"
-                borderRadius="0"
-                spacing="4"
-              >
-                <Text className="list-group-item text-center">
-                  <small>Se unío en {gym.df_fecha_ingreso} </small>
-                </Text>
-                <Link to="/profiles">
-                  <Button className="list-group-item active">
-                    <i className="fa fa-user fa-fw" aria-hidden="true"></i> TU
-                    PERFIL
-                  </Button>
-                </Link>
-                <Link to="/adminPage">
-                  <Button className="list-group-item">
-                    <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>{" "}
-                    CONFIGURACIÓN
-                  </Button>
-                </Link>
-              </VStack>
             </VStack>
+          </HStack>
+          <HStack mt={4} mb={2} spacing={2} wrap="wrap"></HStack>
+        </GridItem>
+        <GridItem colSpan={{ base: 1, md: 2 }}>
+          <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
+            <Text fontWeight="bold" mb={2}>
+              Ubicación del Gimnasio
+            </Text>
+            <MapContainer />
           </Box>
-          <Box className="col-xs-12 col-sm-8 col-md-9">
-            <Box className="full-width bar-info-user" py="2" px="4">
-              <i className="fa fa-user fa-fw" aria-hidden="true"></i>
-              <Text>TU PERFIL</Text>
-            </Box>
-            {/* Contenido*/}
-            <Box
-              className="full-width"
-              p="4"
-              border="1px solid #E1E1E1"
-              borderRadius="md"
-            >
-              <form action="">
-                <Text className="text-muted text-center">
-                  Seleccione una imagen
-                </Text>
-                <Box className="form-group">
-                  <Box className="custom-input-file">
-                    <Button as="label" htmlFor="fileInput">
-                      <Input type="file" id="fileInput" display="none" />
-                      <i className="fa fa-picture-o" aria-hidden="true"></i>
-                    </Button>
-                  </Box>
-                  <Text className="text-muted text-center archivo">
-                    Archivo...
-                  </Text>
-                </Box>
-                <Box className="form-group">
-                  <Text>Nombre del Gimnasio</Text>
-                  <Input
-                    type="text"
-                    placeholder="Nombre del Gimnasio"
-                    className="form-control"
-                  />
-                </Box>
-                <Box className="form-group">
-                  <Text>
-                    Teléfono <small></small>
-                  </Text>
-                  <Input
-                    type="text"
-                    placeholder="¿Cuál es tu teléfono?"
-                    className="form-control"
-                  />
-                </Box>
-                <Box className="form-group">
-                  <Text>
-                    Ubicación <small>¿Cuál es tu ubicación?</small>
-                  </Text>
-                  <Input
-                    type="text"
-                    placeholder="Ubicación"
-                    className="form-control"
-                  />
-                </Box>
-                <Box className="form-group">
-                  <Text>Correo electrónico</Text>
-                  <Input
-                    type="email"
-                    placeholder="Email"
-                    className="form-control"
-                  />
-                </Box>
-                <Box className="form-group">
-                  <Text>Contraseña</Text>
-                  <Button
-                    className="btn btn-default btn-xs pull-right btn-dropdown-container"
-                    data-drop-cont=".perfil-password"
-                  >
-                    Mostrar/Ocultar{" "}
-                    <i className="fa fa-sort" aria-hidden="true"></i>
-                  </Button>
-                  <VStack className="full-width perfil-password" spacing="4">
-                    <Input
-                      type="password"
-                      placeholder="Contraseña"
-                      className="form-control"
-                    />
-                    <Input
-                      type="password"
-                      placeholder="Nueva Contraseña"
-                      className="form-control"
-                    />
-                    <Input
-                      type="password"
-                      placeholder="Confirmar Contraseña"
-                      className="form-control"
-                    />
-                  </VStack>
-                </Box>
-                <Text className="text-center">
-                  <Button colorScheme="red">GUARDAR</Button>
-                </Text>
-              </form>
-            </Box>
+        </GridItem>
+        <GridItem colSpan={{ base: 1, md: 3 }}>
+          <Box mt={-4} p={4} borderWidth="1px" borderRadius="md">
+            <Text fontWeight="bold" mb={2}>
+              Actividad reciente
+            </Text>
+            {classes.map((clase) => (
+              <ClassBox
+                key={clase.id}
+                className={clase.dc_nombre_clase}
+                schedule={clase.dc_horario}
+                availableSpots={clase.nb_cupos_disponibles}
+                imageUrl={clase.dc_imagen_url}
+              />
+            ))}
           </Box>
-        </Box>
-      </Box>
-    </VStack>
+        </GridItem>
+        <GridItem colSpan={{ base: 1, md: 2 }}>
+          <Box
+            mt={4}
+            p={2}
+            borderWidth="1px"
+            borderRadius="md"
+            maxW="fit-content"
+            mx="auto"
+          >
+            <Text fontWeight="bold" mb={4}>
+              Horarios:
+            </Text>
+            <Calendar />
+            {/* <Button size="sm" mt={4}>
+              Agendar clase
+            </Button> */}
+          </Box>
+        </GridItem>
+      </SimpleGrid>
+    </Box>
   );
 };
 

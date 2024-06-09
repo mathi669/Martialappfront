@@ -21,7 +21,7 @@ export { ConfigAdminUser };
 export { CreateClass };
 export { UserIndex };
 export { GymProfile };
-export { AdminPage }
+export { AdminPage };
 export { BuscarGimnasios };
-export { EditarPerfil}
-export { Profiles}
+export { EditarPerfil };
+export { Profiles };
