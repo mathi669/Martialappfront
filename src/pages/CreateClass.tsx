@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import {
   Box,
   Button,
   Flex,
-  Heading,
   Text,
   useDisclosure,
   Modal,
@@ -28,6 +27,7 @@ import {
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import apiService from "../services/service";
+import { ClassData } from "../interfaces/class_data";
 
 const CreateClass = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -38,7 +38,7 @@ const CreateClass = () => {
     cupos_disponibles: "",
     fecha: "",
     descripcion: "",
-    gimnasio_id: "",
+    gimnasio_id: 1,
     categoria_id: 1,
     clase_estado_id: 1,
     arte_marcial_id: 1,
@@ -46,7 +46,7 @@ const CreateClass = () => {
   });
   const [message, setMessage] = useState("");
   const [gymImageUrl, setGymImageUrl] = useState("");
-  const [classes, setClasses] = useState([]);
+  const [classes, setClasses] = useState<ClassData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const CreateClass = () => {
     }
   }, []);
 
-  const fetchClasses = async (gymId) => {
+  const fetchClasses = async (gymId: number) => {
     setIsLoading(true);
     try {
       const response = await apiService.getClassesByGym(gymId);
@@ -71,28 +71,31 @@ const CreateClass = () => {
     setIsLoading(false);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData((prevData) => ({
-          ...prevData,
-          imagen: reader.result?.split(",")[1] || "",
-        }));
+        if(reader.result){
+
+          setFormData((prevData) => ({
+            ...prevData,
+            imagen: (reader.result as string).split(",")[1] || "",
+          }));
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     const { horaInicio, horaFin, ...rest } = formData;
     const horario = `${horaInicio} - ${horaFin}`;
@@ -103,20 +106,26 @@ const CreateClass = () => {
       setMessage(response.message);
       onClose();
       fetchClasses(formData.gimnasio_id);
-    } catch (error) {
+    } catch (error: any) {
       setMessage(error.response?.data?.error || "Error creating class");
     }
   };
 
-  const handleDelete = async (classId) => {
+  const handleDelete = async (classId: any) => {
     try {
       await apiService.deleteClass(classId);
       fetchClasses(formData.gimnasio_id);
     } catch (error) {}
   };
 
-  const handleEdit = (classData) => {
-    setFormData(classData);
+  const handleEdit = (classData: ClassData) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      nombre_clase: classData.dc_nombre_clase,
+      horaInicio: classData.dc_horario.split(" - ")[0],
+      horaFin: classData.dc_horario.split(" - ")[1],
+      fecha: classData.df_fecha,
+    }));
     onOpen();
   };
 
@@ -156,7 +165,7 @@ const CreateClass = () => {
               <Th>Acciones</Th>
             </Tr>
           </Thead>
-          {classes != [] ? (
+          {classes.length > 0 ? (
             <Tbody>
               {isLoading ? (
                 <Center w="full" h="200px">
@@ -172,13 +181,11 @@ const CreateClass = () => {
                       <IconButton
                         icon={<EditIcon />}
                         mr={2}
-                        onClick={() => handleEdit(classData)}
-                      />
+                        onClick={() => handleEdit(classData)} aria-label={""}                      />
                       <IconButton
                         icon={<DeleteIcon />}
                         colorScheme="red"
-                        onClick={() => handleDelete(classData.id)}
-                      />
+                        onClick={() => handleDelete(classData.id)} aria-label={""}                      />
                     </Td>
                   </Tr>
                 ))

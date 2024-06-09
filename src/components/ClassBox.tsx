@@ -1,5 +1,5 @@
 // src/components/ClassBox.tsx
-import { Box, Text, Image, Button } from "@chakra-ui/react";
+import { Box, Text, Image } from "@chakra-ui/react";
 import { ClassBoxProps } from "../interfaces/classbox_interface";
 
 const ClassBox: React.FC<ClassBoxProps> = ({

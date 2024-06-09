@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button, Container, Flex, Text } from "@chakra-ui/react";
+import { Useradmin } from "../interfaces/admin_user_interface";
 
 const AdminHome = () => {
   // Obtener información del usuario administrador del localStorage
-  const user: any = JSON.parse(localStorage?.getItem("user"));
+  const storedUser = localStorage.getItem("user");
+  const user: Useradmin | null = storedUser ? JSON.parse(storedUser) : null;
 
   return (
     <Container maxW="container.xl">
@@ -40,28 +42,29 @@ const AdminHome = () => {
             </Text>
             <Text fontSize="xl">Información del Usuario Administrador</Text>
           </Flex>
-          <Flex
-            p={4}
-            border="1px solid #e1e1e1"
-            borderRadius="md"
-            flexDirection="column"
-          >
-            <Text mb={4}>
-              <strong>Nombre:</strong> {user.nombre}
-            </Text>
-            <Text mb={4}>
-              <strong>Correo Electrónico:</strong> {user.correo_electronico}
-            </Text>
-            <Text mb={4}>
-              <strong>Teléfono:</strong> {user.telefono}
-            </Text>
-            <Text mb={4}>
-              <strong>Dirección:</strong> {user.direccion}
-            </Text>
-            <Text mb={4}>
-              <strong>Estado:</strong> {user.estado}
-            </Text>
-          </Flex>
+          {user ? (
+            <Flex
+              p={4}
+              border="1px solid #e1e1e1"
+              borderRadius="md"
+              flexDirection="column"
+            >
+              <Text mb={4}>
+                <strong>Nombre:</strong> {user.nombre}
+              </Text>
+              <Text mb={4}>
+                <strong>Correo Electrónico:</strong> {user.correo_electronico}
+              </Text>
+              <Text mb={4}>
+                <strong>Teléfono:</strong> {user.telefono}
+              </Text>
+              <Text mb={4}>
+                <strong>ID:</strong> {user.id}
+              </Text>
+            </Flex>
+          ) : (
+            <Text>No se ha encontrado información del usuario.</Text>
+          )}
         </Flex>
       </Flex>
     </Container>

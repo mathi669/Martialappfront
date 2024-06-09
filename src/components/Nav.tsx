@@ -23,11 +23,12 @@ import {
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import logo from "../static/img/MartialApps.png";
+import { User } from "../interfaces/user_interface.tsx"
 
 function NavbarMartial() {
   const { isOpen, onToggle, onClose } = useDisclosure();
   const isDesktop = useBreakpointValue({ base: false, md: true });
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [userType, setUserType] = useState("");
   const navigate = useNavigate();
 

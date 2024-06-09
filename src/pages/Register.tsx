@@ -42,14 +42,17 @@ const Register: React.FC = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          imagen_base64: reader.result?.split(",")[1] || "",
-        }));
+        if (reader.result) {
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            imagen_base64: (reader.result as string).split(",")[1] || "",
+          }));
+        }
       };
       reader.readAsDataURL(file);
     }
   };
+  
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true);
@@ -80,7 +83,7 @@ const Register: React.FC = () => {
       });
 
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error en el registro:", error);
       setError(
         "Ha ocurrido un error. Por favor, inténtelo de nuevo más tarde."
