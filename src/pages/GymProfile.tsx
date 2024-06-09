@@ -3,12 +3,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
-  Button,
   VStack,
   HStack,
   Text,
   Avatar,
-  Grid,
   GridItem,
   Spinner,
   SimpleGrid,

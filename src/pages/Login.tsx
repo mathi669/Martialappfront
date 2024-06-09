@@ -11,8 +11,6 @@ import {
   InputRightElement,
   Select,
   Stack,
-  Text,
-  useBreakpointValue,
   useToast,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -82,7 +80,7 @@ const Login: React.FC = () => {
           position: "top",
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       toast({
         title: "Error en el inicio de sesión.",
         description: err?.message,
@@ -96,7 +94,6 @@ const Login: React.FC = () => {
     }
   };
 
-  const isDesktop = useBreakpointValue({ base: false, md: true });
 
   return (
     <Box

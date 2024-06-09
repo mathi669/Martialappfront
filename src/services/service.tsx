@@ -96,7 +96,7 @@ const apiService = {
       const response = await apiClient.get(`/classes/${gymId}`);
       const data = response.data;
       if (data && data.classes) {
-        const convertedClasses = data.classes.map((c) => {
+        const convertedClasses = data.classes.map((c: any) => {
           const convertedClass = { ...c };
           for (const key in convertedClass) {
             if (Object.prototype.hasOwnProperty.call(convertedClass, key)) {
@@ -168,6 +168,14 @@ const apiService = {
       const response = await apiClient.post(
         `/rechazar_solicitud/${idSolicitud}`
       );
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+  deleteClass: async (classId: any) => {
+    try {
+      const response = await apiClient.post(`/delete_class/${classId}`);
       return handleResponse(response);
     } catch (error) {
       handleError(error);
