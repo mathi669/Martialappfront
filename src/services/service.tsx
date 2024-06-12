@@ -99,6 +99,14 @@ const apiService = {
       handleError(error);
     }
   },
+  reservarClase: async (formData: any) => {
+    try {
+      const response = await apiClient.post("/reservarClase", formData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
 
   getClassesByGym: async (gymId: number) => {
     try {
