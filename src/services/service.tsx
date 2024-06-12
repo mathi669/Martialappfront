@@ -81,10 +81,27 @@ const apiService = {
     }
   },
 
-  // Obtener todos los gimnasios
-  getAllGyms: async () => {
+  searchGyms: async (query: string) => {
     try {
-      const response = await apiClient.get(`/gyms`);
+        const response = await apiClient.get(`/gyms?query=${query}`);
+        return handleResponse(response);
+    } catch (error) {
+        handleError(error);
+    }
+  },
+
+  // Obtener todos los gimnasios
+  getAllGyms: async (query: string = "") => {
+    try {
+      const response = await apiClient.get(`/gyms`, { params: { query } });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+  reservarClase: async (formData: any) => {
+    try {
+      const response = await apiClient.post("/reservarClase", formData);
       return handleResponse(response);
     } catch (error) {
       handleError(error);

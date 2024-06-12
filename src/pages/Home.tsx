@@ -13,7 +13,7 @@ function Home() {
           <Flex
             w="full"
             h={{ base: "200px", md: "400px" }} // Añade una altura mínima
-            bgImage="url('./src/static/img/header-index 2.png')"
+            bgImage="url('https://i.ibb.co/G0F0DCb/header-index-2.png')"
             bgSize="cover"
             bgPosition="center"
             direction="column"
