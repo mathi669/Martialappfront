@@ -1,5 +1,5 @@
 // src/components/ClassBox.tsx
-import { Box, Text, Image } from "@chakra-ui/react";
+import { Box, Text, Image, Button  } from "@chakra-ui/react";
 import { ClassBoxProps } from "../interfaces/classbox_interface";
 
 const ClassBox: React.FC<ClassBoxProps> = ({
@@ -7,6 +7,7 @@ const ClassBox: React.FC<ClassBoxProps> = ({
   schedule,
   availableSpots,
   imageUrl,
+  onReserve,
 }) => {
   return (
     <Box
@@ -32,10 +33,13 @@ const ClassBox: React.FC<ClassBoxProps> = ({
           alt={className}
           objectFit="cover"
           width="100%"
-          height="150px"
+          height="250px"
           mb={4}
         />
       )}
+      <Button colorScheme="teal" size="sm" onClick={onReserve}>
+        Reservar Clase
+      </Button>
     </Box>
   );
 };

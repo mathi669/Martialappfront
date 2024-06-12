@@ -3,4 +3,5 @@ export interface ClassBoxProps {
     schedule: string;
     availableSpots: number;
     imageUrl?: string;
+    onReserve: any;
   }

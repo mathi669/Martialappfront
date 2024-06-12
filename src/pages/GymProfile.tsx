@@ -10,6 +10,20 @@ import {
   GridItem,
   Spinner,
   SimpleGrid,
+  useDisclosure,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  FormControl,
+  FormLabel,
+  Input,
+  useToast,
+  Grid
 } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
 import Calendar from "react-calendar";
@@ -17,16 +31,29 @@ import "react-calendar/dist/Calendar.css";
 import apiService from "../services/service";
 import ClassBox from "../components/ClassBox";
 import MapContainer from "../components/Maps";
+import { User } from "../interfaces/user_interface";
 
 const GymProfile = () => {
   const { gym_id } = useParams<{ gym_id: string }>();
   const [gym, setGym] = useState<any>(null);
-
   const [loadingClasses, setLoadingClasses] = useState(true);
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedClass, setSelectedClass] = useState<any>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  const toast = useToast();
 
   useEffect(() => {
+    const userData = localStorage.getItem("user");
+
+    if (userData) {
+
+      setUser(JSON.parse(userData));
+    }
     const fetchGym = async () => {
       try {
         const data = await apiService.getGym(gym_id);
@@ -54,6 +81,49 @@ const GymProfile = () => {
     fetchGym();
     fetchClasses();
   }, [gym_id]);
+
+  const handleReserve = async () => {
+    if (!selectedDate || !selectedTime || !selectedClass) {
+      toast({
+        title: "Error",
+        description: "Debe seleccionar fecha, hora y clase",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      await apiService.reservarClase({
+        clase_id: selectedClass.id,
+        gimnasio_id: gym.id,
+        usuario_id: user?.id, // Cambia esto por el ID del usuario actual
+        fecha: selectedDate.toISOString().split('T')[0],
+        hora: selectedTime,
+      });
+      toast({
+        title: "Clase reservada",
+        description: "La clase ha sido reservada exitosamente",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Hubo un problema al reservar la clase",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  // const handleDateChange = (value: Date) => {
+  //   setSelectedDate(value);
+  // };
 
   if (loading || loadingClasses) {
     return <Spinner size="xl" />;
@@ -105,6 +175,11 @@ const GymProfile = () => {
                 schedule={clase.dc_horario}
                 availableSpots={clase.nb_cupos_disponibles}
                 imageUrl={clase.dc_imagen_url}
+                onReserve={() => {
+                  setSelectedClass(clase);
+                  setSelectedTime(clase.dc_horario); // Selecciona automáticamente la hora de la clase
+                  onOpen();
+                }}
               />
             ))}
           </Box>
@@ -121,13 +196,50 @@ const GymProfile = () => {
             <Text fontWeight="bold" mb={4}>
               Horarios:
             </Text>
-            <Calendar />
-            {/* <Button size="sm" mt={4}>
-              Agendar clase
-            </Button> */}
+            <Calendar  value={selectedDate} />
           </Box>
         </GridItem>
       </SimpleGrid>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Reservar Clase</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Fecha</FormLabel>
+              <Input
+                type="date"
+                value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
+                onChange={(e) => setSelectedDate(new Date(e.target.value))}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Hora</FormLabel>
+              <Grid templateColumns="repeat(4, 1fr)" gap={2}>
+                {classes.map((clase) => (
+                  <Button
+                    key={clase.dc_horario}
+                    onClick={() => setSelectedTime(clase.dc_horario)}
+                    colorScheme={selectedTime === clase.dc_horario ? "blue" : "gray"}
+                  >
+                    {clase.dc_horario}
+                  </Button>
+                ))}
+              </Grid>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handleReserve}>
+              Reservar
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancelar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
