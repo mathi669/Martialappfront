@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -10,10 +10,28 @@ import {
   Text,
   Select,
   Textarea,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { FaSignOutAlt, FaSave } from "react-icons/fa";
+import { FaSignOutAlt, FaSave, FaKey } from "react-icons/fa";
 
 const EditarPerfil: React.FC = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handlePasswordChange = () => {
+    // Lógica para cambiar la contraseña
+    onClose();
+  };
+
   return (
     <Flex
       direction="column"
@@ -80,14 +98,14 @@ const EditarPerfil: React.FC = () => {
             <FormLabel>Dirección</FormLabel>
             <Input type="text" placeholder="Dirección" />
           </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Contraseña</FormLabel>
-            <Input type="password" />
-          </FormControl>
           <FormControl mb={6}>
             <FormLabel>Foto de perfil</FormLabel>
             <Input type="file" />
           </FormControl>
+
+          <Button colorScheme="blue" leftIcon={<FaKey />} onClick={onOpen} mb={6}>
+            Cambiar Contraseña
+          </Button>
 
           <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
             Información del Gimnasio
@@ -157,6 +175,48 @@ const EditarPerfil: React.FC = () => {
           </Flex>
         </form>
       </Box>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Cambiar Contraseña</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl mb={4}>
+              <FormLabel>Contraseña Antigua</FormLabel>
+              <Input
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Contraseña Nueva</FormLabel>
+              <Input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Repetir Contraseña Nueva</FormLabel>
+              <Input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handlePasswordChange}>
+              Cambiar Contraseña
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancelar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 };

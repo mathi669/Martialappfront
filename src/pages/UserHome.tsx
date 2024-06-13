@@ -9,25 +9,74 @@ import {
   Spinner,
   Stack,
   Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { User } from "../interfaces/user_interface";
 
 const UserHome = () => {
   const [user, setUser] = useState<User | null>(null);
   const [userType, setUserType] = useState<string | null>(null);
+  const [reservations, setReservations] = useState<any[]>([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
     const userTypeData = localStorage.getItem("userType");
 
     if (userData) {
-
       setUser(JSON.parse(userData));
     }
     if (userTypeData) {
       setUserType(userTypeData);
     }
   }, []);
+
+  useEffect(() => {
+    const fetchReservations = async () => {
+      const mockReservations = [
+        {
+          id: 1,
+          class: "Yoga",
+          date: "2023-06-12",
+          time: "10:00 AM",
+          description: "Clase de Yoga para principiantes",
+          gymImage: "https://via.placeholder.com/150",
+        },
+        {
+          id: 2,
+          class: "Pilates",
+          date: "2023-06-14",
+          time: "12:00 PM",
+          description: "Pilates intermedio",
+          gymImage: "https://via.placeholder.com/150",
+        },
+        {
+          id: 3,
+          class: "Spinning",
+          date: "2023-06-16",
+          time: "6:00 PM",
+          description: "Spinning avanzado",
+          gymImage: "https://via.placeholder.com/150",
+        },
+      ];
+      setReservations(mockReservations);
+    };
+
+    fetchReservations();
+  }, []);
+
+  const cancelReservation = (id: number) => {
+    setReservations((prevReservations) =>
+      prevReservations.filter((reservation) => reservation.id !== id)
+    );
+  };
 
   if (!user || !userType) {
     return (
@@ -73,14 +122,14 @@ const UserHome = () => {
                 TU PERFIL
               </Button>
             </Link>
-            <Link to="/configuracion">
+            <Link to="/editarperfil">
               <Button
                 w="full"
                 leftIcon={
                   <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
                 }
               >
-                CONFIGURACIÓN
+                EDITAR PERFIL
               </Button>
             </Link>
             {userType === "gimnasio" ? (
@@ -95,16 +144,15 @@ const UserHome = () => {
                 </Button>
               </Link>
             ) : (
-              <Link to="/reservations">
-                <Button
-                  w="full"
-                  leftIcon={
-                    <i className="fa fa-calendar" aria-hidden="true"></i>
-                  }
-                >
-                  MIS SOLICITUDES DE RESERVA
-                </Button>
-              </Link>
+              <Button
+                w="full"
+                leftIcon={
+                  <i className="fa fa-calendar" aria-hidden="true"></i>
+                }
+                onClick={onOpen}
+              >
+                MIS SOLICITUDES DE RESERVA
+              </Button>
             )}
           </Stack>
         </Box>
@@ -143,22 +191,47 @@ const UserHome = () => {
               </Flex>
             </Stack>
           </Box>
-          <Box
-            mt={6}
-            p={6}
-            border="1px"
-            borderColor="gray.200"
-            borderRadius="md"
-          >
-            <Text mb={4} fontWeight="bold">
-              Cambiar Contraseña
-            </Text>
-            <Link to="/change-password">
-              <Button colorScheme="blue">CAMBIAR CONTRASEÑA</Button>
-            </Link>
-          </Box>
         </Box>
       </Flex>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Mis Solicitudes de Reserva</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {reservations.length > 0 ? (
+              reservations.map((reservation) => (
+                <Box key={reservation.id} p={4} borderBottom="1px solid gray" display="flex" alignItems="center">
+                  <Image
+                    src={reservation.gymImage}
+                    alt={reservation.class}
+                    boxSize="100px"
+                    borderRadius="md"
+                    mr={4}
+                  />
+                  <Box flex="1">
+                    <Text fontWeight="bold">Clase: {reservation.class}</Text>
+                    <Text>Fecha: {reservation.date}</Text>
+                    <Text>Hora: {reservation.time}</Text>
+                    <Text>Descripción: {reservation.description}</Text>
+                  </Box>
+                  <Button colorScheme="red" onClick={() => cancelReservation(reservation.id)}>
+                    Cancelar
+                  </Button>
+                </Box>
+              ))
+            ) : (
+              <Text>No tienes reservas aún.</Text>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={onClose}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 };
