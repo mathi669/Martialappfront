@@ -129,7 +129,7 @@ const UserHome = () => {
                   <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
                 }
               >
-                EDITAR DE PERFIL
+                EDITAR PERFIL
               </Button>
             </Link>
             {userType === "gimnasio" ? (
@@ -190,20 +190,6 @@ const UserHome = () => {
                 <Text>{user.id}</Text>
               </Flex>
             </Stack>
-          </Box>
-          <Box
-            mt={6}
-            p={6}
-            border="1px"
-            borderColor="gray.200"
-            borderRadius="md"
-          >
-            <Text mb={4} fontWeight="bold">
-              Cambiar Contraseña
-            </Text>
-            <Link to="/change-password">
-              <Button colorScheme="blue">CAMBIAR CONTRASEÑA</Button>
-            </Link>
           </Box>
         </Box>
       </Flex>
