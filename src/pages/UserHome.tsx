@@ -73,7 +73,7 @@ const UserHome = () => {
                 TU PERFIL
               </Button>
             </Link>
-            <Link to="/configuracion">
+            <Link to="/editarperfil">
               <Button
                 w="full"
                 leftIcon={
