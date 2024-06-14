@@ -4,7 +4,8 @@ import axios, { AxiosResponse } from "axios";
 
 // Configuración base de Axios
 const apiClient = axios.create({
-  baseURL: "http://127.0.0.1:5000", // Cambia esta URL según sea necesario
+  baseURL: "https://martialapps-zfk3rshyeq-uc.a.run.app", // Cambia esta URL según sea necesario
+  // baseURL: "http://127.0.0.1:5000", // Cambia esta URL según sea necesario
   headers: {
     "Content-Type": "application/json",
   },

@@ -13,7 +13,7 @@ function App() {
       <Flex direction="column" minHeight="100vh">
         <Suspense>
           <NavbarMartial />
-          <SideBar />
+          {/* <SideBar /> */}
           <Box flex="1">
             <Routes>
               {routes.map((route, index) => (
