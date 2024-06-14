@@ -19,15 +19,9 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  FormControl,
-  FormLabel,
-  Input,
   useToast,
-  Grid
 } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import apiService from "../services/service";
 import ClassBox from "../components/ClassBox";
 import MapContainer from "../components/Maps";
@@ -41,8 +35,6 @@ const GymProfile = () => {
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<any>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
   const toast = useToast();
@@ -51,13 +43,12 @@ const GymProfile = () => {
     const userData = localStorage.getItem("user");
 
     if (userData) {
-
       setUser(JSON.parse(userData));
     }
+
     const fetchGym = async () => {
       try {
         const data = await apiService.getGym(gym_id);
-        console.log("Gym data fetched:", data); // Debug log for fetched data
         setGym(data);
       } catch (error) {
         console.error("Error fetching gym:", error);
@@ -69,7 +60,6 @@ const GymProfile = () => {
     const fetchClasses = async () => {
       try {
         const data = await apiService.getClassesByGym(Number(gym_id));
-        console.log("Classes data fetched:", data); // Debug log for fetched data
         setClasses(data);
       } catch (error) {
         console.error("Error fetching classes:", error);
@@ -83,10 +73,10 @@ const GymProfile = () => {
   }, [gym_id]);
 
   const handleReserve = async () => {
-    if (!selectedDate || !selectedTime || !selectedClass) {
+    if (!selectedClass) {
       toast({
         title: "Error",
-        description: "Debe seleccionar fecha, hora y clase",
+        description: "Debe seleccionar una clase",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -94,14 +84,21 @@ const GymProfile = () => {
       return;
     }
 
+    const horaInicio = selectedClass.dc_horario.split(' - ')[0];
+    const payload = {
+      clase_id: selectedClass.id,
+      gimnasio_id: gym[0],  // El ID del gimnasio
+      usuario_id: user?.id, // ID del usuario autenticado
+      fecha: selectedClass.df_fecha, // Usamos la fecha de la clase
+      hora: horaInicio, // Usamos la hora de la clase
+    };
+
+
+  
+    console.log("Payload:", payload);
+
     try {
-      await apiService.reservarClase({
-        clase_id: selectedClass.id,
-        gimnasio_id: gym.id,
-        usuario_id: user?.id, // Cambia esto por el ID del usuario actual
-        fecha: selectedDate.toISOString().split('T')[0],
-        hora: selectedTime,
-      });
+      await apiService.reservarClase(payload);
       toast({
         title: "Clase reservada",
         description: "La clase ha sido reservada exitosamente",
@@ -121,9 +118,10 @@ const GymProfile = () => {
     }
   };
 
-  // const handleDateChange = (value: Date) => {
-  //   setSelectedDate(value);
-  // };
+  const handleReserveClick = (clase: any) => {
+    setSelectedClass(clase);
+    onOpen();
+  };
 
   if (loading || loadingClasses) {
     return <Spinner size="xl" />;
@@ -153,7 +151,6 @@ const GymProfile = () => {
               </Text>
             </VStack>
           </HStack>
-          <HStack mt={4} mb={2} spacing={2} wrap="wrap"></HStack>
         </GridItem>
         <GridItem colSpan={{ base: 1, md: 2 }}>
           <Box mt={4} p={4} borderWidth="1px" borderRadius="md">
@@ -175,28 +172,9 @@ const GymProfile = () => {
                 schedule={clase.dc_horario}
                 availableSpots={clase.nb_cupos_disponibles}
                 imageUrl={clase.dc_imagen_url}
-                onReserve={() => {
-                  setSelectedClass(clase);
-                  setSelectedTime(clase.dc_horario); // Selecciona automáticamente la hora de la clase
-                  onOpen();
-                }}
+                onReserve={() => handleReserveClick(clase)}
               />
             ))}
-          </Box>
-        </GridItem>
-        <GridItem colSpan={{ base: 1, md: 2 }}>
-          <Box
-            mt={4}
-            p={2}
-            borderWidth="1px"
-            borderRadius="md"
-            maxW="fit-content"
-            mx="auto"
-          >
-            <Text fontWeight="bold" mb={4}>
-              Horarios:
-            </Text>
-            <Calendar  value={selectedDate} />
           </Box>
         </GridItem>
       </SimpleGrid>
@@ -204,31 +182,12 @@ const GymProfile = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Reservar Clase</ModalHeader>
+          <ModalHeader>Confirmar Reserva</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl>
-              <FormLabel>Fecha</FormLabel>
-              <Input
-                type="date"
-                value={selectedDate ? selectedDate.toISOString().split('T')[0] : ''}
-                onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Hora</FormLabel>
-              <Grid templateColumns="repeat(4, 1fr)" gap={2}>
-                {classes.map((clase) => (
-                  <Button
-                    key={clase.dc_horario}
-                    onClick={() => setSelectedTime(clase.dc_horario)}
-                    colorScheme={selectedTime === clase.dc_horario ? "blue" : "gray"}
-                  >
-                    {clase.dc_horario}
-                  </Button>
-                ))}
-              </Grid>
-            </FormControl>
+            <Text>Clase: {selectedClass?.dc_nombre_clase}</Text>
+            <Text>Fecha: {selectedClass?.df_fecha}</Text>
+            <Text>Hora: {selectedClass?.dc_horario}</Text>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" onClick={handleReserve}>
