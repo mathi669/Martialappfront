@@ -99,9 +99,27 @@ const apiService = {
       handleError(error);
     }
   },
-  reservarClase: async (formData: any) => {
+  reservarClase: async (data: any) => {
     try {
-      const response = await apiClient.post("/reservarClase", formData);
+      const response = await apiClient.post("/reservarClase", data);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getUserReservations: async (userId: string) => {
+    try {
+      const response = await apiClient.get(`/reservasUsuario/${userId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  cancelReservation: async (reservaId: string) => {
+    try {
+      const response = await apiClient.delete(`/cancelarReserva/${reservaId}`);
       return handleResponse(response);
     } catch (error) {
       handleError(error);

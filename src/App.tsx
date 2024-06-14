@@ -5,6 +5,7 @@ import { routes } from "./routerConfig";
 import { Suspense } from "react";
 import Footer from "./components/Footer";
 import { Box, Flex } from "@chakra-ui/react";
+import SideBar from "./components/SideBar";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Flex direction="column" minHeight="100vh">
         <Suspense>
           <NavbarMartial />
+          <SideBar />
           <Box flex="1">
             <Routes>
               {routes.map((route, index) => (

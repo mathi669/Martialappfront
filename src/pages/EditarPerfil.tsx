@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -10,10 +10,43 @@ import {
   Text,
   Select,
   Textarea,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { FaSignOutAlt, FaSave } from "react-icons/fa";
+import { FaSignOutAlt, FaSave, FaKey } from "react-icons/fa";
+// import { User } from "../interfaces/user_interface";
 
 const EditarPerfil: React.FC = () => {
+  // const [user, setUser] = useState<User | null>(null);
+  // const [userType, setUserType] = useState<string | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handlePasswordChange = () => {
+    // Lógica para cambiar la contraseña
+    onClose();
+  };
+
+  useEffect(() => {
+    // const userData = localStorage.getItem("user");
+    // const userTypeData = localStorage.getItem("userType");
+
+    // if (userData) {
+    //   setUser(JSON.parse(userData));
+    // }
+    // if (userTypeData) {
+    //   setUserType(userTypeData);
+    // }
+  }, []);
+
   return (
     <Flex
       direction="column"
@@ -45,7 +78,7 @@ const EditarPerfil: React.FC = () => {
           <Flex mt={6} mb={4} justify="space-between" gap={6}>
             <FormControl>
               <FormLabel>Nombre</FormLabel>
-              <Input type="text" defaultValue="John" />
+              <Input type="text" defaultValue="" />
             </FormControl>
             <FormControl>
               <FormLabel>Apellido</FormLabel>
@@ -80,14 +113,14 @@ const EditarPerfil: React.FC = () => {
             <FormLabel>Dirección</FormLabel>
             <Input type="text" placeholder="Dirección" />
           </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Contraseña</FormLabel>
-            <Input type="password" />
-          </FormControl>
           <FormControl mb={6}>
             <FormLabel>Foto de perfil</FormLabel>
             <Input type="file" />
           </FormControl>
+
+          <Button colorScheme="blue" leftIcon={<FaKey />} onClick={onOpen} mb={6}>
+            Cambiar Contraseña
+          </Button>
 
           <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
             Información del Gimnasio
@@ -157,6 +190,40 @@ const EditarPerfil: React.FC = () => {
           </Flex>
         </form>
       </Box>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Cambiar Contraseña</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl mb={4}>
+              <FormLabel>Contraseña Nueva</FormLabel>
+              <Input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </FormControl>
+            <FormControl mb={4}>
+              <FormLabel>Repetir Contraseña Nueva</FormLabel>
+              <Input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={handlePasswordChange}>
+              Cambiar Contraseña
+            </Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancelar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 };
