@@ -11,7 +11,6 @@ import {
 } from "@chakra-ui/react";
 import {
   FaUser,
-  FaEnvelope,
   FaPhone,
   FaHome,
   FaBirthdayCake,
@@ -29,18 +28,18 @@ import { User } from "../interfaces/user_interface";
 const Profile: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null);
-  const [userType, setUserType] = useState<string | null>(null);
+  // const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    const userTypeData = localStorage.getItem("userType");
+    //const userTypeData = localStorage.getItem("userType");
 
     if (userData) {
       setUser(JSON.parse(userData));
     }
-    if (userTypeData) {
-      setUserType(userTypeData);
-    }
+    // if (userTypeData) {
+    //   setUserType(userTypeData);
+    // }
   }, []);
   
   return (

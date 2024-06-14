@@ -20,13 +20,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FaSignOutAlt, FaSave, FaKey } from "react-icons/fa";
-import { User } from "../interfaces/user_interface";
+// import { User } from "../interfaces/user_interface";
 
 const EditarPerfil: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [userType, setUserType] = useState<string | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
+  // const [userType, setUserType] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [oldPassword, setOldPassword] = useState("");
+  // const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -36,15 +36,15 @@ const EditarPerfil: React.FC = () => {
   };
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    const userTypeData = localStorage.getItem("userType");
+    // const userData = localStorage.getItem("user");
+    // const userTypeData = localStorage.getItem("userType");
 
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-    if (userTypeData) {
-      setUserType(userTypeData);
-    }
+    // if (userData) {
+    //   setUser(JSON.parse(userData));
+    // }
+    // if (userTypeData) {
+    //   setUserType(userTypeData);
+    // }
   }, []);
 
   return (
