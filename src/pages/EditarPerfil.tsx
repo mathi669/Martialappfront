@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -20,10 +20,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FaSignOutAlt, FaSave, FaKey } from "react-icons/fa";
+// import { User } from "../interfaces/user_interface";
 
 const EditarPerfil: React.FC = () => {
+  // const [user, setUser] = useState<User | null>(null);
+  // const [userType, setUserType] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [oldPassword, setOldPassword] = useState("");
+  // const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -31,6 +34,18 @@ const EditarPerfil: React.FC = () => {
     // Lógica para cambiar la contraseña
     onClose();
   };
+
+  useEffect(() => {
+    // const userData = localStorage.getItem("user");
+    // const userTypeData = localStorage.getItem("userType");
+
+    // if (userData) {
+    //   setUser(JSON.parse(userData));
+    // }
+    // if (userTypeData) {
+    //   setUserType(userTypeData);
+    // }
+  }, []);
 
   return (
     <Flex
@@ -63,7 +78,7 @@ const EditarPerfil: React.FC = () => {
           <Flex mt={6} mb={4} justify="space-between" gap={6}>
             <FormControl>
               <FormLabel>Nombre</FormLabel>
-              <Input type="text" defaultValue="John" />
+              <Input type="text" defaultValue="" />
             </FormControl>
             <FormControl>
               <FormLabel>Apellido</FormLabel>
@@ -182,14 +197,6 @@ const EditarPerfil: React.FC = () => {
           <ModalHeader>Cambiar Contraseña</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl mb={4}>
-              <FormLabel>Contraseña Antigua</FormLabel>
-              <Input
-                type="password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-              />
-            </FormControl>
             <FormControl mb={4}>
               <FormLabel>Contraseña Nueva</FormLabel>
               <Input
