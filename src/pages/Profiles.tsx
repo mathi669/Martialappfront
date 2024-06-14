@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -23,8 +23,26 @@ import {
   FaBook,
   FaTrophy,
 } from "react-icons/fa";
+import { User } from "../interfaces/user_interface";
+
 
 const Profile: React.FC = () => {
+
+  const [user, setUser] = useState<User | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    const userTypeData = localStorage.getItem("userType");
+
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+    if (userTypeData) {
+      setUserType(userTypeData);
+    }
+  }, []);
+  
   return (
     <Flex
       direction="column"
@@ -48,9 +66,9 @@ const Profile: React.FC = () => {
         </Text>
         <Avatar size="2xl" src="/path-to-your-image.jpg" mb={4} />
         <Text fontSize="2xl" fontWeight="bold">
-          John Doe
+          {user?.dc_nombre}
         </Text>
-        <Text color="gray.500" mb={4}>john@example.com</Text>
+        <Text color="gray.500" mb={4}>{user?.dc_correo_electronico}</Text>
 
         <Divider mb={4} />
 
@@ -61,16 +79,8 @@ const Profile: React.FC = () => {
           <Box p={4} bg="gray.100" borderRadius="md">
             <VStack align="start" spacing={2}>
               <HStack>
-                <Icon as={FaUser} />
-                <Text>Nombre: John Doe</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaEnvelope} />
-                <Text>Correo Electrónico: john@example.com</Text>
-              </HStack>
-              <HStack>
                 <Icon as={FaPhone} />
-                <Text>Teléfono: +123456789</Text>
+                <Text>Teléfono: {user?.dc_telefono}</Text>
               </HStack>
               <HStack>
                 <Icon as={FaHome} />

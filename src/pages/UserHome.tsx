@@ -18,6 +18,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@chakra-ui/react";
+import apiService from "../services/service";
 import { User } from "../interfaces/user_interface";
 
 const UserHome = () => {
@@ -40,42 +41,28 @@ const UserHome = () => {
 
   useEffect(() => {
     const fetchReservations = async () => {
-      const mockReservations = [
-        {
-          id: 1,
-          class: "Yoga",
-          date: "2023-06-12",
-          time: "10:00 AM",
-          description: "Clase de Yoga para principiantes",
-          gymImage: "https://via.placeholder.com/150",
-        },
-        {
-          id: 2,
-          class: "Pilates",
-          date: "2023-06-14",
-          time: "12:00 PM",
-          description: "Pilates intermedio",
-          gymImage: "https://via.placeholder.com/150",
-        },
-        {
-          id: 3,
-          class: "Spinning",
-          date: "2023-06-16",
-          time: "6:00 PM",
-          description: "Spinning avanzado",
-          gymImage: "https://via.placeholder.com/150",
-        },
-      ];
-      setReservations(mockReservations);
+      if (user) {
+        try {
+          const data = await apiService.getUserReservations(user.id);
+          setReservations(data.reservas);
+        } catch (error) {
+          console.error("Error fetching reservations:", error);
+        }
+      }
     };
 
     fetchReservations();
-  }, []);
+  }, [user]);
 
-  const cancelReservation = (id: number) => {
-    setReservations((prevReservations) =>
-      prevReservations.filter((reservation) => reservation.id !== id)
-    );
+  const cancelReservation = async (id: string) => {
+    try {
+      await apiService.cancelReservation(id);
+      setReservations((prevReservations) =>
+        prevReservations.filter((reservation) => reservation.id !== id)
+      );
+    } catch (error) {
+      console.error("Error cancelling reservation:", error);
+    }
   };
 
   if (!user || !userType) {
@@ -146,9 +133,7 @@ const UserHome = () => {
             ) : (
               <Button
                 w="full"
-                leftIcon={
-                  <i className="fa fa-calendar" aria-hidden="true"></i>
-                }
+                leftIcon={<i className="fa fa-calendar" aria-hidden="true"></i>}
                 onClick={onOpen}
               >
                 MIS SOLICITUDES DE RESERVA
@@ -202,7 +187,13 @@ const UserHome = () => {
           <ModalBody>
             {reservations.length > 0 ? (
               reservations.map((reservation) => (
-                <Box key={reservation.id} p={4} borderBottom="1px solid gray" display="flex" alignItems="center">
+                <Box
+                  key={reservation.id}
+                  p={4}
+                  borderBottom="1px solid gray"
+                  display="flex"
+                  alignItems="center"
+                >
                   <Image
                     src={reservation.gymImage}
                     alt={reservation.class}
@@ -216,7 +207,10 @@ const UserHome = () => {
                     <Text>Hora: {reservation.time}</Text>
                     <Text>Descripción: {reservation.description}</Text>
                   </Box>
-                  <Button colorScheme="red" onClick={() => cancelReservation(reservation.id)}>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => cancelReservation(reservation.id)}
+                  >
                     Cancelar
                   </Button>
                 </Box>

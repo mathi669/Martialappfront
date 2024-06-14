@@ -108,6 +108,23 @@ const apiService = {
     }
   },
 
+  getUserReservations: async (userId: string) => {
+    try {
+      const response = await apiClient.get(`/reservasUsuario/${userId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  cancelReservation: async (reservaId: string) => {
+    try {
+      const response = await apiClient.delete(`/cancelarReserva/${reservaId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
 
   getClassesByGym: async (gymId: number) => {
     try {
