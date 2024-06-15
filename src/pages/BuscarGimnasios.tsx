@@ -1,4 +1,12 @@
-import { Flex, FormControl, Input, Text, SimpleGrid, Spinner, Select } from "@chakra-ui/react";
+import {
+  Flex,
+  FormControl,
+  Input,
+  Text,
+  SimpleGrid,
+  Spinner,
+  Select,
+} from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import GymBox from "../components/GymBox";
 import apiService from "../services/service.tsx";
@@ -71,7 +79,9 @@ const BuscarGimnasios = () => {
 
   return (
     <Flex direction="column" align="center" w="full" h="full" p={8}>
-      <Text fontSize="3xl" fontWeight="bold" mb={4}>¿dónde quieres entrenar?</Text>
+      <Text fontSize="3xl" fontWeight="bold" mb={4}>
+        ¿dónde quieres entrenar?
+      </Text>
       <FormControl w="full" maxW="600px" mb={8}>
         <Input
           type="text"
@@ -109,7 +119,12 @@ const BuscarGimnasios = () => {
           size="xl"
         />
       ) : (
-        <SimpleGrid columns={{ sm: 1, md: 3 }} spacing={4} w="full" maxW="1200px">
+        <SimpleGrid
+          columns={{ sm: 1, md: 3 }}
+          spacing={4}
+          w="full"
+          maxW="1200px"
+        >
           {filteredGyms.map((gym) => (
             <GymBox
               key={gym.id}

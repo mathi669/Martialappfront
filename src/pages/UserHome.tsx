@@ -17,16 +17,37 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  Skeleton,
 } from "@chakra-ui/react";
-import apiService from "../services/service";
 import { User } from "../interfaces/user_interface";
+import apiService from "../services/service";
 
 const UserHome = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [isLoadingReservas, setIsLoadingReservas] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const fetchReservations = async () => {
+    setIsLoadingReservas(true);
+    if (user) {
+      try {
+        const data = await apiService.getReservationRequests(user.id);
+        setReservations(data);
+      } catch (error) {
+        console.error("Error fetching reservations:", error);
+        setIsLoadingReservas(false);
+      }
+    }
+    setIsLoadingReservas(false);
+  };
+
+  const modal = () => {
+    fetchReservations();
+    onOpen();
+  };
   useEffect(() => {
     const userData = localStorage.getItem("user");
     const userTypeData = localStorage.getItem("userType");
@@ -43,8 +64,8 @@ const UserHome = () => {
     const fetchReservations = async () => {
       if (user) {
         try {
-          const data = await apiService.getUserReservations(user.id);
-          setReservations(data.reservas);
+          const data = await apiService.getReservationRequests(user.id);
+          setReservations(data);
         } catch (error) {
           console.error("Error fetching reservations:", error);
         }
@@ -55,6 +76,7 @@ const UserHome = () => {
   }, [user]);
 
   const cancelReservation = async (id: string) => {
+    setCancelLoading(true);
     try {
       await apiService.cancelReservation(id);
       setReservations((prevReservations) =>
@@ -63,6 +85,8 @@ const UserHome = () => {
     } catch (error) {
       console.error("Error cancelling reservation:", error);
     }
+    fetchReservations();
+    setCancelLoading(false);
   };
 
   if (!user || !userType) {
@@ -134,7 +158,7 @@ const UserHome = () => {
               <Button
                 w="full"
                 leftIcon={<i className="fa fa-calendar" aria-hidden="true"></i>}
-                onClick={onOpen}
+                onClick={modal}
               >
                 MIS SOLICITUDES DE RESERVA
               </Button>
@@ -195,26 +219,34 @@ const UserHome = () => {
                   alignItems="center"
                 >
                   <Image
-                    src={reservation.gymImage}
-                    alt={reservation.class}
+                    src={reservation.dc_imagen_url}
+                    alt={reservation.dc_nombre_clase}
                     boxSize="100px"
                     borderRadius="md"
                     mr={4}
                   />
                   <Box flex="1">
-                    <Text fontWeight="bold">Clase: {reservation.class}</Text>
-                    <Text>Fecha: {reservation.date}</Text>
-                    <Text>Hora: {reservation.time}</Text>
-                    <Text>Descripción: {reservation.description}</Text>
+                    <Text fontWeight="bold">
+                      Clase: {reservation.dc_nombre_clase}
+                    </Text>
+                    <Text>Fecha: {reservation.df_fecha}</Text>
+                    <Text>Hora: {reservation.df_hora}</Text>
+                    <Text>Descripción: {reservation.dc_nombre_clase}</Text>
                   </Box>
                   <Button
                     colorScheme="red"
-                    onClick={() => cancelReservation(reservation.id)}
+                    onClick={() => cancelReservation(reservation.solicitud_id)}
+                    isLoading={cancelLoading}
                   >
                     Cancelar
                   </Button>
                 </Box>
               ))
+            ) : isLoadingReservas ? (
+              <Skeleton>
+                <div>contents wrapped</div>
+                <div>won't be visible</div>
+              </Skeleton>
             ) : (
               <Text>No tienes reservas aún.</Text>
             )}

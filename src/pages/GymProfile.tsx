@@ -19,8 +19,12 @@ import {
   ModalBody,
   ModalFooter,
   useToast,
+  FormControl,
+  FormLabel,
+  Textarea,
+  Input,
 } from "@chakra-ui/react";
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaStar } from "react-icons/fa";
 import apiService from "../services/service";
 import ClassBox from "../components/ClassBox";
 import MapContainer from "../components/Maps";
@@ -32,10 +36,17 @@ const GymProfile = () => {
   const [loadingClasses, setLoadingClasses] = useState(true);
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingReserva, setLoadingReserva] = useState(false);
+  const [loadingComentario, setLoadingComentario] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<any>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [newRating, setNewRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [starSelected, setStarSelected] = useState(false);
 
   const toast = useToast();
 
@@ -68,12 +79,23 @@ const GymProfile = () => {
       }
     };
 
+    const fetchComments = async () => {
+      try {
+        const data = await apiService.getGymComments(gym_id);
+        setComments(data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
     fetchGym();
     fetchClasses();
+    fetchComments();
   }, [gym_id]);
 
   const handleReserve = async () => {
-    if (!selectedClass || !selectedTime) {
+    setLoadingReserva(true);
+    if (!selectedClass) {
       toast({
         title: "Error",
         description: "Debe seleccionar una clase y un horario",
@@ -84,13 +106,17 @@ const GymProfile = () => {
       return;
     }
 
+    const horaInicio = selectedClass.dc_horario.split(" - ")[0];
+
     const payload = {
       clase_id: selectedClass.id,
-      gimnasio_id: gym[0],  // El ID del gimnasio
-      usuario_id: user?.id, // ID del usuario autenticado
-      fecha: selectedClass.df_fecha, // Usamos la fecha de la clase
-      hora: selectedTime, // Usamos la hora seleccionada
+      gimnasio_id: gym[0],
+      usuario_id: user?.id,
+      fecha: selectedClass.df_fecha,
+      hora: horaInicio,
     };
+
+    console.log("Payload:", payload);
 
     try {
       await apiService.reservarClase(payload);
@@ -110,13 +136,80 @@ const GymProfile = () => {
         duration: 3000,
         isClosable: true,
       });
+      setLoadingReserva(false);
     }
+    setLoadingReserva(false);
   };
 
   const handleReserveClick = (clase: any) => {
     setSelectedClass(clase);
     setSelectedTime(clase.dc_horario.split(' - ')[0]); // Seleccionamos la primera hora por defecto
     onOpen();
+  };
+
+  const handleAddComment = async () => {
+    setLoadingComentario(true);
+    if (!newComment || newRating === 0) {
+      toast({
+        title: "Error",
+        description: "Debe ingresar un comentario y una calificación",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      const response = await apiService.addGymComment(
+        Number(gym_id),
+        user?.id,
+        newComment,
+        newRating
+      );
+      if (response.status === 201) {
+        toast({
+          title: "Comentario agregado",
+          description: "Su comentario ha sido agregado con éxito",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setNewComment("");
+        setNewRating(0);
+        setStarSelected(false);
+        const data = await apiService.getGymComments(Number(gym_id));
+        setComments(data);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    setLoadingComentario(false);
+  };
+
+  const handleStarClick = (rating: number) => {
+    setNewRating(rating);
+    setStarSelected(true);
+  };
+
+  const handleStarHover = (rating: number) => {
+    if (!starSelected) {
+      setHoverRating(rating);
+    }
+  };
+
+  const handleStarLeave = () => {
+    if (!starSelected) {
+      setHoverRating(0);
+    }
   };
 
   if (loading || loadingClasses) {
@@ -153,7 +246,7 @@ const GymProfile = () => {
             <Text fontWeight="bold" mb={2}>
               Ubicación del Gimnasio
             </Text>
-            <MapContainer />
+            <MapContainer gymAddress={gym[4]} />
           </Box>
         </GridItem>
         <GridItem colSpan={{ base: 1, md: 3 }}>
@@ -174,7 +267,6 @@ const GymProfile = () => {
           </Box>
         </GridItem>
       </SimpleGrid>
-
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -200,7 +292,11 @@ const GymProfile = () => {
             </Box>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleReserve}>
+            <Button
+              colorScheme="blue"
+              isLoading={loadingReserva}
+              onClick={handleReserve}
+            >
               Reservar
             </Button>
             <Button variant="ghost" onClick={onClose}>
@@ -209,6 +305,71 @@ const GymProfile = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <Box mt={8}>
+        <VStack align="start" spacing={4}>
+          <Text fontWeight="bold" fontSize="xl">
+            Comentarios y Calificaciones
+          </Text>
+          {comments.comments.map((comment, index) => (
+            <Box key={index} borderWidth="1px" p={4} borderRadius="md">
+              <HStack>
+                <Avatar size="sm" name={comment.user} />
+                <VStack align="start">
+                  <HStack>
+                    <Text fontWeight="bold">{comment.user}</Text>
+                    <Text fontSize="sm" color="gray.500">
+                      {comment.date}
+                    </Text>
+                  </HStack>
+                  <HStack>
+                    {[...Array(comment.rating)].map((_, i) => (
+                      <FaStar key={i} color="yellow.400" />
+                    ))}
+                    {[...Array(5 - comment.rating)].map((_, i) => (
+                      <FaStar key={i} color="gray.300" />
+                    ))}
+                  </HStack>
+                </VStack>
+              </HStack>
+              <Text mt={2}>{comment.comment}</Text>
+            </Box>
+          ))}
+          <FormControl id="comment" isRequired>
+            <FormLabel>Nuevo Comentario</FormLabel>
+            <Textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Ingrese su comentario..."
+            />
+          </FormControl>
+          <FormControl id="rating" isRequired>
+            <FormLabel>Calificación</FormLabel>
+            <HStack spacing={1}>
+              {[1, 2, 3, 4, 5].map((rating) => (
+                <FaStar
+                  key={rating}
+                  color={
+                    (hoverRating || newRating) >= rating
+                      ? "yellow.400"
+                      : "gray.300"
+                  }
+                  onMouseEnter={() => handleStarHover(rating)}
+                  onMouseLeave={handleStarLeave}
+                  onClick={() => handleStarClick(rating)}
+                />
+              ))}
+            </HStack>
+          </FormControl>
+          <Button
+            colorScheme="blue"
+            onClick={handleAddComment}
+            isLoading={loadingComentario}
+          >
+            Agregar Comentario
+          </Button>
+        </VStack>
+      </Box>
     </Box>
   );
 };
