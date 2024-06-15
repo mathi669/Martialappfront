@@ -4,8 +4,10 @@ import axios, { AxiosResponse } from "axios";
 
 // Configuración base de Axios
 const apiClient = axios.create({
-  baseURL: "https://martialapps-zfk3rshyeq-uc.a.run.app", // Cambia esta URL según sea necesario
-  // baseURL: "http://127.0.0.1:5000", // Cambia esta URL según sea necesario
+  // baseURL: "https://martialapps-zfk3rshyeq-uc.a.run.app",
+  // Cambia esta URL según sea necesario
+  baseURL: "http://127.0.0.1:8080",
+  // Cambia esta URL según sea necesario
   headers: {
     "Content-Type": "application/json",
   },
@@ -84,10 +86,10 @@ const apiService = {
 
   searchGyms: async (query: string) => {
     try {
-        const response = await apiClient.get(`/gyms?query=${query}`);
-        return handleResponse(response);
+      const response = await apiClient.get(`/gyms?query=${query}`);
+      return handleResponse(response);
     } catch (error) {
-        handleError(error);
+      handleError(error);
     }
   },
 
@@ -212,6 +214,65 @@ const apiService = {
   deleteClass: async (classId: any) => {
     try {
       const response = await apiClient.post(`/delete_class/${classId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getReservationRequests: async (userId: any) => {
+    try {
+      const response = await apiClient.get("/user/reservation-requests", {
+        params: { tb_usuario_id: userId },
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Obtener comentarios de un gimnasio
+  getGymComments: async (gymId: any) => {
+    try {
+      const response = await apiClient.get(`/comments/gym/${gymId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Agregar comentario a un gimnasio
+  addGymComment: async (gymId: any, userId: any, comment: any, rating: any) => {
+    try {
+      const response = await apiClient.post(`/comments/gym/${gymId}`, {
+        user_id: userId,
+        comment,
+        rating,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Obtener comentarios de una clase
+  getClassComments: async (classId: any) => {
+    try {
+      const response = await apiClient.get(`/comments/class/${classId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Agregar comentario a una clase
+  addClassComment: async (classId: any, userId: any, comment: any, rating: any) => {
+    try {
+      const response = await apiClient.post(`/comments/class/${classId}`, {
+        user_id: userId,
+        comment,
+        rating,
+      });
       return handleResponse(response);
     } catch (error) {
       handleError(error);
