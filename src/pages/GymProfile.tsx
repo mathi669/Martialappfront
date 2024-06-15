@@ -1,4 +1,3 @@
-// src/pages/GymProfile.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -35,6 +34,7 @@ const GymProfile = () => {
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<any>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
   const toast = useToast();
@@ -73,10 +73,10 @@ const GymProfile = () => {
   }, [gym_id]);
 
   const handleReserve = async () => {
-    if (!selectedClass) {
+    if (!selectedClass || !selectedTime) {
       toast({
         title: "Error",
-        description: "Debe seleccionar una clase",
+        description: "Debe seleccionar una clase y un horario",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -84,18 +84,13 @@ const GymProfile = () => {
       return;
     }
 
-    const horaInicio = selectedClass.dc_horario.split(' - ')[0];
     const payload = {
       clase_id: selectedClass.id,
       gimnasio_id: gym[0],  // El ID del gimnasio
       usuario_id: user?.id, // ID del usuario autenticado
       fecha: selectedClass.df_fecha, // Usamos la fecha de la clase
-      hora: horaInicio, // Usamos la hora de la clase
+      hora: selectedTime, // Usamos la hora seleccionada
     };
-
-
-  
-    console.log("Payload:", payload);
 
     try {
       await apiService.reservarClase(payload);
@@ -120,6 +115,7 @@ const GymProfile = () => {
 
   const handleReserveClick = (clase: any) => {
     setSelectedClass(clase);
+    setSelectedTime(clase.dc_horario.split(' - ')[0]); // Seleccionamos la primera hora por defecto
     onOpen();
   };
 
@@ -188,6 +184,20 @@ const GymProfile = () => {
             <Text>Clase: {selectedClass?.dc_nombre_clase}</Text>
             <Text>Fecha: {selectedClass?.df_fecha}</Text>
             <Text>Hora: {selectedClass?.dc_horario}</Text>
+            <Box mt={4}>
+              <Text fontWeight="bold">Seleccionar Horario:</Text>
+              <HStack mt={2}>
+                {selectedClass?.dc_horario.split(' - ').map((time: string) => (
+                  <Button
+                    key={time}
+                    onClick={() => setSelectedTime(time)}
+                    colorScheme={selectedTime === time ? "blue" : "gray"}
+                  >
+                    {time}
+                  </Button>
+                ))}
+              </HStack>
+            </Box>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" onClick={handleReserve}>

@@ -20,11 +20,11 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FaSignOutAlt, FaSave, FaKey } from "react-icons/fa";
-// import { User } from "../interfaces/user_interface";
+import { User } from "../interfaces/user_interface";
 
 const EditarPerfil: React.FC = () => {
-  // const [user, setUser] = useState<User | null>(null);
-  // const [userType, setUserType] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   // const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -36,15 +36,15 @@ const EditarPerfil: React.FC = () => {
   };
 
   useEffect(() => {
-    // const userData = localStorage.getItem("user");
-    // const userTypeData = localStorage.getItem("userType");
+    const userData = localStorage.getItem("user");
+    const userTypeData = localStorage.getItem("userType");
 
-    // if (userData) {
-    //   setUser(JSON.parse(userData));
-    // }
-    // if (userTypeData) {
-    //   setUserType(userTypeData);
-    // }
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+    if (userTypeData) {
+      setUserType(userTypeData);
+    }
   }, []);
 
   return (
@@ -69,7 +69,9 @@ const EditarPerfil: React.FC = () => {
         <Text fontSize="2xl" fontWeight="bold">
           John Doe
         </Text>
-        <Text color="gray.500" mb={4}>john@example.com</Text>
+        <Text color="gray.500" mb={4}>
+          john@example.com
+        </Text>
 
         <form>
           <Text fontSize="lg" fontWeight="bold" mb={2}>
@@ -118,45 +120,57 @@ const EditarPerfil: React.FC = () => {
             <Input type="file" />
           </FormControl>
 
-          <Button colorScheme="blue" leftIcon={<FaKey />} onClick={onOpen} mb={6}>
+          <Button
+            colorScheme="blue"
+            leftIcon={<FaKey />}
+            onClick={onOpen}
+            mb={6}
+          >
             Cambiar Contraseña
           </Button>
 
-          <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
-            Información del Gimnasio
-          </Text>
-          <FormControl mb={4}>
-            <FormLabel>Nivel/Grado</FormLabel>
-            <Select placeholder="Seleccione nivel">
-              <option value="blanco">Cinturón Blanco</option>
-              <option value="azul">Cinturón Azul</option>
-              <option value="negro">Cinturón Negro</option>
-            </Select>
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Estilo de Artes Marciales</FormLabel>
-            <Input type="text" placeholder="Estilo de Artes Marciales" />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Gimnasio</FormLabel>
-            <Input type="text" placeholder="Nombre del gimnasio" />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Fecha de Ingreso al Gimnasio</FormLabel>
-            <Input type="date" />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Horas de Entrenamiento Semanales</FormLabel>
-            <Input type="number" placeholder="Horas de Entrenamiento Semanales" />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Clases Registradas</FormLabel>
-            <Input type="text" placeholder="Clases Registradas" />
-          </FormControl>
-          <FormControl mb={4}>
-            <FormLabel>Próximos Eventos/Competencias</FormLabel>
-            <Textarea placeholder="Próximos Eventos/Competencias" />
-          </FormControl>
+          {userType === "Gimnasio" && (
+            <>
+              <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
+                Información del Gimnasio
+              </Text>
+              <FormControl mb={4}>
+                <FormLabel>Nivel/Grado</FormLabel>
+                <Select placeholder="Seleccione nivel">
+                  <option value="blanco">Cinturón Blanco</option>
+                  <option value="azul">Cinturón Azul</option>
+                  <option value="negro">Cinturón Negro</option>
+                </Select>
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Estilo de Artes Marciales</FormLabel>
+                <Input type="text" placeholder="Estilo de Artes Marciales" />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Nombre del Gimnasio</FormLabel>
+                <Input type="text" placeholder="Nombre del gimnasio" />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Fecha de Ingreso al Gimnasio</FormLabel>
+                <Input type="date" />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Horas de Entrenamiento Semanales</FormLabel>
+                <Input
+                  type="number"
+                  placeholder="Horas de Entrenamiento Semanales"
+                />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Clases Registradas</FormLabel>
+                <Input type="text" placeholder="Clases Registradas" />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Próximos Eventos/Competencias</FormLabel>
+                <Textarea placeholder="Próximos Eventos/Competencias" />
+              </FormControl>
+            </>
+          )}
 
           <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
             Información de Contacto de Emergencia
