@@ -60,6 +60,7 @@ const Register: React.FC = () => {
     setError(""); // Clear error message before trying to register
 
     try {
+      console.log("Datos del formulario:", formData);
       if (userType === "Usuario") {
         const newData = {
           ...formData,
@@ -277,6 +278,15 @@ const Register: React.FC = () => {
                         type="text"
                         placeholder="Teléfono del Gimnasio"
                         value={formData.telefonoGimnasio || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
+                    <FormControl id="horario" mb={4} isRequired> {/* Nuevo campo */}
+                      <FormLabel>Horario del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Horario del Gimnasio"
+                        value={formData.horario || ""}
                         onChange={handleInputChange}
                       />
                     </FormControl>

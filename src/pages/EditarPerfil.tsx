@@ -65,12 +65,12 @@ const EditarPerfil: React.FC = () => {
         p={6}
         textAlign="center"
       >
-        <Avatar size="2xl" src="/path-to-your-image.jpg" mb={4} />
+        <Avatar size="2xl" src={user?.dc_correo_electronico} mb={4} />
         <Text fontSize="2xl" fontWeight="bold">
-          John Doe
+          {user?.dc_nombre}
         </Text>
         <Text color="gray.500" mb={4}>
-          john@example.com
+          {user?.dc_correo_electronico}
         </Text>
 
         <form>
@@ -80,11 +80,11 @@ const EditarPerfil: React.FC = () => {
           <Flex mt={6} mb={4} justify="space-between" gap={6}>
             <FormControl>
               <FormLabel>Nombre</FormLabel>
-              <Input type="text" defaultValue="" />
+              <Input type="text" placeholder="Nombre" />
             </FormControl>
             <FormControl>
               <FormLabel>Apellido</FormLabel>
-              <Input type="text" defaultValue="Doe" />
+              <Input type="text" placeholder="Apellidovc" />
             </FormControl>
           </Flex>
           <Flex mb={4} justify="space-between" gap={6}>
@@ -129,7 +129,7 @@ const EditarPerfil: React.FC = () => {
             Cambiar Contraseña
           </Button>
 
-          {userType === "Gimnasio" && (
+          {user && userType === "gimnasio" ? (
             <>
               <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
                 Información del Gimnasio
@@ -170,7 +170,7 @@ const EditarPerfil: React.FC = () => {
                 <Textarea placeholder="Próximos Eventos/Competencias" />
               </FormControl>
             </>
-          )}
+          ) : null}
 
           <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
             Información de Contacto de Emergencia
