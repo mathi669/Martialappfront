@@ -40,12 +40,15 @@ const GymProfile = () => {
   const [loadingComentario, setLoadingComentario] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedClass, setSelectedClass] = useState<any>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [newRating, setNewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [starSelected, setStarSelected] = useState(false);
+  const [gymStatus, setGymStatus] = useState<string>("");
 
   const toast = useToast();
 
@@ -87,17 +90,27 @@ const GymProfile = () => {
       }
     };
 
+    const fetchGymStatus = async () => {
+      try {
+        const data = await apiService.getGymStatus(Number(gym_id));
+        setGymStatus(data.status);
+      } catch (error) {
+        console.error("Error fetching gym status:", error);
+      }
+    };
+
     fetchGym();
     fetchClasses();
     fetchComments();
+    fetchGymStatus();
   }, [gym_id]);
 
   const handleReserve = async () => {
     setLoadingReserva(true);
-    if (!selectedClass) {
+    if (!selectedClass || !selectedDate) {
       toast({
         title: "Error",
-        description: "Debe seleccionar una clase",
+        description: "Debe seleccionar una clase, una fecha y un horario",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -111,7 +124,7 @@ const GymProfile = () => {
       clase_id: selectedClass.id,
       gimnasio_id: gym[0],
       usuario_id: user?.id,
-      fecha: selectedClass.df_fecha,
+      fecha: selectedDate,
       hora: horaInicio,
     };
 
@@ -142,6 +155,7 @@ const GymProfile = () => {
 
   const handleReserveClick = (clase: any) => {
     setSelectedClass(clase);
+    setSelectedTime(clase.dc_horario.split(' - ')[0]); // Seleccionamos la primera hora por defecto
     onOpen();
   };
 
@@ -181,7 +195,7 @@ const GymProfile = () => {
       } else {
         throw new Error(response.data.message);
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
@@ -236,6 +250,9 @@ const GymProfile = () => {
               <Text>
                 Fecha de ingreso: {new Date(gym[6]).toLocaleDateString()}
               </Text>
+              <Text color={gymStatus === "abierto" ? "green" : "red"}>
+                Estado: {gymStatus === "abierto" ? "Abierto" : "Cerrado"}
+              </Text>
             </VStack>
           </HStack>
         </GridItem>
@@ -274,6 +291,26 @@ const GymProfile = () => {
             <Text>Clase: {selectedClass?.dc_nombre_clase}</Text>
             <Text>Fecha: {selectedClass?.df_fecha}</Text>
             <Text>Hora: {selectedClass?.dc_horario}</Text>
+            <Box mt={4}>
+              <Text fontWeight="bold">Seleccionar Fecha:</Text>
+              <Input
+                type="date"
+                value={selectedDate || ""}
+                onChange={(e) => setSelectedDate(e.target.value)}
+              />
+              <Text fontWeight="bold" mt={4}>Seleccionar Horario:</Text>
+              <HStack mt={2}>
+                {selectedClass?.dc_horario.split(' - ').map((time: string) => (
+                  <Button
+                    key={time}
+                    onClick={() => setSelectedTime(time)}
+                    colorScheme={selectedTime === time ? "blue" : "gray"}
+                  >
+                    {time}
+                  </Button>
+                ))}
+              </HStack>
+            </Box>
           </ModalBody>
           <ModalFooter>
             <Button
@@ -295,7 +332,7 @@ const GymProfile = () => {
           <Text fontWeight="bold" fontSize="xl">
             Comentarios y Calificaciones
           </Text>
-          {comments.comments.map((comment, index) => (
+          {comments.comments.map((comment: any, index: number) => (
             <Box key={index} borderWidth="1px" p={4} borderRadius="md">
               <HStack>
                 <Avatar size="sm" name={comment.user} />

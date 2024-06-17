@@ -55,6 +55,23 @@ const apiService = {
       handleError(error);
     }
   },
+  searchUser: async (query: any) => {
+    try {
+      const response = await apiClient.get(`/search_users`, { params: { query } });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getUserById: async (userId: any) => {
+    try {
+      const response = await apiClient.get(`/get_user/${userId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
 
   // Inicio de sesión de usuario
   loginUser: async (
@@ -172,6 +189,15 @@ const apiService = {
   registerGym: async (formData: any) => {
     try {
       const response = await apiClient.post("/registerGym", formData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getGymStatus: async (gymId: any) => {
+    try {
+      const response = await apiClient.get(`/gym/${gymId}/status`);
       return handleResponse(response);
     } catch (error) {
       handleError(error);
