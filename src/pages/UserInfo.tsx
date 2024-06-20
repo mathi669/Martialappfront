@@ -1,6 +1,5 @@
-// UserSearchResults.tsx
 import { SetStateAction, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -18,6 +17,7 @@ import { User } from "../interfaces/user_interface";
 
 const UserSearchResults: React.FC = () => {
   const { query } = useParams<{ query: string }>();
+  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -36,6 +36,10 @@ const UserSearchResults: React.FC = () => {
         });
     }
   }, [query]);
+
+  const handleViewProfile = (userId: number) => {
+    navigate(`/user/${userId}`);
+  };
 
   return (
     <Flex
@@ -87,7 +91,7 @@ const UserSearchResults: React.FC = () => {
                     <Icon as={FaPhone} /> {user[3]}
                   </Text>
                 </VStack>
-                <Button>ver perfil</Button>
+                <Button onClick={() => handleViewProfile(user[0])}>ver perfil</Button>
               </HStack>
             </Box>
           ))
