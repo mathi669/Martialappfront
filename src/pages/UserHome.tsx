@@ -106,7 +106,7 @@ const UserHome = () => {
           </Button>
           <Box textAlign="center" mb={6}>
             <Image
-              src="./src/static/img/user.png"
+              src={user.dc_nombre}
               alt="User"
               borderRadius="full"
               boxSize="100px"

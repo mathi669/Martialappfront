@@ -55,7 +55,7 @@ const apiService = {
       handleError(error);
     }
   },
-  searchUser: async (query: any) => {
+  searchUser: async (query: string) => {
     try {
       const response = await apiClient.get(`/search_users`, { params: { query } });
       return handleResponse(response);
@@ -119,6 +119,16 @@ const apiService = {
       handleError(error);
     }
   },
+
+  updateGym: async (dataToUpdate: any) => {
+    try {
+      const response = await apiClient.put(`/updateGym/${dataToUpdate.id}`, dataToUpdate);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   reservarClase: async (data: any) => {
     try {
       const response = await apiClient.post("/reservarClase", data);
@@ -127,6 +137,7 @@ const apiService = {
       handleError(error);
     }
   },
+  
 
   getUserReservations: async (userId: string) => {
     try {
@@ -239,7 +250,7 @@ const apiService = {
   },
   deleteClass: async (classId: any) => {
     try {
-      const response = await apiClient.post(`/delete_class/${classId}`);
+      const response = await apiClient.delete(`/delete_class/${classId}`);
       return handleResponse(response);
     } catch (error) {
       handleError(error);
@@ -304,6 +315,23 @@ const apiService = {
       handleError(error);
     }
   },
+  recommendGym: async (gymId: any, userId: any) => {
+    try {
+      const response = await apiClient.post('/recommendations', { gymId, userId });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getRecommendationCount: async (gymId: any) => {
+    try {
+      const response = await apiClient.get(`/recommendations/count/${gymId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  }
 };
 
 export default apiService;

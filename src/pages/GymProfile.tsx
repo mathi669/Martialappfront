@@ -48,6 +48,7 @@ const GymProfile = () => {
   const [newRating, setNewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [starSelected, setStarSelected] = useState(false);
+  const [recommendationCount, setRecommendationCount] = useState<number>(0);
   const [gymStatus, setGymStatus] = useState<string>("");
 
   const toast = useToast();
@@ -99,10 +100,20 @@ const GymProfile = () => {
       }
     };
 
+    const fetchRecommendationCount = async () => {
+      try {
+        const data = await apiService.getRecommendationCount(gym_id);
+        setRecommendationCount(data.recommendation_count);
+      } catch (error) {
+        console.error('Error fetching recommendation count:', error);
+      }
+    };
+
     fetchGym();
     fetchClasses();
     fetchComments();
     fetchGymStatus();
+    fetchRecommendationCount();
   }, [gym_id]);
 
   const handleReserve = async () => {
@@ -224,6 +235,29 @@ const GymProfile = () => {
     }
   };
 
+  const handleRecommend = async () => {
+    try {
+      await apiService.recommendGym(gym_id, user?.id);
+      toast({
+        title: 'Recomendación exitosa',
+        description: 'Has recomendado este gimnasio exitosamente',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      const updatedCount = await apiService.getRecommendationCount(gym_id);
+      setRecommendationCount(updatedCount.recommendation_count);
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Hubo un problema al recomendar el gimnasio',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   if (loading || loadingClasses) {
     return <Spinner size="xl" />;
   }
@@ -249,6 +283,12 @@ const GymProfile = () => {
               <Text>Teléfono: {gym[3]}</Text>
               <Text>
                 Fecha de ingreso: {new Date(gym[6]).toLocaleDateString()}
+              </Text>
+              <Button colorScheme="teal" onClick={handleRecommend}>
+                Recomendar
+              </Button>
+              <Text>
+                {recommendationCount} usuarios recomiendan este gym 
               </Text>
               <Text color={gymStatus === "abierto" ? "green" : "red"}>
                 Estado: {gymStatus === "abierto" ? "Abierto" : "Cerrado"}

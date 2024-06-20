@@ -10,7 +10,8 @@ import {
   Text,
   useBreakpointValue,
   useDisclosure,
-  Input
+  Input,
+  Spinner
 } from "@chakra-ui/react";
 import {
   FaBars,
@@ -33,6 +34,7 @@ function NavbarMartial() {
   const [user, setUser] = useState<User | null>(null);
   const [userType, setUserType] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,13 +64,16 @@ function NavbarMartial() {
 
   
   const handleSearch = async () => {
+    setLoading(true);
     try {
       const result = await apiService.searchUser(searchQuery);
+      setLoading(false);
       if (result && result.length > 0) {
-        navigate(`/profiles/${result[0][0]}`); // Navega al perfil del primer usuario encontrado
+        navigate(`/UserResults/${searchQuery}`);
       } else {
         alert("Usuario no encontrado");
       }
+      setSearchQuery("");
     } catch (error) {
       console.error("Error en la búsqueda de usuario:", error);
       alert("Error en la búsqueda");

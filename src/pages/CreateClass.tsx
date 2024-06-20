@@ -38,6 +38,7 @@ const CreateClass = () => {
     cupos_disponibles: "",
     fecha: "",
     descripcion: "",
+    dc_imagen_url: "",
     gimnasio_id: 1,
     categoria_id: 1,
     clase_estado_id: 1,
@@ -97,11 +98,14 @@ const CreateClass = () => {
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    const { horaInicio, horaFin, ...rest } = formData;
-    const horario = `${horaInicio} - ${horaFin}`;
-    const hora = horaInicio;
-    const newData = { ...rest, horario, hora };
     try {
+      
+      // Crear la clase con la URL de la imagen
+      const { horaInicio, horaFin, ...rest } = formData;
+      const horario = `${horaInicio} - ${horaFin}`;
+      const hora = horaInicio;
+      const newData = { ...rest, horario, hora };
+
       const response = await apiService.createClass(newData);
       setMessage(response.message);
       onClose();
@@ -115,7 +119,9 @@ const CreateClass = () => {
     try {
       await apiService.deleteClass(classId);
       fetchClasses(formData.gimnasio_id);
-    } catch (error) {}
+    } catch (error: any) {
+      setMessage(error.response?.data?.error || "Error deleting class");
+    }
   };
 
   const handleEdit = (classData: ClassData) => {
@@ -156,16 +162,16 @@ const CreateClass = () => {
       </Flex>
 
       <Box p={5}>
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Nombre</Th>
-              <Th>Horario</Th>
-              <Th>Fecha</Th>
-              <Th>Acciones</Th>
-            </Tr>
-          </Thead>
-          {classes.length > 0 ? (
+        {classes.length > 0 ? (
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Nombre</Th>
+                <Th>Horario</Th>
+                <Th>Fecha</Th>
+                <Th>Acciones</Th>
+              </Tr>
+            </Thead>
             <Tbody>
               {isLoading ? (
                 <Center w="full" h="200px">
@@ -191,10 +197,10 @@ const CreateClass = () => {
                 ))
               )}
             </Tbody>
-          ) : (
-            <Text>Aún no existen clases, crea la primera</Text>
-          )}
-        </Table>
+          </Table>
+        ) : (
+          <Text>Aún no existen clases, crea la primera</Text>
+        )}
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
