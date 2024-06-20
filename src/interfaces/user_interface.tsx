@@ -1,4 +1,5 @@
 export interface User {
+    dc_genero: string;
     dc_nombre: string;
     dc_correo_electronico: string;
     dc_telefono: string;

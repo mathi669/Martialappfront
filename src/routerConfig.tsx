@@ -13,6 +13,7 @@ import {
   BuscarGimnasios,
   Profiles,
   UserSearchResults,
+  UserProfile, // Asegúrate de importar UserProfile aquí
 } from "./pages";
 import SolicitudesRegistro from "./pages/SolicitudesRegistros";
 
@@ -80,5 +81,9 @@ export const routes = [
   {
     path: "/UserResults/:query",
     element: <UserSearchResults />,
+  },
+  {
+    path: "/user/:userId", // Nueva ruta para UserProfile
+    element: <UserProfile />,
   },
 ];
