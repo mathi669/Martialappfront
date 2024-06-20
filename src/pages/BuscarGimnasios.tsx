@@ -8,6 +8,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import GymBox from "../components/GymBox";
 import apiService from "../services/service.tsx";
 
@@ -16,6 +17,7 @@ const BuscarGimnasios = () => {
   const [gyms, setGyms] = useState<any[]>([]);
   const [filteredGyms, setFilteredGyms] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [favorites, setFavorites] = useState<number[]>([]);
 
   useEffect(() => {
     fetchAllGyms();
@@ -45,6 +47,14 @@ const BuscarGimnasios = () => {
         console.error("Error searching gyms:", error);
       }
     }
+  };
+
+  const toggleFavorite = (gymId: number) => {
+    setFavorites((prevFavorites) =>
+      prevFavorites.includes(gymId)
+        ? prevFavorites.filter((id) => id !== gymId)
+        : [...prevFavorites, gymId]
+    );
   };
 
   // const handleSearch = () => {
@@ -133,6 +143,8 @@ const BuscarGimnasios = () => {
               gymName={gym.nombre}
               gymAddress={gym.ubicacion}
               gymId={gym.id}
+              isFavorite={favorites.includes(gym.id)}
+              onToggleFavorite={() => toggleFavorite(gym.id)}
             />
           ))}
         </SimpleGrid>
