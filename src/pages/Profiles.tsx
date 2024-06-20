@@ -63,14 +63,14 @@ const Profile: React.FC = () => {
         <Text fontSize="3xl" fontWeight="bold" mb={6}>
           Perfil de usuario
         </Text>
-        <Avatar size="2xl" src="/path-to-your-image.jpg" mb={4} />
+        <Avatar size="2xl" src={user?.dc_imagen_url} mb={4} />
         <Text fontSize="2xl" fontWeight="bold">
           {user?.dc_nombre}
         </Text>
         <Text color="gray.500" mb={4}>{user?.dc_correo_electronico}</Text>
 
         <Divider mb={4} />
-
+        
         <Box textAlign="left" mb={6}>
           <Text fontSize="lg" fontWeight="bold" mb={2}>
             Información Personal
@@ -83,11 +83,11 @@ const Profile: React.FC = () => {
               </HStack>
               <HStack>
                 <Icon as={FaHome} />
-                <Text>Dirección: 123 Calle Falsa, Ciudad, País</Text>
+                <Text>Dirección: {user?.dc_ubicacion}</Text>
               </HStack>
               <HStack>
                 <Icon as={FaBirthdayCake} />
-                <Text>Fecha de Nacimiento: 01/01/1990</Text>
+                <Text>Fecha de ingreso: {user?.df_fecha_ingreso}</Text>
               </HStack>
               <HStack>
                 <Icon as={FaUser} />
