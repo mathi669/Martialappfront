@@ -28,7 +28,13 @@ const UserHome = () => {
   const [isLoadingReservas, setIsLoadingReservas] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
+  const [favorites, setFavorites] = useState<any[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isFavOpen,
+    onOpen: onFavOpen,
+    onClose: onFavClose,
+  } = useDisclosure();
 
   const fetchReservations = async () => {
     setIsLoadingReservas(true);
@@ -44,10 +50,21 @@ const UserHome = () => {
     setIsLoadingReservas(false);
   };
 
+  const fetchFavorites = () => {
+    const favoritesData = JSON.parse(localStorage.getItem("favorites") || "[]");
+    setFavorites(favoritesData);
+  };
+
   const modal = () => {
     fetchReservations();
     onOpen();
   };
+
+  const favModal = () => {
+    fetchFavorites();
+    onFavOpen();
+  };
+
   useEffect(() => {
     const userData = localStorage.getItem("user");
     const userTypeData = localStorage.getItem("userType");
@@ -155,13 +172,26 @@ const UserHome = () => {
                 </Button>
               </Link>
             ) : (
-              <Button
-                w="full"
-                leftIcon={<i className="fa fa-calendar" aria-hidden="true"></i>}
-                onClick={modal}
-              >
-                MIS SOLICITUDES DE RESERVA
-              </Button>
+              <>
+                <Button
+                  w="full"
+                  leftIcon={
+                    <i className="fa fa-calendar" aria-hidden="true"></i>
+                  }
+                  onClick={modal}
+                >
+                  MIS SOLICITUDES DE RESERVA
+                </Button>
+                <Button
+                  w="full"
+                  leftIcon={
+                    <i className="fa fa-heart" aria-hidden="true"></i>
+                  }
+                  onClick={favModal}
+                >
+                  MIS GIMNASIOS FAVORITOS
+                </Button>
+              </>
             )}
           </Stack>
         </Box>
@@ -253,6 +283,46 @@ const UserHome = () => {
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" onClick={onClose}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isFavOpen} onClose={onFavClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Mis Gimnasios Favoritos</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {favorites.length > 0 ? (
+              favorites.map((gym) => (
+                <Box
+                  key={gym.id}
+                  p={4}
+                  borderBottom="1px solid gray"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <Image
+                    src={gym.imagen_url}
+                    alt={gym.nombre}
+                    boxSize="100px"
+                    borderRadius="md"
+                    mr={4}
+                  />
+                  <Box flex="1">
+                    <Text fontWeight="bold">{gym.nombre}</Text>
+                    <Text>Ubicación: {gym.ubicacion}</Text>
+                  </Box>
+                </Box>
+              ))
+            ) : (
+              <Text>No tienes gimnasios favoritos aún.</Text>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={onFavClose}>
               Cerrar
             </Button>
           </ModalFooter>
