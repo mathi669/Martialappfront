@@ -120,7 +120,7 @@ function NavbarMartial() {
                 </Button>
               </Link>
             ) : null}
-            {user ? (
+            {user && userType != "gimnasio" ? (
               <Link to="/buscargimnasio">
                 <Button leftIcon={<FaDumbbell />} variant="link">
                   GIMNASIOS
