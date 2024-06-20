@@ -242,6 +242,15 @@ const apiService = {
     }
   },
 
+  updateClass: async (classId: number, formData: any) => {
+    try {
+      const response = await apiClient.post(`/update_class/${classId}`, formData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   getReservationRequests: async (userId: any) => {
     try {
       const response = await apiClient.get("/user/reservation-requests", {

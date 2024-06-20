@@ -32,23 +32,23 @@ import { ClassData } from "../interfaces/class_data";
 const CreateClass = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [formData, setFormData] = useState({
-    nombre_clase: "",
-    horaInicio: "",
-    horaFin: "",
-    cupos_disponibles: "",
-    fecha: "",
-    descripcion: "",
+    dc_nombre_clase: "",
+    dc_horario: "",
+    nb_cupos_disponibles: "",
+    df_fecha: "",
+    dc_descripcion: "",
     dc_imagen_url: "",
-    gimnasio_id: 1,
-    categoria_id: 1,
-    clase_estado_id: 1,
-    arte_marcial_id: 1,
-    profesor_id: 1,
+    tb_gimnasio_id: 1,
+    id_categoria: 1,
+    tb_clase_estado_id: 1,
+    tb_arte_marcial_id: 1,
+    tb_profesor_id: 1,
   });
   const [message, setMessage] = useState("");
   const [gymImageUrl, setGymImageUrl] = useState("");
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editClassId, setEditClassId] = useState<number | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -100,38 +100,52 @@ const CreateClass = () => {
     e.preventDefault();
     try {
       
-      // Crear la clase con la URL de la imagen
-      const { horaInicio, horaFin, ...rest } = formData;
-      const horario = `${horaInicio} - ${horaFin}`;
-      const hora = horaInicio;
-      const newData = { ...rest, horario, hora };
-
-      const response = await apiService.createClass(newData);
+      const df_hora = formData.dc_horario.split(" - ")[0]
+      const newData = { ...formData, df_hora };
+  
+      let response;
+      if (editClassId) {
+        // Llamar al endpoint de actualización
+        response = await apiService.updateClass(editClassId, newData);
+      } else {
+        // Llamar al endpoint de creación
+        response = await apiService.createClass(newData);
+      }
+  
       setMessage(response.message);
       onClose();
-      fetchClasses(formData.gimnasio_id);
+      fetchClasses(formData.tb_gimnasio_id);
     } catch (error: any) {
-      setMessage(error.response?.data?.error || "Error creating class");
+      setMessage(error.response?.data?.error || "Error creating/updating class");
+    } finally {
+      setEditClassId(null); // Resetear el estado de edición
     }
   };
 
   const handleDelete = async (classId: any) => {
     try {
       await apiService.deleteClass(classId);
-      fetchClasses(formData.gimnasio_id);
+      fetchClasses(formData.tb_gimnasio_id);
     } catch (error: any) {
       setMessage(error.response?.data?.error || "Error deleting class");
     }
   };
 
   const handleEdit = (classData: ClassData) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      nombre_clase: classData.dc_nombre_clase,
-      horaInicio: classData.dc_horario.split(" - ")[0],
-      horaFin: classData.dc_horario.split(" - ")[1],
-      fecha: classData.df_fecha,
-    }));
+    setEditClassId(classData.id);
+    setFormData({
+      dc_nombre_clase: classData.dc_nombre_clase,
+      dc_horario: classData.dc_horario.split(" - ")[0] + " - " + classData.dc_horario.split(" - ")[1],
+      nb_cupos_disponibles: classData.nb_cupos_disponibles,
+      df_fecha: classData.df_fecha,
+      dc_descripcion: classData.dc_descripcion || "",
+      dc_imagen_url: classData.dc_imagen_url || "",
+      tb_gimnasio_id: classData.tb_gimnasio_id,
+      id_categoria: classData.id_categoria,
+      tb_clase_estado_id: classData.tb_clase_estado_id,
+      tb_arte_marcial_id: classData.tb_arte_marcial_id,
+      tb_profesor_id: classData.tb_profesor_id,
+    });
     onOpen();
   };
 
@@ -155,7 +169,23 @@ const CreateClass = () => {
           colorScheme="blue"
           size="lg"
           leftIcon={<Box as="span" className="fa fa-plus" />}
-          onClick={onOpen}
+          onClick={() => {
+            setEditClassId(null); // Resetear el estado de edición
+            setFormData({
+              dc_nombre_clase: "",
+              dc_horario: "",
+              nb_cupos_disponibles: "",
+              df_fecha: "",
+              dc_descripcion: "",
+              dc_imagen_url: "",
+              tb_gimnasio_id: formData.tb_gimnasio_id,
+              id_categoria: 1,
+              tb_clase_estado_id: 1,
+              tb_arte_marcial_id: 1,
+              tb_profesor_id: 1,
+            });
+            onOpen();
+          }}
         >
           Crear Clase
         </Button>
@@ -199,83 +229,85 @@ const CreateClass = () => {
             </Tbody>
           </Table>
         ) : (
-          <Text>Aún no existen clases, crea la primera</Text>
+          <Center w="full" h="200px">
+            <Spinner size="xl" />
+          </Center>
         )}
       </Box>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Crear Nueva Clase</ModalHeader>
+          <ModalHeader>{editClassId ? "Actualizar Clase" : "Crear Nueva Clase"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleSubmit}>
-              <FormControl id="nombre_clase" mb={4}>
+              <FormControl id="dc_nombre_clase" mb={4}>
                 <FormLabel>Nombre de la Clase</FormLabel>
                 <Input
-                  name="nombre_clase"
-                  value={formData.nombre_clase}
+                  name="dc_nombre_clase"
+                  value={formData.dc_nombre_clase}
                   onChange={handleChange}
                   placeholder="Ingrese el nombre de la clase"
                 />
               </FormControl>
-              <FormControl id="horaInicio" mb={4}>
+              <FormControl id="dc_horario" mb={4}>
                 <FormLabel>Hora de Inicio</FormLabel>
                 <Input
                   type="time"
-                  name="horaInicio"
-                  value={formData.horaInicio}
+                  name="dc_horario"
+                  value={formData.dc_horario.split(" - ")[0]}
                   onChange={handleChange}
                 />
               </FormControl>
-              <FormControl id="horaFin" mb={4}>
+              <FormControl id="dc_horario" mb={4}>
                 <FormLabel>Hora de Fin</FormLabel>
                 <Input
                   type="time"
-                  name="horaFin"
-                  value={formData.horaFin}
+                  name="dc_horario"
+                  value={formData.dc_horario.split(" - ")[1]}
                   onChange={handleChange}
                 />
               </FormControl>
-              <FormControl id="cupos_disponibles" mb={4}>
+              <FormControl id="nb_cupos_disponibles" mb={4}>
                 <FormLabel>Cupos Disponibles</FormLabel>
                 <Input
                   type="number"
-                  name="cupos_disponibles"
-                  value={formData.cupos_disponibles}
+                  name="nb_cupos_disponibles"
+                  value={formData.nb_cupos_disponibles}
                   onChange={handleChange}
                   placeholder="Ingrese la cantidad de cupos disponibles"
                 />
               </FormControl>
-              <FormControl id="fecha" mb={4}>
+              <FormControl id="df_fecha" mb={4}>
                 <FormLabel>Fecha</FormLabel>
                 <Input
                   type="date"
-                  name="fecha"
-                  value={formData.fecha}
+                  name="df_fecha"
+                  value={formData.df_fecha}
                   onChange={handleChange}
                 />
               </FormControl>
-              <FormControl id="descripcion" mb={4}>
+              <FormControl id="dc_descripcion" mb={4}>
                 <FormLabel>Descripción</FormLabel>
                 <Input
-                  name="descripcion"
-                  value={formData.descripcion}
+                  name="dc_descripcion"
+                  value={formData.dc_descripcion}
                   onChange={handleChange}
                   placeholder="Ingrese la descripción de la clase"
                 />
               </FormControl>
-              <FormControl id="imagen" mb={4}>
+              <FormControl id="dc_imagen_url" mb={4}>
                 <FormLabel>Imagen</FormLabel>
                 <Input
                   type="file"
-                  name="imagen"
+                  name="dc_imagen_url"
                   accept="image/*"
                   onChange={handleImageChange}
                 />
               </FormControl>
               <Button type="submit" colorScheme="blue" mr={3}>
-                Guardar Clase
+                {editClassId ? "Actualizar Clase" : "Guardar Clase"}
               </Button>
             </form>
           </ModalBody>
