@@ -13,8 +13,9 @@ import {
   BuscarGimnasios,
   Profiles,
   UserSearchResults,
-  UserProfile, // Asegúrate de importar UserProfile aquí
+  UserProfile,
 } from "./pages";
+import ReportManagement from "./pages/ReportManagement";
 import SolicitudesRegistro from "./pages/SolicitudesRegistros";
 
 export const routes = [
@@ -85,5 +86,9 @@ export const routes = [
   {
     path: "/user/:userId", // Nueva ruta para UserProfile
     element: <UserProfile />,
+  },
+  {
+    path: "/admin/reportes",
+    element: <ReportManagement />,
   },
 ];

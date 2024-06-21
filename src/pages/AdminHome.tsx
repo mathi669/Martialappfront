@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Flex, Text } from "@chakra-ui/react";
 import { Useradmin } from "../interfaces/admin_user_interface";
@@ -19,12 +20,6 @@ const AdminHome = () => {
           minWidth="240px"
         >
           {/* Sidebar Content */}
-          {/* <Button colorScheme="blue" mb={2} as={Link} to="/userModule">
-            Módulo de Usuarios
-          </Button>
-          <Button colorScheme="teal" mb={2} as={Link} to="/bookingRequests">
-            Solicitudes de Reserva
-          </Button> */}
           <Button
             colorScheme="green"
             mb={2}
@@ -32,6 +27,9 @@ const AdminHome = () => {
             to="/SolicitudesRegistro"
           >
             Solicitudes de Registro
+          </Button>
+          <Button colorScheme="red" mb={2} as={Link} to="/admin/reportes">
+            Reportes de Usuarios
           </Button>
         </Flex>
         <Flex flexDir="column" flexGrow={1}>

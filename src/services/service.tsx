@@ -50,7 +50,9 @@ const apiService = {
 
   searchUser: async (query: string) => {
     try {
-      const response = await apiClient.get(`/search_users`, { params: { query } });
+      const response = await apiClient.get(`/search_users`, {
+        params: { query },
+      });
       return handleResponse(response);
     } catch (error) {
       handleError(error);
@@ -112,7 +114,10 @@ const apiService = {
 
   updateGym: async (dataToUpdate: any) => {
     try {
-      const response = await apiClient.put(`/updateGym/${dataToUpdate.id}`, dataToUpdate);
+      const response = await apiClient.put(
+        `/updateGym/${dataToUpdate.id}`,
+        dataToUpdate
+      );
       return handleResponse(response);
     } catch (error) {
       handleError(error);
@@ -244,7 +249,10 @@ const apiService = {
 
   updateClass: async (classId: number, formData: any) => {
     try {
-      const response = await apiClient.post(`/update_class/${classId}`, formData);
+      const response = await apiClient.post(
+        `/update_class/${classId}`,
+        formData
+      );
       return handleResponse(response);
     } catch (error) {
       handleError(error);
@@ -293,7 +301,12 @@ const apiService = {
     }
   },
 
-  addClassComment: async (classId: any, userId: any, comment: any, rating: any) => {
+  addClassComment: async (
+    classId: any,
+    userId: any,
+    comment: any,
+    rating: any
+  ) => {
     try {
       const response = await apiClient.post(`/comments/class/${classId}`, {
         user_id: userId,
@@ -308,7 +321,10 @@ const apiService = {
 
   recommendGym: async (gymId: any, userId: any) => {
     try {
-      const response = await apiClient.post('/recommendations', { gymId, userId });
+      const response = await apiClient.post("/recommendations", {
+        gymId,
+        userId,
+      });
       return handleResponse(response);
     } catch (error) {
       handleError(error);
@@ -322,7 +338,61 @@ const apiService = {
     } catch (error) {
       handleError(error);
     }
-  }
+  },
+
+  reportUser: async (
+    userId: any,
+    reporterId: any,
+    reporterType: any,
+    reason: any,
+    details: any
+  ) => {
+    try {
+      const response = await apiClient.post("/reportUser", {
+        user_id: userId,
+        reporter_id: reporterId,
+        reporter_type: reporterType,
+        reason,
+        details,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getPendingReports: async () => {
+    try {
+      const response = await apiClient.get("/pendingReports");
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  acceptReport: async (reportId: any, reporter_id: any) => {
+    try {
+      const response = await apiClient.post(
+        `/acceptReport/${reportId}`,
+        reporter_id
+      );
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  rejectReport: async (reportId: any, reject_reason: any) => {
+    try {
+      const response = await apiClient.post(`/rejectReport/${reportId}`, {
+        reject_reason: reject_reason,
+        reporter_id: reportId,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
 };
 
 export default apiService;

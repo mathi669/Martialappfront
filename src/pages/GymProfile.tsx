@@ -105,7 +105,7 @@ const GymProfile = () => {
         const data = await apiService.getRecommendationCount(gym_id);
         setRecommendationCount(data.recommendation_count);
       } catch (error) {
-        console.error('Error fetching recommendation count:', error);
+        console.error("Error fetching recommendation count:", error);
       }
     };
 
@@ -166,7 +166,7 @@ const GymProfile = () => {
 
   const handleReserveClick = (clase: any) => {
     setSelectedClass(clase);
-    setSelectedTime(clase.dc_horario.split(' - ')[0]); // Seleccionamos la primera hora por defecto
+    setSelectedTime(clase.dc_horario.split(" - ")[0]); // Seleccionamos la primera hora por defecto
     onOpen();
   };
 
@@ -239,9 +239,9 @@ const GymProfile = () => {
     try {
       await apiService.recommendGym(gym_id, user?.id);
       toast({
-        title: 'Recomendación exitosa',
-        description: 'Has recomendado este gimnasio exitosamente',
-        status: 'success',
+        title: "Recomendación exitosa",
+        description: "Has recomendado este gimnasio exitosamente",
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
@@ -249,9 +249,9 @@ const GymProfile = () => {
       setRecommendationCount(updatedCount.recommendation_count);
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Hubo un problema al recomendar el gimnasio',
-        status: 'error',
+        title: "Error",
+        description: "Hubo un problema al recomendar el gimnasio",
+        status: "error",
         duration: 3000,
         isClosable: true,
       });
@@ -287,9 +287,7 @@ const GymProfile = () => {
               <Button colorScheme="teal" onClick={handleRecommend}>
                 Recomendar
               </Button>
-              <Text>
-                {recommendationCount} usuarios recomiendan este gym 
-              </Text>
+              <Text>{recommendationCount} usuarios recomiendan este gym</Text>
               <Text color={gymStatus === "abierto" ? "green" : "red"}>
                 Estado: {gymStatus === "abierto" ? "Abierto" : "Cerrado"}
               </Text>
@@ -338,9 +336,11 @@ const GymProfile = () => {
                 value={selectedDate || ""}
                 onChange={(e) => setSelectedDate(e.target.value)}
               />
-              <Text fontWeight="bold" mt={4}>Seleccionar Horario:</Text>
+              <Text fontWeight="bold" mt={4}>
+                Seleccionar Horario:
+              </Text>
               <HStack mt={2}>
-                {selectedClass?.dc_horario.split(' - ').map((time: string) => (
+                {selectedClass?.dc_horario.split(" - ").map((time: string) => (
                   <Button
                     key={time}
                     onClick={() => setSelectedTime(time)}
