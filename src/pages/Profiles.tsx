@@ -28,18 +28,18 @@ import { User } from "../interfaces/user_interface";
 const Profile: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null);
-  // const [userType, setUserType] = useState<string | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-    //const userTypeData = localStorage.getItem("userType");
+    const userTypeData = localStorage.getItem("userType");
 
     if (userData) {
       setUser(JSON.parse(userData));
     }
-    // if (userTypeData) {
-    //   setUserType(userTypeData);
-    // }
+    if (userTypeData) {
+      setUserType(userTypeData);
+    }
   }, []);
   
   return (
@@ -97,43 +97,50 @@ const Profile: React.FC = () => {
           </Box>
         </Box>
 
-        <Box textAlign="left" mb={6}>
-          <Text fontSize="lg" fontWeight="bold" mb={2}>
-            Información del Gimnasio
-          </Text>
-          <Box p={4} bg="gray.100" borderRadius="md">
-            <VStack align="start" spacing={2}>
-              <HStack>
-                <Icon as={FaMedal} />
-                <Text>Nivel/Grado: Cinturón Negro</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaDumbbell} />
-                <Text>Estilo de Artes Marciales: Karate</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaMapMarkerAlt} />
-                <Text>Gimnasio: Gimnasio XYZ</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaCalendarAlt} />
-                <Text>Fecha de Ingreso al Gimnasio: 01/01/2015</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaClock} />
-                <Text>Horas de Entrenamiento Semanales: 10</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaBook} />
-                <Text>Clases Registradas: Clase de Kata, Clase de Kumite</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaTrophy} />
-                <Text>Próximos Eventos/Competencias: Campeonato Nacional</Text>
-              </HStack>
-            </VStack>
-          </Box>
-        </Box>
+        {userType === "gimnasio" ? (
+          <>
+            <Box textAlign="left" mb={6}>
+              <Text fontSize="lg" fontWeight="bold" mb={2}>
+                Información del Gimnasio
+              </Text>
+              <Box p={4} bg="gray.100" borderRadius="md">
+                <VStack align="start" spacing={2}>
+                  <HStack>
+                    <Icon as={FaMedal} />
+                    <Text>Nivel/Grado: Cinturón Negro</Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={FaDumbbell} />
+                    <Text>Estilo de Artes Marciales: Karate</Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={FaMapMarkerAlt} />
+                    <Text>Gimnasio: Gimnasio XYZ</Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={FaCalendarAlt} />
+                    <Text>Fecha de Ingreso al Gimnasio: 01/01/2015</Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={FaClock} />
+                    <Text>Horas de Entrenamiento Semanales: 10</Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={FaBook} />
+                    <Text>Clases Registradas: Clase de Kata, Clase de Kumite</Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={FaTrophy} />
+                    <Text>Próximos Eventos/Competencias: Campeonato Nacional</Text>
+                  </HStack>
+                </VStack>
+              </Box>
+            </Box>
+          </>
+        ) : (
+          null
+        )}
+
 
         <Box textAlign="left" mb={6}>
           <Text fontSize="lg" fontWeight="bold" mb={2}>
