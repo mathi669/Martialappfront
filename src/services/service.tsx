@@ -394,6 +394,15 @@ const apiService = {
     }
   },
 
+  scheduleReminder: async (formData: any) => {
+    try {
+      const response = await apiClient.post("/schedule_reminder", formData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   addFavorite: async (userId: any, gymId: number) => {
     try {
       const response = await apiClient.post("/favorites", { userId, gymId });

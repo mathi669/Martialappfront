@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { User } from "../interfaces/user_interface";
 import apiService from "../services/service";
+import ScheduleReminder from "../components/ScheduleReminder";
 
 const UserHome = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -34,6 +35,12 @@ const UserHome = () => {
     isOpen: isFavOpen,
     onOpen: onFavOpen,
     onClose: onFavClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isReminderOpen,
+    onOpen: onReminderOpen,
+    onClose: onReminderClose,
   } = useDisclosure();
 
   const fetchReservations = async () => {
@@ -190,12 +197,17 @@ const UserHome = () => {
                 </Button>
                 <Button
                   w="full"
-                  leftIcon={
-                    <i className="fa fa-heart" aria-hidden="true"></i>
-                  }
+                  leftIcon={<i className="fa fa-heart" aria-hidden="true"></i>}
                   onClick={favModal}
                 >
                   MIS GIMNASIOS FAVORITOS
+                </Button>
+                <Button
+                  w="full"
+                  leftIcon={<i className="fa fa-bell" aria-hidden="true"></i>}
+                  onClick={onReminderOpen}
+                >
+                  PROGRAMAR RECORDATORIO
                 </Button>
               </>
             )}
@@ -329,6 +341,22 @@ const UserHome = () => {
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" onClick={onFavClose}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isReminderOpen} onClose={onReminderClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Programar Recordatorio</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ScheduleReminder />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={onReminderClose}>
               Cerrar
             </Button>
           </ModalFooter>
