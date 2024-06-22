@@ -402,6 +402,33 @@ const apiService = {
       handleError(error);
     }
   },
+
+  addFavorite: async (userId: any, gymId: number) => {
+    try {
+      const response = await apiClient.post("/favorites", { userId, gymId });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  removeFavorite: async (userId: any, gymId: any) => {
+    try {
+      const response = await apiClient.delete("/favorites", { data: { userId, gymId } });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getFavorites: async (userId: any) => {
+    try {
+      const response = await apiClient.get(`/favorites/${userId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
 };
 
 export default apiService;

@@ -1,18 +1,62 @@
-import { Box, Text, Image, Flex, IconButton } from "@chakra-ui/react";
+import { Box, Text, Image, Flex, useToast, Button } from "@chakra-ui/react";
 import { GymBoxProps } from "../interfaces/gymbox_interface";
 import { useNavigate } from "react-router-dom";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import apiService from "../services/service";
 
 interface GymBoxPropsExtended extends GymBoxProps {
   isFavorite: boolean;
   onToggleFavorite: () => void;
+  horario: string;
+  status: string;
 }
 
-const GymBox: React.FC<GymBoxPropsExtended> = ({ imageSrc, altText, gymName, gymAddress, gymId, isFavorite, onToggleFavorite }) => {
+const GymBox: React.FC<GymBoxPropsExtended> = ({
+  imageSrc,
+  altText,
+  gymName,
+  gymAddress,
+  gymId,
+  isFavorite,
+  onToggleFavorite,
+  horario,
+  status,
+}) => {
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleImageClick = () => {
     navigate(`/gymprofile/${gymId}`);
+  };
+
+  const handleFavoriteClick = async () => {
+    const userData = localStorage.getItem("user");
+    const user = userData ? JSON.parse(userData) : null;
+    if (user) {
+      
+      const response = await apiService.addFavorite(user.id, gymId);
+      if(response.color === "success"){
+        toast({
+          title: "Exito",
+          description: response.message,
+          status: response.color,
+          duration: 5000,
+          isClosable: true,
+          position: "top"
+        });
+
+      } else {
+        toast({
+          title: "Error",
+          description: response.message,
+          status: response.color,
+          duration: 5000,
+          isClosable: true,
+          position: "top"
+        });
+      }
+      onToggleFavorite();
+    }
   };
 
   return (
@@ -38,16 +82,26 @@ const GymBox: React.FC<GymBoxPropsExtended> = ({ imageSrc, altText, gymName, gym
           <Text fontWeight="bold" fontSize="xl">
             {gymName}
           </Text>
-          <IconButton
-            aria-label="Favorite Gym"
-            icon={isFavorite ? <FaHeart color="red" /> : <FaRegHeart />}
-            onClick={onToggleFavorite}
-            variant="ghost"
-          />
         </Flex>
         <Text fontSize="md" color="gray.500">
           {gymAddress}
         </Text>
+        <Text fontSize="md" color="gray.500">
+          {horario}
+        </Text>
+        <Text fontSize="md" color="gray.500">
+          {status}
+        </Text>
+        <Button
+          size="md"
+          height="48px"
+          width="200px"
+          border="2px"
+          borderColor="green.500"
+          onClick={handleFavoriteClick}
+        >
+          Añadir a favoritos
+        </Button>
       </Box>
     </Box>
   );

@@ -8,9 +8,9 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
 import GymBox from "../components/GymBox";
 import apiService from "../services/service.tsx";
+import { User } from "../interfaces/user_interface.tsx";
 
 const BuscarGimnasios = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +18,18 @@ const BuscarGimnasios = () => {
   const [filteredGyms, setFilteredGyms] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [userType, setUserType] = useState("");
+
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const userType = localStorage.getItem("userType");
+    if (storedUser && userType) {
+      setUser(JSON.parse(storedUser));
+      setUserType(userType);
+    }
+  }, [localStorage.getItem("user")]);
 
   useEffect(() => {
     fetchAllGyms();
@@ -49,43 +61,21 @@ const BuscarGimnasios = () => {
     }
   };
 
-  const toggleFavorite = (gymId: number) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(gymId)
-        ? prevFavorites.filter((id) => id !== gymId)
-        : [...prevFavorites, gymId]
-    );
+  const toggleFavorite = async (gymId: number) => {
+    try {
+      const response = await apiService.addFavorite(user?.id, gymId);
+      if (response.message === "Gimnasio ya está en favoritos") {
+        // Eliminar de favoritos si ya está agregado
+        setFavorites((prevFavorites) => prevFavorites.filter((id) => id !== gymId));
+      } else {
+        // Agregar a favoritos si no está agregado
+        setFavorites((prevFavorites) => [...prevFavorites, gymId]);
+      }
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+    }
   };
-
-  // const handleSearch = () => {
-  //   setIsLoading(true);
-  //   if (searchType === "gimnasio") {
-  //     const filtered = gyms.filter(gym =>
-  //       gym.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       gym.ubicacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       gym.horario.toLowerCase().includes(searchTerm.toLowerCase())
-  //     );
-  //     setFilteredGyms(filtered);
-  //   } else if (searchType === "clase") {
-  //     const filtered = classes.filter(clase =>
-  //       clase.dc_nombre_clase.toLowerCase().includes(searchTerm.toLowerCase())
-  //     );
-  //     setFilteredClasses(filtered);
-  //   }
-  //   setSearchTerm("");
-  //   setIsLoading(false);
-  // };
-
-  // const handleSearchTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setSearchType(e.target.value);
-  //   setSearchTerm("");
-  //   if (e.target.value === "gimnasio") {
-  //     fetchAllGyms();
-  //   } else {
-  //     setClasses([]);
-  //     setFilteredClasses([]);
-  //   }
-  // };
+  
 
   return (
     <Flex direction="column" align="center" w="full" h="full" p={8}>
@@ -145,6 +135,8 @@ const BuscarGimnasios = () => {
               gymId={gym.id}
               isFavorite={favorites.includes(gym.id)}
               onToggleFavorite={() => toggleFavorite(gym.id)}
+              horario={gym.horario}
+              status={gym.status}
             />
           ))}
         </SimpleGrid>

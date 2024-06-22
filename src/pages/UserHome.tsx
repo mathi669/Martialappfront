@@ -57,9 +57,15 @@ const UserHome = () => {
     setIsLoadingReservas(false);
   };
 
-  const fetchFavorites = () => {
-    const favoritesData = JSON.parse(localStorage.getItem("favorites") || "[]");
-    setFavorites(favoritesData);
+  const fetchFavorites = async () => {
+    if (user) {
+      try {
+        const data = await apiService.getFavorites(user.id);
+        setFavorites(data.favorites);
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    }
   };
 
   const modal = () => {
@@ -130,7 +136,7 @@ const UserHome = () => {
           </Button>
           <Box textAlign="center" mb={6}>
             <Image
-              src={user.dc_nombre}
+              src={user.dc_imagen_url}
               alt="User"
               borderRadius="full"
               boxSize="100px"
@@ -236,9 +242,9 @@ const UserHome = () => {
               </Flex>
               <Flex>
                 <Text fontWeight="bold" w="150px">
-                  ID de usuario:
+                  Genero:
                 </Text>
-                <Text>{user.id}</Text>
+                <Text>{user.dc_genero}</Text>
               </Flex>
             </Stack>
           </Box>
