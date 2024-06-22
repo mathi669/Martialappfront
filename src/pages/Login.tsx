@@ -172,9 +172,6 @@ const Login: React.FC = () => {
               INICIAR SESIÓN
             </Button>
           </form>
-          <Box textAlign="left" color="gray.600">
-            <Link to="#!">No recuerdo mi contraseña</Link>
-          </Box>
           <Box textAlign="center" color="gray.600">
             <Link to="/registro">Si eres nuevo ¡Crea una cuenta!</Link>
           </Box>

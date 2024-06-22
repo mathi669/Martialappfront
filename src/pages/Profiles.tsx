@@ -61,7 +61,12 @@ const Profile: React.FC = () => {
         <Text fontSize="3xl" fontWeight="bold" mb={6}>
           Perfil de usuario
         </Text>
-        <Avatar size="2xl" src={user?.dc_imagen_url} mb={4} />
+        <Avatar
+          src={user?.dc_imagen_url} // Imagen del usuario del gimnasio
+          name={user?.dc_nombre}
+          size="2xl"
+          mb={4}
+        />
         <Text fontSize="2xl" fontWeight="bold">
           {user?.dc_nombre}
         </Text>
