@@ -87,8 +87,8 @@ const GymBox: React.FC<GymBoxPropsExtended> = ({
         <Text fontSize="md" color="gray.500">
           {horario}
         </Text>
-        <Text fontSize="md" color="gray.500">
-          {status}
+        <Text mt={2} color={status === "abierto" ? "green.500" : "red.500"}>
+          Estado: {status}
         </Text>
         <Button
           size="md"
