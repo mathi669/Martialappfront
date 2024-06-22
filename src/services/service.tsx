@@ -1,11 +1,8 @@
-// apiService.js
-
 import axios, { AxiosResponse } from "axios";
 
 // Configuración base de Axios
 const apiClient = axios.create({
-  baseURL: "https://martialapps-zfk3rshyeq-uc.a.run.app", // Cambia esta URL según sea necesario
-  // baseURL: "http://127.0.0.1:5000", // Cambia esta URL según sea necesario
+  baseURL: "http://127.0.0.1:8080", // Cambia esta URL según sea necesario
   headers: {
     "Content-Type": "application/json",
   },
@@ -24,7 +21,6 @@ const handleError = (error: any) => {
 
 // Servicio de API
 const apiService = {
-  // Llamada para cerrar sesión
   logout: async () => {
     try {
       const response = await apiClient.post("/logout");
@@ -34,7 +30,6 @@ const apiService = {
     }
   },
 
-  // Obtener información de un gimnasio
   getGym: async (gym_id: any) => {
     try {
       const response = await apiClient.get(`/gym/${gym_id}`);
@@ -44,7 +39,6 @@ const apiService = {
     }
   },
 
-  // Crear una clase de gimnasio
   createClass: async (formData: any) => {
     try {
       const response = await apiClient.post("/create_class", formData);
@@ -54,7 +48,26 @@ const apiService = {
     }
   },
 
-  // Inicio de sesión de usuario
+  searchUser: async (query: string) => {
+    try {
+      const response = await apiClient.get(`/search_users`, {
+        params: { query },
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getUserById: async (userId: any) => {
+    try {
+      const response = await apiClient.get(`/get_user/${userId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   loginUser: async (
     userType: any,
     dc_correo_electronico: any,
@@ -72,7 +85,6 @@ const apiService = {
     }
   },
 
-  // Obtener gimnasios filtrados
   getFilteredGyms: async (params: any) => {
     try {
       const response = await apiClient.get(`/filterGyms`, { params });
@@ -84,14 +96,13 @@ const apiService = {
 
   searchGyms: async (query: string) => {
     try {
-        const response = await apiClient.get(`/gyms?query=${query}`);
-        return handleResponse(response);
+      const response = await apiClient.get(`/gyms?query=${query}`);
+      return handleResponse(response);
     } catch (error) {
-        handleError(error);
+      handleError(error);
     }
   },
 
-  // Obtener todos los gimnasios
   getAllGyms: async (query: string = "") => {
     try {
       const response = await apiClient.get(`/gyms`, { params: { query } });
@@ -100,6 +111,19 @@ const apiService = {
       handleError(error);
     }
   },
+
+  updateGym: async (dataToUpdate: any) => {
+    try {
+      const response = await apiClient.put(
+        `/updateGym/${dataToUpdate.id}`,
+        dataToUpdate
+      );
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   reservarClase: async (data: any) => {
     try {
       const response = await apiClient.post("/reservarClase", data);
@@ -156,7 +180,6 @@ const apiService = {
     }
   },
 
-  // Registrar un usuario
   register: async (formData: any) => {
     try {
       const response = await apiClient.post("/register", formData);
@@ -166,7 +189,6 @@ const apiService = {
     }
   },
 
-  // Registrar un gimnasio
   registerGym: async (formData: any) => {
     try {
       const response = await apiClient.post("/registerGym", formData);
@@ -176,7 +198,15 @@ const apiService = {
     }
   },
 
-  // Obtener las solicitudes de registro
+  getGymStatus: async (gymId: any) => {
+    try {
+      const response = await apiClient.get(`/gym/${gymId}/status`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
   getSolicitudesRegistro: async () => {
     try {
       const response = await apiClient.get("/solicitudes_registro");
@@ -186,7 +216,6 @@ const apiService = {
     }
   },
 
-  // Aceptar una solicitud de registro
   aceptarSolicitud: async (idSolicitud: any) => {
     try {
       const response = await apiClient.post(
@@ -198,7 +227,6 @@ const apiService = {
     }
   },
 
-  // Rechazar una solicitud de registro
   rechazarSolicitud: async (idSolicitud: any) => {
     try {
       const response = await apiClient.post(
@@ -209,9 +237,214 @@ const apiService = {
       handleError(error);
     }
   },
+
   deleteClass: async (classId: any) => {
     try {
-      const response = await apiClient.post(`/delete_class/${classId}`);
+      const response = await apiClient.delete(`/delete_class/${classId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  updateClass: async (classId: number, formData: any) => {
+    try {
+      const response = await apiClient.post(
+        `/update_class/${classId}`,
+        formData
+      );
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getReservationRequests: async (userId: any) => {
+    try {
+      const response = await apiClient.get("/user/reservation-requests", {
+        params: { tb_usuario_id: userId },
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getGymComments: async (gymId: any) => {
+    try {
+      const response = await apiClient.get(`/comments/gym/${gymId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  addGymComment: async (gymId: any, userId: any, comment: any, rating: any) => {
+    try {
+      const response = await apiClient.post(`/comments/gym/${gymId}`, {
+        user_id: userId,
+        comment,
+        rating,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getClassComments: async (classId: any) => {
+    try {
+      const response = await apiClient.get(`/comments/class/${classId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  addClassComment: async (
+    classId: any,
+    userId: any,
+    comment: any,
+    rating: any
+  ) => {
+    try {
+      const response = await apiClient.post(`/comments/class/${classId}`, {
+        user_id: userId,
+        comment,
+        rating,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  recommendGym: async (gymId: any, userId: any) => {
+    try {
+      const response = await apiClient.post("/recommendations", {
+        gymId,
+        userId,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getRecommendationCount: async (gymId: any) => {
+    try {
+      const response = await apiClient.get(`/recommendations/count/${gymId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  reportUser: async (
+    userId: any,
+    reporterId: any,
+    reporterType: any,
+    reason: any,
+    details: any
+  ) => {
+    try {
+      const response = await apiClient.post("/reportUser", {
+        user_id: userId,
+        reporter_id: reporterId,
+        reporter_type: reporterType,
+        reason,
+        details,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getPendingReports: async () => {
+    try {
+      const response = await apiClient.get("/pendingReports");
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  acceptReport: async (reportId: any, reporter_id: any) => {
+    try {
+      const response = await apiClient.post(
+        `/acceptReport/${reportId}`,
+        reporter_id
+      );
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  rejectReport: async (reportId: any, reject_reason: any) => {
+    try {
+      const response = await apiClient.post(`/rejectReport/${reportId}`, {
+        reject_reason: reject_reason,
+        reporter_id: reportId,
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  scheduleReminder: async (formData: any) => {
+    try {
+      const response = await apiClient.post("/schedule_reminder", formData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  addFavorite: async (userId: any, gymId: number) => {
+    try {
+      const response = await apiClient.post("/favorites", { userId, gymId });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  removeFavorite: async (userId: any, gymId: any) => {
+    try {
+      const response = await apiClient.delete("/favorites", {
+        data: { userId, gymId },
+      });
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  getFavorites: async (userId: any) => {
+    try {
+      const response = await apiClient.get(`/favorites/${userId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+  // Método para crear una publicación de gimnasio
+  createGymPost: async (postData: any) => {
+    try {
+      const response = await apiClient.post("/gym/post", postData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Método para obtener las publicaciones de un gimnasio
+  getGymPosts: async (gymId: number) => {
+    try {
+      const response = await apiClient.get(`/gym/${gymId}/posts`);
       return handleResponse(response);
     } catch (error) {
       handleError(error);

@@ -10,6 +10,7 @@ import {
   Text,
   useBreakpointValue,
   useDisclosure,
+  Input,
 } from "@chakra-ui/react";
 import {
   FaBars,
@@ -23,13 +24,16 @@ import {
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import logo from "../static/img/MartialApps.png";
-import { User } from "../interfaces/user_interface.tsx"
+import { User } from "../interfaces/user_interface.tsx";
+import apiService from "../services/service.tsx";
 
 function NavbarMartial() {
   const { isOpen, onToggle, onClose } = useDisclosure();
   const isDesktop = useBreakpointValue({ base: false, md: true });
   const [user, setUser] = useState<User | null>(null);
   const [userType, setUserType] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,6 +61,24 @@ function NavbarMartial() {
     }
   };
 
+  
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const result = await apiService.searchUser(searchQuery);
+      setLoading(false);
+      if (result && result.length > 0) {
+        navigate(`/UserResults/${searchQuery}`);
+      } else {
+        alert("Usuario no encontrado");
+      }
+      setSearchQuery("");
+    } catch (error) {
+      console.error("Error en la búsqueda de usuario:", error);
+      alert("Error en la búsqueda");
+    }
+  };
+
   return (
     <Box bg="gray.100" px={4} className="full-width">
       <Flex h={16} alignItems="center" justifyContent="space-between">
@@ -64,6 +86,13 @@ function NavbarMartial() {
           <Image src={logo} alt="MartialApps Logo" boxSize="77px" />
         </Link>
         <Flex alignItems="center" ml="auto">
+          <Input
+            placeholder="Buscar usuarios"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            mr={2}
+          />
+          <Button onClick={handleSearch}>Buscar</Button>
           <IconButton
             size="md"
             icon={<FaBars />}
@@ -90,7 +119,7 @@ function NavbarMartial() {
                 </Button>
               </Link>
             ) : null}
-            {user ? (
+            {user && userType != "gimnasio" ? (
               <Link to="/buscargimnasio">
                 <Button leftIcon={<FaDumbbell />} variant="link">
                   GIMNASIOS

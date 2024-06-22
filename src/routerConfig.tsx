@@ -12,7 +12,10 @@ import {
   AdminPage,
   BuscarGimnasios,
   Profiles,
+  UserSearchResults,
+  UserProfile,
 } from "./pages";
+import ReportManagement from "./pages/ReportManagement";
 import SolicitudesRegistro from "./pages/SolicitudesRegistros";
 
 export const routes = [
@@ -75,5 +78,17 @@ export const routes = [
   {
     path: "/SolicitudesRegistro",
     element: <SolicitudesRegistro />,
+  },
+  {
+    path: "/UserResults/:query",
+    element: <UserSearchResults />,
+  },
+  {
+    path: "/user/:userId", // Nueva ruta para UserProfile
+    element: <UserProfile />,
+  },
+  {
+    path: "/admin/reportes",
+    element: <ReportManagement />,
   },
 ];

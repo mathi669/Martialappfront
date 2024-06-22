@@ -17,15 +17,89 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  Skeleton,
+  Avatar,
+  IconButton,
 } from "@chakra-ui/react";
-import apiService from "../services/service";
 import { User } from "../interfaces/user_interface";
+import apiService from "../services/service";
+import ScheduleReminder from "../components/ScheduleReminder";
+import GymComponent from "../components/GymComponent";
+import { FaTrash } from "react-icons/fa";
 
 const UserHome = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [isLoadingReservas, setIsLoadingReservas] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
+  const [favorites, setFavorites] = useState<any[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isFavOpen,
+    onOpen: onFavOpen,
+    onClose: onFavClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isReminderOpen,
+    onOpen: onReminderOpen,
+    onClose: onReminderClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isPostOpen,
+    onOpen: onPostOpen,
+    onClose: onPostClose,
+  } = useDisclosure();
+
+  const fetchReservations = async () => {
+    setIsLoadingReservas(true);
+    if (user) {
+      try {
+        const data = await apiService.getReservationRequests(user.id);
+        setReservations(data);
+      } catch (error) {
+        console.error("Error fetching reservations:", error);
+        setIsLoadingReservas(false);
+      }
+    }
+    setIsLoadingReservas(false);
+  };
+
+  const fetchFavorites = async () => {
+    if (user) {
+      try {
+        const data = await apiService.getFavorites(user.id);
+        setFavorites(data.favorites);
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    }
+  };
+
+  const removeFavorite = async (gymId: number) => {
+    if (user) {
+      try {
+        await apiService.removeFavorite(user.id, gymId);
+        setFavorites((prevFavorites) =>
+          prevFavorites.filter((fav: any) => fav.id !== gymId)
+        );
+      } catch (error) {
+        console.error("Error removing favorite:", error);
+      }
+    }
+  };
+
+  const modal = () => {
+    fetchReservations();
+    onOpen();
+  };
+
+  const favModal = () => {
+    fetchFavorites();
+    onFavOpen();
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -43,8 +117,8 @@ const UserHome = () => {
     const fetchReservations = async () => {
       if (user) {
         try {
-          const data = await apiService.getUserReservations(user.id);
-          setReservations(data.reservas);
+          const data = await apiService.getReservationRequests(user.id);
+          setReservations(data);
         } catch (error) {
           console.error("Error fetching reservations:", error);
         }
@@ -55,6 +129,7 @@ const UserHome = () => {
   }, [user]);
 
   const cancelReservation = async (id: string) => {
+    setCancelLoading(true);
     try {
       await apiService.cancelReservation(id);
       setReservations((prevReservations) =>
@@ -63,6 +138,8 @@ const UserHome = () => {
     } catch (error) {
       console.error("Error cancelling reservation:", error);
     }
+    fetchReservations();
+    setCancelLoading(false);
   };
 
   if (!user || !userType) {
@@ -81,22 +158,13 @@ const UserHome = () => {
             <i className="fa fa-user fa-fw" aria-hidden="true"></i> MOSTRAR MENÚ
           </Button>
           <Box textAlign="center" mb={6}>
-            <Image
-              src="./src/static/img/user.png"
-              alt="User"
-              borderRadius="full"
-              boxSize="100px"
+            <Avatar
+              name={user.dc_nombre}
+              src={user.dc_imagen_url}
+              size="xl"
+              mb={2}
               mx="auto"
             />
-            <Text mt={2}>
-              <small>{user.dc_nombre}</small>
-            </Text>
-            <Flex justify="space-around" mt={2}>
-              <Box textAlign="center">
-                {userType === "gimnasio" ? "Gimnasio" : "Usuario"} <br />
-                <small>Tipo</small>
-              </Box>
-            </Flex>
           </Box>
           <Stack spacing={2}>
             <Link to="/profiles">
@@ -109,35 +177,69 @@ const UserHome = () => {
                 TU PERFIL
               </Button>
             </Link>
-            <Link to="/editarperfil">
-              <Button
-                w="full"
-                leftIcon={
-                  <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
-                }
-              >
-                EDITAR PERFIL
-              </Button>
-            </Link>
+
             {userType === "gimnasio" ? (
-              <Link to="/createClass">
+              <Link to="/editarperfil">
+                <Button
+                  w="full"
+                  leftIcon={
+                    <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
+                  }
+                >
+                  EDITAR PERFIL
+                </Button>
+              </Link>
+            ) : (
+              <></>
+            )}
+            {userType === "gimnasio" ? (
+              <>
+                <Link to="/createClass">
+                  <Button
+                    w="full"
+                    leftIcon={
+                      <i className="fa fa-dumbbell" aria-hidden="true"></i>
+                    }
+                  >
+                    MODULO DE CLASES
+                  </Button>
+                </Link>
                 <Button
                   w="full"
                   leftIcon={
                     <i className="fa fa-dumbbell" aria-hidden="true"></i>
                   }
+                  onClick={onPostOpen}
                 >
-                  MODULO DE CLASES
+                  PUBLICACIONES
                 </Button>
-              </Link>
+              </>
             ) : (
-              <Button
-                w="full"
-                leftIcon={<i className="fa fa-calendar" aria-hidden="true"></i>}
-                onClick={onOpen}
-              >
-                MIS SOLICITUDES DE RESERVA
-              </Button>
+              <>
+                <Button
+                  w="full"
+                  leftIcon={
+                    <i className="fa fa-calendar" aria-hidden="true"></i>
+                  }
+                  onClick={modal}
+                >
+                  MIS SOLICITUDES DE RESERVA
+                </Button>
+                <Button
+                  w="full"
+                  leftIcon={<i className="fa fa-heart" aria-hidden="true"></i>}
+                  onClick={favModal}
+                >
+                  MIS GIMNASIOS FAVORITOS
+                </Button>
+                <Button
+                  w="full"
+                  leftIcon={<i className="fa fa-bell" aria-hidden="true"></i>}
+                  onClick={onReminderOpen}
+                >
+                  PROGRAMAR RECORDATORIO
+                </Button>
+              </>
             )}
           </Stack>
         </Box>
@@ -148,7 +250,6 @@ const UserHome = () => {
             </Text>
           </Box>
           <Box border="1px" borderColor="gray.200" p={6} borderRadius="md">
-            <Text mb={4}>Aquí está la información del usuario.</Text>
             <Stack spacing={4}>
               <Flex>
                 <Text fontWeight="bold" w="150px">
@@ -167,12 +268,6 @@ const UserHome = () => {
                   Teléfono:
                 </Text>
                 <Text>{user.dc_telefono}</Text>
-              </Flex>
-              <Flex>
-                <Text fontWeight="bold" w="150px">
-                  ID de usuario:
-                </Text>
-                <Text>{user.id}</Text>
               </Flex>
             </Stack>
           </Box>
@@ -195,26 +290,34 @@ const UserHome = () => {
                   alignItems="center"
                 >
                   <Image
-                    src={reservation.gymImage}
-                    alt={reservation.class}
+                    src={reservation.dc_imagen_url}
+                    alt={reservation.dc_nombre_clase}
                     boxSize="100px"
                     borderRadius="md"
                     mr={4}
                   />
                   <Box flex="1">
-                    <Text fontWeight="bold">Clase: {reservation.class}</Text>
-                    <Text>Fecha: {reservation.date}</Text>
-                    <Text>Hora: {reservation.time}</Text>
-                    <Text>Descripción: {reservation.description}</Text>
+                    <Text fontWeight="bold">
+                      Clase: {reservation.dc_nombre_clase}
+                    </Text>
+                    <Text>Fecha: {reservation.df_fecha}</Text>
+                    <Text>Hora: {reservation.df_hora}</Text>
+                    <Text>Descripción: {reservation.dc_nombre_clase}</Text>
                   </Box>
                   <Button
                     colorScheme="red"
-                    onClick={() => cancelReservation(reservation.id)}
+                    onClick={() => cancelReservation(reservation.solicitud_id)}
+                    isLoading={cancelLoading}
                   >
                     Cancelar
                   </Button>
                 </Box>
               ))
+            ) : isLoadingReservas ? (
+              <Skeleton>
+                <div>contents wrapped</div>
+                <div>won't be visible</div>
+              </Skeleton>
             ) : (
               <Text>No tienes reservas aún.</Text>
             )}
@@ -224,6 +327,87 @@ const UserHome = () => {
               Cerrar
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isFavOpen} onClose={onFavClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Mis Gimnasios Favoritos</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {favorites.length > 0 ? (
+              favorites.map((gym) => (
+                <Box
+                  key={gym.id}
+                  p={4}
+                  borderBottom="1px solid gray"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <Image
+                    src={gym.imagen_url}
+                    alt={gym.nombre}
+                    boxSize="100px"
+                    borderRadius="md"
+                    mr={4}
+                  />
+                  <Box flex="1">
+                    <Text fontWeight="bold">{gym.nombre}</Text>
+                    <Text>Ubicación: {gym.ubicacion}</Text>
+                  </Box>
+                  <IconButton
+                    aria-label="Remove Favorite Gym"
+                    icon={<FaTrash />}
+                    onClick={() => removeFavorite(gym.id)}
+                    variant="ghost"
+                    colorScheme="red"
+                    ml={2}
+                  />
+                </Box>
+              ))
+            ) : (
+              <Flex justifyContent="center" alignItems="center" height="50vh">
+                <Spinner
+                  size="md"
+                  thickness="4px"
+                  speed="0.65s"
+                  color="blue.500"
+                />
+              </Flex>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={onFavClose}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isReminderOpen} onClose={onReminderClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Programar Recordatorio</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ScheduleReminder />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={onReminderClose}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isPostOpen} onClose={onPostClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalCloseButton />
+          <ModalBody>
+            <GymComponent gymId={user.id} />
+          </ModalBody>
         </ModalContent>
       </Modal>
     </Container>

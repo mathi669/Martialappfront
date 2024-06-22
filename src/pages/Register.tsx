@@ -52,7 +52,6 @@ const Register: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-  
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true);
@@ -60,6 +59,7 @@ const Register: React.FC = () => {
     setError(""); // Clear error message before trying to register
 
     try {
+      console.log("Datos del formulario:", formData);
       if (userType === "Usuario") {
         const newData = {
           ...formData,
@@ -280,6 +280,17 @@ const Register: React.FC = () => {
                         onChange={handleInputChange}
                       />
                     </FormControl>
+                    <FormControl id="horario" mb={4} isRequired>
+                      {" "}
+                      {/* Nuevo campo */}
+                      <FormLabel>Horario del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Horario del Gimnasio"
+                        value={formData.horario || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
                     <FormControl id="ubicacionGimnasio" mb={4} isRequired>
                       <FormLabel>Ubicación del Gimnasio:</FormLabel>
                       <Input
@@ -297,6 +308,15 @@ const Register: React.FC = () => {
                         value={formData.descripcion || ""}
                         onChange={handleInputChange}
                         maxLength={250}
+                      />
+                    </FormControl>
+                    <FormControl id="redSocial" mb={4} isRequired>
+                      <FormLabel>Red Social del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Red Social del Gimnasio"
+                        value={formData.redSocial || ""}
+                        onChange={handleInputChange}
                       />
                     </FormControl>
                     <FormControl id="imagen" mb={4} isRequired>

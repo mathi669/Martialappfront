@@ -11,6 +11,8 @@ import AdminPage from "./AdminPage";
 import BuscarGimnasios from "./BuscarGimnasios";
 import EditarPerfil from "./EditarPerfil";
 import Profiles from "./Profiles";
+import UserSearchResults from "./UserInfo";
+import UserProfile from "./UserProfile";
 
 export { Home };
 export { About };
@@ -25,3 +27,5 @@ export { AdminPage };
 export { BuscarGimnasios };
 export { EditarPerfil };
 export { Profiles };
+export { UserSearchResults }
+export { UserProfile }
