@@ -22,6 +22,7 @@ const BuscarGimnasios = () => {
   const [userType, setUserType] = useState("");
 
 
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const userType = localStorage.getItem("userType");
