@@ -60,61 +60,41 @@ const GymProfile = () => {
       setUser(JSON.parse(userData));
     }
 
-    const fetchGym = async () => {
+    const fetchData = async () => {
       try {
-        const data = await apiService.getGym(gym_id);
-        setGym(data);
+        setLoading(true);
+
+        // Primero fetchGym
+        const gymData = await apiService.getGym(gym_id);
+        setGym(gymData);
+
+        // Luego fetchClasses
+        const classesData = await apiService.getClassesByGym(Number(gym_id));
+        setClasses(classesData);
+
+        // Después fetchComments
+        const commentsData = await apiService.getGymComments(gym_id);
+        setComments(commentsData);
+
+        // A continuación fetchGymStatus
+        const gymStatusData = await apiService.getGymStatus(Number(gym_id));
+        setGymStatus(gymStatusData.status);
+
+        // Por último fetchRecommendationCount
+        const recommendationCountData = await apiService.getRecommendationCount(
+          gym_id
+        );
+        setRecommendationCount(recommendationCountData.recommendation_count);
       } catch (error) {
-        console.error("Error fetching gym:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
+        setLoadingClasses(false); // Si tenías un estado para clases
       }
     };
 
-    const fetchClasses = async () => {
-      try {
-        const data = await apiService.getClassesByGym(Number(gym_id));
-        setClasses(data);
-      } catch (error) {
-        console.error("Error fetching classes:", error);
-      } finally {
-        setLoadingClasses(false);
-      }
-    };
-
-    const fetchComments = async () => {
-      try {
-        const data = await apiService.getGymComments(gym_id);
-        setComments(data);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-
-    const fetchGymStatus = async () => {
-      try {
-        const data = await apiService.getGymStatus(Number(gym_id));
-        setGymStatus(data.status);
-      } catch (error) {
-        console.error("Error fetching gym status:", error);
-      }
-    };
-
-    const fetchRecommendationCount = async () => {
-      try {
-        const data = await apiService.getRecommendationCount(gym_id);
-        setRecommendationCount(data.recommendation_count);
-      } catch (error) {
-        console.error("Error fetching recommendation count:", error);
-      }
-    };
-
-    fetchGym();
-    fetchClasses();
-    fetchComments();
-    fetchGymStatus();
-    fetchRecommendationCount();
-  }, []);
+    fetchData();
+  }, [gym_id]); // Asegúrate de incluir gym_id en la dependencia si cambia
 
   const handleReserve = async () => {
     setLoadingReserva(true);
