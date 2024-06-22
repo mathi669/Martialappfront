@@ -114,7 +114,7 @@ const GymProfile = () => {
     fetchComments();
     fetchGymStatus();
     fetchRecommendationCount();
-  }, [gym_id]);
+  }, []);
 
   const handleReserve = async () => {
     setLoadingReserva(true);

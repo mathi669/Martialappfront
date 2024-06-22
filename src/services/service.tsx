@@ -393,6 +393,15 @@ const apiService = {
       handleError(error);
     }
   },
+
+  scheduleReminder: async (formData: any) => {
+    try {
+      const response = await apiClient.post("/schedule_reminder", formData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
 };
 
 export default apiService;
