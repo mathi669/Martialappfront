@@ -43,6 +43,8 @@ const CreateClass = () => {
     tb_clase_estado_id: 1,
     tb_arte_marcial_id: 1,
     tb_profesor_id: 1,
+    hora_inicio: "",
+    hora_fin: "",
   });
   const [message, setMessage] = useState("");
   const [gymImageUrl, setGymImageUrl] = useState("");
@@ -57,7 +59,7 @@ const CreateClass = () => {
       setGymImageUrl(user.dc_imagen_url);
       setFormData((prevData) => ({
         ...prevData,
-        gimnasio_id: user.id,
+        tb_gimnasio_id: user.id,
       }));
       fetchClasses(user.id);
     }
@@ -97,8 +99,9 @@ const CreateClass = () => {
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
-      const df_hora = formData.dc_horario.split(" - ")[0];
-      const newData = { ...formData, df_hora };
+      const df_hora = formData.hora_inicio;
+      const dc_horario = formData.hora_inicio + " - " + formData.hora_fin;
+      const newData = { ...formData, df_hora, dc_horario };
 
       let response;
       if (editClassId) {
@@ -134,10 +137,7 @@ const CreateClass = () => {
     setEditClassId(classData.id);
     setFormData({
       dc_nombre_clase: classData.dc_nombre_clase,
-      dc_horario:
-        classData.dc_horario.split(" - ")[0] +
-        " - " +
-        classData.dc_horario.split(" - ")[1],
+      dc_horario: classData.hora_inicio + " - " + classData.hora_fin,
       nb_cupos_disponibles: classData.nb_cupos_disponibles,
       df_fecha: classData.df_fecha,
       dc_descripcion: classData.dc_descripcion || "",
@@ -147,6 +147,8 @@ const CreateClass = () => {
       tb_clase_estado_id: classData.tb_clase_estado_id,
       tb_arte_marcial_id: classData.tb_arte_marcial_id,
       tb_profesor_id: classData.tb_profesor_id,
+      hora_fin: classData.hora_fin,
+      hora_inicio: classData.hora_inicio,
     });
     onOpen();
   };
@@ -185,6 +187,8 @@ const CreateClass = () => {
               tb_clase_estado_id: 1,
               tb_arte_marcial_id: 1,
               tb_profesor_id: 1,
+              hora_fin: "",
+              hora_inicio: "",
             });
             onOpen();
           }}
@@ -259,21 +263,29 @@ const CreateClass = () => {
                   placeholder="Ingrese el nombre de la clase"
                 />
               </FormControl>
-              <FormControl id="dc_horario" mb={4}>
+              <FormControl id="hora_inicio" mb={4}>
                 <FormLabel>Hora de Inicio</FormLabel>
                 <Input
                   type="time"
-                  name="dc_horario"
-                  value={formData.dc_horario.split(" - ")[0]}
+                  name="hora_inicio"
+                  value={
+                    editClassId
+                      ? formData.dc_horario.split(" - ")[0]
+                      : formData.hora_inicio
+                  }
                   onChange={handleChange}
                 />
               </FormControl>
-              <FormControl id="dc_horario" mb={4}>
+              <FormControl id="hora_fin" mb={4}>
                 <FormLabel>2da Hora de Inicio</FormLabel>
                 <Input
                   type="time"
-                  name="dc_horario"
-                  value={formData.dc_horario.split(" - ")[1]}
+                  name="hora_fin"
+                  value={
+                    editClassId
+                      ? formData.dc_horario.split(" - ")[1]
+                      : formData.hora_fin
+                  }
                   onChange={handleChange}
                 />
               </FormControl>

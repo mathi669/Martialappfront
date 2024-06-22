@@ -156,10 +156,7 @@ const ReportManagement: React.FC = () => {
             mb={4}
             textAlign="left"
           >
-            <Text fontSize="lg" fontWeight="bold">
-              ID del Reporte: {report.report_id}
-            </Text>
-            <Text>Reportado por: {report.user_name}</Text>
+            <Text>Usuario reportado: {report.user_name}</Text>
             <Text>Motivo: {report.report_reason}</Text>
             <Text>Detalles: {report.report_details}</Text>
             <Button
