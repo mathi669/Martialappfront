@@ -4,26 +4,13 @@ import {
   GoogleMap,
   LoadScript,
   Marker,
-  Autocomplete,
 } from "@react-google-maps/api";
 import {
   Box,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
   useDisclosure,
-  Input,
-  InputGroup,
-  InputRightElement,
   Alert,
   AlertIcon,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
 
 const mapContainerStyle = {
   width: "100%",

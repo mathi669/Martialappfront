@@ -19,8 +19,9 @@ import {
   ModalFooter,
   useDisclosure,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
-import { FaSignOutAlt, FaSave, FaKey } from "react-icons/fa";
+import { FaSignOutAlt, FaSave, FaKey, FaEdit } from "react-icons/fa";
 import { User } from "../interfaces/user_interface";
 import apiService from "../services/service";
 
@@ -30,6 +31,8 @@ const EditarPerfil: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const toast = useToast();
 
   // Estado para los campos del gimnasio en un solo objeto
@@ -42,6 +45,7 @@ const EditarPerfil: React.FC = () => {
     imagen_url: "",
     estadoId: 2,
     fechaIngreso: "",
+    redSocial: "",
   });
 
   // Estado para los campos del usuario
@@ -69,6 +73,7 @@ const EditarPerfil: React.FC = () => {
           imagen_url: parsedUser.dc_imagen_url || "",
           estadoId: parsedUser.tb_gimnasio_estado_id || 2,
           fechaIngreso: parsedUser.df_fecha_ingreso || "",
+          redSocial: parsedUser.dc_red_social || "",
         });
       }
     }
@@ -102,43 +107,61 @@ const EditarPerfil: React.FC = () => {
       return;
     }
 
-    if (userType === "gimnasio" && user) {
-      const dataToUpdate = {
-        id: user?.id,
-        dc_nombre: gymData.nombreGimnasio,
-        dc_correo_electronico: user?.dc_correo_electronico,
-        dc_contrasena: newPassword || undefined,
-        dc_telefono: gymData.telefonoGimnasio,
-        dc_ubicacion: gymData.ubicacionGimnasio,
-        dc_horario: gymData.horario,
-        dc_descripcion: gymData.descripcion,
-        dc_imagen_url: gymData.imagen_url,
-        tb_gimnasio_estado_id: gymData.estadoId,
-      };
-      await apiService.updateGym(dataToUpdate);
-    } else {
-      // const dataToUpdate = {
-      //   id: user?.id,
-      //   dc_nombre: userName,
-      //   dc_correo_electronico: user?.dc_correo_electronico,
-      //   dc_contrasena: newPassword || undefined, // Solo incluir la contraseña si se ha cambiado
-      //   dc_telefono: userPhone,
-      //   // Otros campos necesarios para actualizar el usuario
-      // };
-      // await apiService.updateUser(dataToUpdate);
+    try {
+      if (userType === "gimnasio" && user) {
+        const dataToUpdate = {
+          id: user?.id,
+          dc_nombre: gymData.nombreGimnasio,
+          dc_correo_electronico: user?.dc_correo_electronico,
+          dc_contrasena: newPassword || undefined,
+          dc_telefono: gymData.telefonoGimnasio,
+          dc_ubicacion: gymData.ubicacionGimnasio,
+          dc_horario: gymData.horario,
+          dc_descripcion: gymData.descripcion,
+          dc_imagen_url: gymData.imagen_url,
+          tb_gimnasio_estado_id: gymData.estadoId,
+          dc_red_social: gymData.redSocial,
+        };
+        await apiService.updateGym(dataToUpdate);
+      } else {
+        // const dataToUpdate = {
+        //   id: user?.id,
+        //   dc_nombre: userName,
+        //   dc_correo_electronico: user?.dc_correo_electronico,
+        //   dc_contrasena: newPassword || undefined, // Solo incluir la contraseña si se ha cambiado
+        //   dc_telefono: userPhone,
+        //   // Otros campos necesarios para actualizar el usuario
+        // };
+        // await apiService.updateUser(dataToUpdate);
+      }
+  
+      toast({
+        title: "Éxito",
+        description: "Datos actualizados correctamente.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+  
+      setNewPassword("");
+      setConfirmPassword("");
+      setIsEditing(false);
+      onClose();
+    } catch (error) {
+      console.error("Error actualizando los datos:", error);
+      toast({
+        title: "Error",
+        description: "Ocurrió un error al actualizar los datos.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
+    setIsSaving(false);
+  };
 
-    toast({
-      title: "Éxito",
-      description: "Datos actualizados correctamente.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
-
-    setNewPassword("");
-    setConfirmPassword("");
-    onClose();
+  const handleEdit = () => {
+    setIsEditing(true);
   };
 
   return (
@@ -181,11 +204,13 @@ const EditarPerfil: React.FC = () => {
                     placeholder="Nombre"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
+                    isDisabled={!isEditing}
                   />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Apellido</FormLabel>
-                  <Input type="text" placeholder="Apellido" />
+                  <Input type="text" placeholder="Apellido" isDisabled={!isEditing} />
+                  
                 </FormControl>
               </Flex>
               <Flex mb={4} justify="space-between" gap={6}>
@@ -194,7 +219,7 @@ const EditarPerfil: React.FC = () => {
                   <Input
                     type="email"
                     defaultValue={user?.dc_correo_electronico}
-                    disabled
+                    isDisabled
                   />
                 </FormControl>
                 <FormControl>
@@ -204,17 +229,18 @@ const EditarPerfil: React.FC = () => {
                     placeholder="Número telefónico"
                     value={userPhone}
                     onChange={(e) => setUserPhone(e.target.value)}
+                    isDisabled={!isEditing}
                   />
                 </FormControl>
               </Flex>
               <Flex mb={4} justify="space-between" gap={6}>
                 <FormControl>
                   <FormLabel>Fecha de Nacimiento</FormLabel>
-                  <Input type="date" />
+                  <Input type="date" isDisabled={!isEditing}/>
                 </FormControl>
                 <FormControl>
                   <FormLabel>Género</FormLabel>
-                  <Select placeholder="Seleccione género">
+                  <Select placeholder="Seleccione género" isDisabled={!isEditing}>
                     <option value="masculino">Masculino</option>
                     <option value="femenino">Femenino</option>
                     <option value="otro">Otro</option>
@@ -223,11 +249,11 @@ const EditarPerfil: React.FC = () => {
               </Flex>
               <FormControl mb={4}>
                 <FormLabel>Dirección</FormLabel>
-                <Input type="text" placeholder="Dirección" />
+                <Input type="text" placeholder="Dirección" isDisabled={!isEditing} />
               </FormControl>
               <FormControl mb={6}>
                 <FormLabel>Foto de perfil</FormLabel>
-                <Input type="file" />
+                <Input type="file" isDisabled={!isEditing} />
               </FormControl>
             </>
           )}
@@ -238,6 +264,7 @@ const EditarPerfil: React.FC = () => {
             leftIcon={<FaKey />}
             onClick={onOpen}
             mb={6}
+            isDisabled={!isEditing}
           >
             Cambiar Contraseña
           </Button>
@@ -255,6 +282,7 @@ const EditarPerfil: React.FC = () => {
                   name="nombreGimnasio"
                   value={gymData.nombreGimnasio}
                   onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
                 />
               </FormControl>
               <FormControl mb={4}>
@@ -265,6 +293,7 @@ const EditarPerfil: React.FC = () => {
                   name="telefonoGimnasio"
                   value={gymData.telefonoGimnasio}
                   onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
                 />
               </FormControl>
               <FormControl mb={4}>
@@ -275,6 +304,7 @@ const EditarPerfil: React.FC = () => {
                   name="ubicacionGimnasio"
                   value={gymData.ubicacionGimnasio}
                   onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
                 />
               </FormControl>
               <FormControl mb={4}>
@@ -285,6 +315,7 @@ const EditarPerfil: React.FC = () => {
                   name="horario"
                   value={gymData.horario}
                   onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
                 />
               </FormControl>
               <FormControl mb={4}>
@@ -294,6 +325,7 @@ const EditarPerfil: React.FC = () => {
                   name="fechaIngreso"
                   value={gymData.fechaIngreso}
                   onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
                 />
               </FormControl>
               <FormControl mb={4}>
@@ -303,6 +335,17 @@ const EditarPerfil: React.FC = () => {
                   name="descripcion"
                   value={gymData.descripcion}
                   onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
+                />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Red Social</FormLabel>
+                <Input
+                  placeholder="Red social"
+                  name="redSocial"
+                  value={gymData.redSocial}
+                  onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
                 />
               </FormControl>
               <FormControl mb={4}>
@@ -313,6 +356,7 @@ const EditarPerfil: React.FC = () => {
                   name="imagen_url"
                   value={gymData.imagen_url}
                   onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
                 />
               </FormControl>
               <FormControl mb={6}>
@@ -325,6 +369,7 @@ const EditarPerfil: React.FC = () => {
                   name="estadoId"
                   value={gymData.estadoId}
                   onChange={handleGymDataChange}
+                  isDisabled={!isEditing}
                 >
                   <option value={1}>Activo</option>
                   <option value={0}>Inactivo</option>
@@ -360,16 +405,25 @@ const EditarPerfil: React.FC = () => {
           )}
 
           <Flex justify="space-between">
-            <Button variant="outline" leftIcon={<FaSignOutAlt />}>
-              Cerrar sesión
-            </Button>
-            <Button
-              colorScheme="blackAlpha"
-              leftIcon={<FaSave />}
-              onClick={handleSaveChanges}
-            >
-              Guardar cambios
-            </Button>
+            {isEditing ? (
+              <Button
+                colorScheme="blue"
+                leftIcon={isSaving ? <Spinner size="sm" /> : <FaSave />}
+                onClick={handleSaveChanges}
+                isDisabled={isSaving}
+              >
+                {isSaving ? "Guardando..." : "Guardar cambios"}
+              </Button>
+            ) : (
+              <Button
+                colorScheme="blue"
+                variant="outline"
+                leftIcon={<FaEdit />}
+                onClick={handleEdit}
+              >
+                Editar
+              </Button>
+            )}
           </Flex>
         </form>
       </Box>
@@ -386,6 +440,7 @@ const EditarPerfil: React.FC = () => {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                isDisabled={!isEditing}
               />
             </FormControl>
             <FormControl mb={4}>
@@ -394,11 +449,12 @@ const EditarPerfil: React.FC = () => {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                isDisabled={!isEditing}
               />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" onClick={handleSaveChanges}>
+            <Button colorScheme="blue" onClick={handleSaveChanges} isDisabled={isSaving || !isEditing}>
               Cambiar Contraseña
             </Button>
             <Button variant="ghost" onClick={onClose}>

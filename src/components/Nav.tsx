@@ -11,7 +11,6 @@ import {
   useBreakpointValue,
   useDisclosure,
   Input,
-  Spinner
 } from "@chakra-ui/react";
 import {
   FaBars,
