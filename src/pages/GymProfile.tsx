@@ -23,6 +23,7 @@ import {
   FormLabel,
   Textarea,
   Input,
+  Link,
 } from "@chakra-ui/react";
 import { FaCheckCircle, FaStar } from "react-icons/fa";
 import apiService from "../services/service";
@@ -270,6 +271,17 @@ const GymProfile = () => {
               <Text>{recommendationCount} usuarios recomiendan este gym</Text>
               <Text color={gymStatus === "abierto" ? "green" : "red"}>
                 Estado: {gymStatus === "abierto" ? "Abierto" : "Cerrado"}
+              </Text>
+              <Text>
+                Red Social:{" "}
+                <Link
+                  href={gym[10]}
+                  isExternal
+                  color="blue.500"
+                  textDecoration="underline"
+                >
+                  Instagram
+                </Link>
               </Text>
             </VStack>
           </HStack>

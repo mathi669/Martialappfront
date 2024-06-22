@@ -309,6 +309,15 @@ const Register: React.FC = () => {
                         maxLength={250}
                       />
                     </FormControl>
+                    <FormControl id="redSocial" mb={4} isRequired>
+                      <FormLabel>Red Social del Gimnasio:</FormLabel>
+                      <Input
+                        type="text"
+                        placeholder="Red Social del Gimnasio"
+                        value={formData.redSocial || ""}
+                        onChange={handleInputChange}
+                      />
+                    </FormControl>
                     <FormControl id="imagen" mb={4} isRequired>
                       <FormLabel>Imagen del Gimnasio:</FormLabel>
                       <Input

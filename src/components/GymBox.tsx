@@ -1,7 +1,6 @@
 import { Box, Text, Image, Flex, useToast, Button } from "@chakra-ui/react";
 import { GymBoxProps } from "../interfaces/gymbox_interface";
 import { useNavigate } from "react-router-dom";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
 import apiService from "../services/service";
 
 interface GymBoxPropsExtended extends GymBoxProps {
@@ -17,7 +16,6 @@ const GymBox: React.FC<GymBoxPropsExtended> = ({
   gymName,
   gymAddress,
   gymId,
-  isFavorite,
   onToggleFavorite,
   horario,
   status,
