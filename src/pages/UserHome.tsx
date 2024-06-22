@@ -19,11 +19,13 @@ import {
   useDisclosure,
   Skeleton,
   Avatar,
+  IconButton,
 } from "@chakra-ui/react";
 import { User } from "../interfaces/user_interface";
 import apiService from "../services/service";
 import ScheduleReminder from "../components/ScheduleReminder";
 import GymComponent from "../components/GymComponent";
+import { FaTrash } from "react-icons/fa";
 
 const UserHome = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -72,6 +74,19 @@ const UserHome = () => {
         setFavorites(data.favorites);
       } catch (error) {
         console.error("Error fetching favorites:", error);
+      }
+    }
+  };
+
+  const removeFavorite = async (gymId: number) => {
+    if (user) {
+      try {
+        await apiService.removeFavorite(user.id, gymId);
+        setFavorites((prevFavorites) =>
+          prevFavorites.filter((fav: any) => fav.id !== gymId)
+        );
+      } catch (error) {
+        console.error("Error removing favorite:", error);
       }
     }
   };
@@ -341,10 +356,25 @@ const UserHome = () => {
                     <Text fontWeight="bold">{gym.nombre}</Text>
                     <Text>Ubicación: {gym.ubicacion}</Text>
                   </Box>
+                  <IconButton
+                    aria-label="Remove Favorite Gym"
+                    icon={<FaTrash />}
+                    onClick={() => removeFavorite(gym.id)}
+                    variant="ghost"
+                    colorScheme="red"
+                    ml={2}
+                  />
                 </Box>
               ))
             ) : (
-              <Text>No tienes gimnasios favoritos aún.</Text>
+              <Flex justifyContent="center" alignItems="center" height="50vh">
+                <Spinner
+                  size="md"
+                  thickness="4px"
+                  speed="0.65s"
+                  color="blue.500"
+                />
+              </Flex>
             )}
           </ModalBody>
           <ModalFooter>

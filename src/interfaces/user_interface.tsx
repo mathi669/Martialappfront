@@ -1,4 +1,5 @@
 export interface User {
+    dc_red_social: string;
     dc_genero: string;
     dc_nombre: string;
     dc_correo_electronico: string;

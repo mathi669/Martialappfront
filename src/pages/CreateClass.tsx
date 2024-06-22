@@ -269,7 +269,7 @@ const CreateClass = () => {
                 />
               </FormControl>
               <FormControl id="dc_horario" mb={4}>
-                <FormLabel>Hora de Fin</FormLabel>
+                <FormLabel>2da Hora de Inicio</FormLabel>
                 <Input
                   type="time"
                   name="dc_horario"
