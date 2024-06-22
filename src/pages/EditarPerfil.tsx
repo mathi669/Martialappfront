@@ -257,7 +257,6 @@ const EditarPerfil: React.FC = () => {
               </FormControl>
             </>
           )}
-          
 
           <Button
             colorScheme="blue"
@@ -424,6 +423,13 @@ const EditarPerfil: React.FC = () => {
                 Editar
               </Button>
             )}
+            <Button
+              colorScheme="blackAlpha"
+              leftIcon={<FaSave />}
+              onClick={handleSaveChanges}
+            >
+              Guardar cambios
+            </Button>
           </Flex>
         </form>
       </Box>

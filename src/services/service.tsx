@@ -414,7 +414,9 @@ const apiService = {
 
   removeFavorite: async (userId: any, gymId: any) => {
     try {
-      const response = await apiClient.delete("/favorites", { data: { userId, gymId } });
+      const response = await apiClient.delete("/favorites", {
+        data: { userId, gymId },
+      });
       return handleResponse(response);
     } catch (error) {
       handleError(error);
@@ -424,6 +426,25 @@ const apiService = {
   getFavorites: async (userId: any) => {
     try {
       const response = await apiClient.get(`/favorites/${userId}`);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+  // Método para crear una publicación de gimnasio
+  createGymPost: async (postData: any) => {
+    try {
+      const response = await apiClient.post("/gym/post", postData);
+      return handleResponse(response);
+    } catch (error) {
+      handleError(error);
+    }
+  },
+
+  // Método para obtener las publicaciones de un gimnasio
+  getGymPosts: async (gymId: number) => {
+    try {
+      const response = await apiClient.get(`/gym/${gymId}/posts`);
       return handleResponse(response);
     } catch (error) {
       handleError(error);

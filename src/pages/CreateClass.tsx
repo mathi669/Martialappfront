@@ -64,7 +64,6 @@ const CreateClass = () => {
   }, []);
 
   const fetchClasses = async (gymId: number) => {
-    setIsLoading(true);
     try {
       const response = await apiService.getClassesByGym(gymId);
       setClasses(response);
@@ -72,7 +71,7 @@ const CreateClass = () => {
     setIsLoading(false);
   };
 
-  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+  const handleChange = (e: { target: { name: any; value: any } }) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -84,8 +83,7 @@ const CreateClass = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        if(reader.result){
-
+        if (reader.result) {
           setFormData((prevData) => ({
             ...prevData,
             imagen: (reader.result as string).split(",")[1] || "",
@@ -96,13 +94,12 @@ const CreateClass = () => {
     }
   };
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
-      
-      const df_hora = formData.dc_horario.split(" - ")[0]
+      const df_hora = formData.dc_horario.split(" - ")[0];
       const newData = { ...formData, df_hora };
-  
+
       let response;
       if (editClassId) {
         // Llamar al endpoint de actualización
@@ -111,12 +108,14 @@ const CreateClass = () => {
         // Llamar al endpoint de creación
         response = await apiService.createClass(newData);
       }
-  
+
       setMessage(response.message);
       onClose();
       fetchClasses(formData.tb_gimnasio_id);
     } catch (error: any) {
-      setMessage(error.response?.data?.error || "Error creating/updating class");
+      setMessage(
+        error.response?.data?.error || "Error creating/updating class"
+      );
     } finally {
       setEditClassId(null); // Resetear el estado de edición
     }
@@ -135,7 +134,10 @@ const CreateClass = () => {
     setEditClassId(classData.id);
     setFormData({
       dc_nombre_clase: classData.dc_nombre_clase,
-      dc_horario: classData.dc_horario.split(" - ")[0] + " - " + classData.dc_horario.split(" - ")[1],
+      dc_horario:
+        classData.dc_horario.split(" - ")[0] +
+        " - " +
+        classData.dc_horario.split(" - ")[1],
       nb_cupos_disponibles: classData.nb_cupos_disponibles,
       df_fecha: classData.df_fecha,
       dc_descripcion: classData.dc_descripcion || "",
@@ -192,7 +194,11 @@ const CreateClass = () => {
       </Flex>
 
       <Box p={5}>
-        {classes.length > 0 ? (
+        {isLoading ? (
+          <Center w="full" h="200px">
+            <Spinner size="xl" />
+          </Center>
+        ) : classes.length > 0 ? (
           <Table variant="simple">
             <Thead>
               <Tr>
@@ -203,34 +209,34 @@ const CreateClass = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {isLoading ? (
-                <Center w="full" h="200px">
-                  <Spinner size="xl" />
-                </Center>
-              ) : (
-                classes?.map((classData) => (
-                  <Tr key={classData.id}>
-                    <Td>{classData.dc_nombre_clase}</Td>
-                    <Td>{classData.dc_horario}</Td>
-                    <Td>{new Date(classData.df_fecha).toLocaleDateString()}</Td>
-                    <Td>
-                      <IconButton
-                        icon={<EditIcon />}
-                        mr={2}
-                        onClick={() => handleEdit(classData)} aria-label={""}                      />
-                      <IconButton
-                        icon={<DeleteIcon />}
-                        colorScheme="red"
-                        onClick={() => handleDelete(classData.id)} aria-label={""}                      />
-                    </Td>
-                  </Tr>
-                ))
-              )}
+              {classes.map((classData) => (
+                <Tr key={classData.id}>
+                  <Td>{classData.dc_nombre_clase}</Td>
+                  <Td>{classData.dc_horario}</Td>
+                  <Td>{new Date(classData.df_fecha).toLocaleDateString()}</Td>
+                  <Td>
+                    <IconButton
+                      icon={<EditIcon />}
+                      mr={2}
+                      onClick={() => handleEdit(classData)}
+                      aria-label="Editar clase"
+                    />
+                    <IconButton
+                      icon={<DeleteIcon />}
+                      colorScheme="red"
+                      onClick={() => handleDelete(classData.id)}
+                      aria-label="Eliminar clase"
+                    />
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         ) : (
           <Center w="full" h="200px">
-            <Spinner size="xl" />
+            <Box>
+              <Text>Aún no tienes clases creadas.</Text>
+            </Box>
           </Center>
         )}
       </Box>
@@ -238,7 +244,9 @@ const CreateClass = () => {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{editClassId ? "Actualizar Clase" : "Crear Nueva Clase"}</ModalHeader>
+          <ModalHeader>
+            {editClassId ? "Actualizar Clase" : "Crear Nueva Clase"}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleSubmit}>
