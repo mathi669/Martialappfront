@@ -81,9 +81,11 @@ const Login: React.FC = () => {
         });
       }
     } catch (err: any) {
+      console.log(err);
       toast({
         title: "Error en el inicio de sesión.",
-        description: err?.message,
+        description:
+          "Su cuenta ah sido suspendida debido a un comportamiento indebido, porfavor comuniquese con soporte en caso de que sea un error.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -93,7 +95,6 @@ const Login: React.FC = () => {
       setisLoading(false);
     }
   };
-
 
   return (
     <Box

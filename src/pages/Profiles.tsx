@@ -24,9 +24,7 @@ import {
 } from "react-icons/fa";
 import { User } from "../interfaces/user_interface";
 
-
 const Profile: React.FC = () => {
-
   const [user, setUser] = useState<User | null>(null);
   const [userType, setUserType] = useState<string | null>(null);
 
@@ -41,7 +39,7 @@ const Profile: React.FC = () => {
       setUserType(userTypeData);
     }
   }, []);
-  
+
   return (
     <Flex
       direction="column"
@@ -67,10 +65,12 @@ const Profile: React.FC = () => {
         <Text fontSize="2xl" fontWeight="bold">
           {user?.dc_nombre}
         </Text>
-        <Text color="gray.500" mb={4}>{user?.dc_correo_electronico}</Text>
+        <Text color="gray.500" mb={4}>
+          {user?.dc_correo_electronico}
+        </Text>
 
         <Divider mb={4} />
-        
+
         <Box textAlign="left" mb={6}>
           <Text fontSize="lg" fontWeight="bold" mb={2}>
             Información Personal
@@ -127,46 +127,21 @@ const Profile: React.FC = () => {
                   </HStack>
                   <HStack>
                     <Icon as={FaBook} />
-                    <Text>Clases Registradas: Clase de Kata, Clase de Kumite</Text>
+                    <Text>
+                      Clases Registradas: Clase de Kata, Clase de Kumite
+                    </Text>
                   </HStack>
                   <HStack>
                     <Icon as={FaTrophy} />
-                    <Text>Próximos Eventos/Competencias: Campeonato Nacional</Text>
+                    <Text>
+                      Próximos Eventos/Competencias: Campeonato Nacional
+                    </Text>
                   </HStack>
                 </VStack>
               </Box>
             </Box>
           </>
-        ) : (
-          null
-        )}
-
-
-        <Box textAlign="left" mb={6}>
-          <Text fontSize="lg" fontWeight="bold" mb={2}>
-            Información de Contacto de Emergencia
-          </Text>
-          <Box p={4} bg="gray.100" borderRadius="md">
-            <VStack align="start" spacing={2}>
-              <HStack>
-                <Icon as={FaUser} />
-                <Text>Nombre: Jane Doe</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaUser} />
-                <Text>Apellido: Doe</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaUser} />
-                <Text>Relación con el Usuario: Esposa</Text>
-              </HStack>
-              <HStack>
-                <Icon as={FaPhone} />
-                <Text>Número telefónico: +987654321</Text>
-              </HStack>
-            </VStack>
-          </Box>
-        </Box>
+        ) : null}
       </Box>
     </Flex>
   );

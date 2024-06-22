@@ -52,7 +52,6 @@ const Register: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-  
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     setLoading(true);
@@ -281,7 +280,9 @@ const Register: React.FC = () => {
                         onChange={handleInputChange}
                       />
                     </FormControl>
-                    <FormControl id="horario" mb={4} isRequired> {/* Nuevo campo */}
+                    <FormControl id="horario" mb={4} isRequired>
+                      {" "}
+                      {/* Nuevo campo */}
                       <FormLabel>Horario del Gimnasio:</FormLabel>
                       <Input
                         type="text"

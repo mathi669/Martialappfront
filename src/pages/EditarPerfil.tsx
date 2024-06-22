@@ -231,7 +231,6 @@ const EditarPerfil: React.FC = () => {
               </FormControl>
             </>
           )}
-          
 
           <Button
             colorScheme="blue"
@@ -360,9 +359,6 @@ const EditarPerfil: React.FC = () => {
           )}
 
           <Flex justify="space-between">
-            <Button variant="outline" leftIcon={<FaSignOutAlt />}>
-              Cerrar sesión
-            </Button>
             <Button
               colorScheme="blackAlpha"
               leftIcon={<FaSave />}

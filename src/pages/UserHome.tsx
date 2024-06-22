@@ -18,10 +18,12 @@ import {
   ModalFooter,
   useDisclosure,
   Skeleton,
+  Avatar,
 } from "@chakra-ui/react";
 import { User } from "../interfaces/user_interface";
 import apiService from "../services/service";
 import ScheduleReminder from "../components/ScheduleReminder";
+import GymComponent from "../components/GymComponent";
 
 const UserHome = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -41,6 +43,12 @@ const UserHome = () => {
     isOpen: isReminderOpen,
     onOpen: onReminderOpen,
     onClose: onReminderClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isPostOpen,
+    onOpen: onPostOpen,
+    onClose: onPostClose,
   } = useDisclosure();
 
   const fetchReservations = async () => {
@@ -135,22 +143,13 @@ const UserHome = () => {
             <i className="fa fa-user fa-fw" aria-hidden="true"></i> MOSTRAR MENÚ
           </Button>
           <Box textAlign="center" mb={6}>
-            <Image
+            <Avatar
+              name={user.dc_nombre}
               src={user.dc_imagen_url}
-              alt="User"
-              borderRadius="full"
-              boxSize="100px"
+              size="xl"
+              mb={2}
               mx="auto"
             />
-            <Text mt={2}>
-              <small>{user.dc_nombre}</small>
-            </Text>
-            <Flex justify="space-around" mt={2}>
-              <Box textAlign="center">
-                {userType === "gimnasio" ? "Gimnasio" : "Usuario"} <br />
-                <small>Tipo</small>
-              </Box>
-            </Flex>
           </Box>
           <Stack spacing={2}>
             <Link to="/profiles">
@@ -163,27 +162,43 @@ const UserHome = () => {
                 TU PERFIL
               </Button>
             </Link>
-            <Link to="/editarperfil">
-              <Button
-                w="full"
-                leftIcon={
-                  <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
-                }
-              >
-                EDITAR PERFIL
-              </Button>
-            </Link>
+
             {userType === "gimnasio" ? (
-              <Link to="/createClass">
+              <Link to="/editarperfil">
+                <Button
+                  w="full"
+                  leftIcon={
+                    <i className="fa fa-cogs fa-fw" aria-hidden="true"></i>
+                  }
+                >
+                  EDITAR PERFIL
+                </Button>
+              </Link>
+            ) : (
+              <></>
+            )}
+            {userType === "gimnasio" ? (
+              <>
+                <Link to="/createClass">
+                  <Button
+                    w="full"
+                    leftIcon={
+                      <i className="fa fa-dumbbell" aria-hidden="true"></i>
+                    }
+                  >
+                    MODULO DE CLASES
+                  </Button>
+                </Link>
                 <Button
                   w="full"
                   leftIcon={
                     <i className="fa fa-dumbbell" aria-hidden="true"></i>
                   }
+                  onClick={onPostOpen}
                 >
-                  MODULO DE CLASES
+                  PUBLICACIONES
                 </Button>
-              </Link>
+              </>
             ) : (
               <>
                 <Button
@@ -220,7 +235,6 @@ const UserHome = () => {
             </Text>
           </Box>
           <Box border="1px" borderColor="gray.200" p={6} borderRadius="md">
-            <Text mb={4}>Aquí está la información del usuario.</Text>
             <Stack spacing={4}>
               <Flex>
                 <Text fontWeight="bold" w="150px">
@@ -239,12 +253,6 @@ const UserHome = () => {
                   Teléfono:
                 </Text>
                 <Text>{user.dc_telefono}</Text>
-              </Flex>
-              <Flex>
-                <Text fontWeight="bold" w="150px">
-                  Genero:
-                </Text>
-                <Text>{user.dc_genero}</Text>
               </Flex>
             </Stack>
           </Box>
@@ -360,6 +368,16 @@ const UserHome = () => {
               Cerrar
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isPostOpen} onClose={onPostClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalCloseButton />
+          <ModalBody>
+            <GymComponent gymId={user.id} />
+          </ModalBody>
         </ModalContent>
       </Modal>
     </Container>

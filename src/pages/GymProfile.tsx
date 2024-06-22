@@ -23,12 +23,18 @@ import {
   FormLabel,
   Textarea,
   Input,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
 } from "@chakra-ui/react";
 import { FaCheckCircle, FaStar } from "react-icons/fa";
 import apiService from "../services/service";
 import ClassBox from "../components/ClassBox";
 import MapContainer from "../components/Maps";
 import { User } from "../interfaces/user_interface";
+import GymPostsTab from "../components/GymPostTab";
 
 const GymProfile = () => {
   const { gym_id } = useParams<{ gym_id: string }>();
@@ -64,23 +70,18 @@ const GymProfile = () => {
       try {
         setLoading(true);
 
-        // Primero fetchGym
         const gymData = await apiService.getGym(gym_id);
         setGym(gymData);
 
-        // Luego fetchClasses
         const classesData = await apiService.getClassesByGym(Number(gym_id));
         setClasses(classesData);
 
-        // Después fetchComments
         const commentsData = await apiService.getGymComments(gym_id);
         setComments(commentsData);
 
-        // A continuación fetchGymStatus
         const gymStatusData = await apiService.getGymStatus(Number(gym_id));
         setGymStatus(gymStatusData.status);
 
-        // Por último fetchRecommendationCount
         const recommendationCountData = await apiService.getRecommendationCount(
           gym_id
         );
@@ -89,12 +90,12 @@ const GymProfile = () => {
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
-        setLoadingClasses(false); // Si tenías un estado para clases
+        setLoadingClasses(false);
       }
     };
 
     fetchData();
-  }, [gym_id]); // Asegúrate de incluir gym_id en la dependencia si cambia
+  }, [gym_id]);
 
   const handleReserve = async () => {
     setLoadingReserva(true);
@@ -284,22 +285,107 @@ const GymProfile = () => {
         </GridItem>
         <GridItem colSpan={{ base: 1, md: 3 }}>
           <Box mt={-4} p={4} borderWidth="1px" borderRadius="md">
-            <Text fontWeight="bold" mb={2}>
-              Actividad reciente
-            </Text>
-            {classes.map((clase) => (
-              <ClassBox
-                key={clase.id}
-                className={clase.dc_nombre_clase}
-                schedule={clase.dc_horario}
-                availableSpots={clase.nb_cupos_disponibles}
-                imageUrl={clase.dc_imagen_url}
-                onReserve={() => handleReserveClick(clase)}
-              />
-            ))}
+            <Tabs>
+              <TabList>
+                <Tab>Comentarios y Calificaciones</Tab>
+                <Tab>Clases Publicadas</Tab>
+                <Tab>Publicaciones del Gimnasio</Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel transition="opacity 0.3s ease-in-out">
+                  <VStack align="start" spacing={4} mt={4}>
+                    {comments?.comments?.map((comment: any, index: number) => (
+                      <Box
+                        key={index}
+                        borderWidth="1px"
+                        p={4}
+                        borderRadius="md"
+                        width="100%"
+                      >
+                        <HStack>
+                          <Avatar size="sm" name={comment.user} />
+                          <VStack align="start">
+                            <HStack>
+                              <Text fontWeight="bold">{comment.user}</Text>
+                              <Text fontSize="sm" color="gray.500">
+                                {comment.date}
+                              </Text>
+                            </HStack>
+                            <HStack>
+                              {[...Array(comment.rating)].map((_, i) => (
+                                <FaStar key={i} color="yellow.400" />
+                              ))}
+                              {[...Array(5 - comment.rating)].map((_, i) => (
+                                <FaStar key={i} color="gray.300" />
+                              ))}
+                            </HStack>
+                          </VStack>
+                        </HStack>
+                        <Text mt={2}>{comment.comment}</Text>
+                      </Box>
+                    ))}
+                    <FormControl id="comment" isRequired>
+                      <FormLabel>Nuevo Comentario</FormLabel>
+                      <Textarea
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Ingrese su comentario..."
+                      />
+                    </FormControl>
+                    <FormControl id="rating" isRequired>
+                      <FormLabel>Calificación</FormLabel>
+                      <HStack spacing={1}>
+                        {[1, 2, 3, 4, 5].map((rating) => (
+                          <FaStar
+                            key={rating}
+                            color={
+                              (hoverRating || newRating) >= rating
+                                ? "yellow.400"
+                                : "gray.300"
+                            }
+                            onMouseEnter={() => handleStarHover(rating)}
+                            onMouseLeave={handleStarLeave}
+                            onClick={() => handleStarClick(rating)}
+                          />
+                        ))}
+                      </HStack>
+                    </FormControl>
+                    <Button
+                      colorScheme="blue"
+                      onClick={handleAddComment}
+                      isLoading={loadingComentario}
+                      mt={4}
+                    >
+                      Agregar Comentario
+                    </Button>
+                  </VStack>
+                </TabPanel>
+
+                <TabPanel transition="opacity 0.3s ease-in-out">
+                  <VStack align="start" spacing={4} mt={4}>
+                    {classes.map((clase) => (
+                      <ClassBox
+                        key={clase.id}
+                        className={clase.dc_nombre_clase}
+                        schedule={clase.dc_horario}
+                        availableSpots={clase.nb_cupos_disponibles}
+                        imageUrl={clase.dc_imagen_url}
+                        onReserve={() => handleReserveClick(clase)}
+                      />
+                    ))}
+                  </VStack>
+                </TabPanel>
+
+                <TabPanel transition="opacity 0.3s ease-in-out">
+                  <Text>Publicaciones del Gimnasio</Text>
+                  <GymPostsTab gymId={gym_id} />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
           </Box>
         </GridItem>
       </SimpleGrid>
+
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -346,71 +432,6 @@ const GymProfile = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-
-      <Box mt={8}>
-        <VStack align="start" spacing={4}>
-          <Text fontWeight="bold" fontSize="xl">
-            Comentarios y Calificaciones
-          </Text>
-          {comments.comments.map((comment: any, index: number) => (
-            <Box key={index} borderWidth="1px" p={4} borderRadius="md">
-              <HStack>
-                <Avatar size="sm" name={comment.user} />
-                <VStack align="start">
-                  <HStack>
-                    <Text fontWeight="bold">{comment.user}</Text>
-                    <Text fontSize="sm" color="gray.500">
-                      {comment.date}
-                    </Text>
-                  </HStack>
-                  <HStack>
-                    {[...Array(comment.rating)].map((_, i) => (
-                      <FaStar key={i} color="yellow.400" />
-                    ))}
-                    {[...Array(5 - comment.rating)].map((_, i) => (
-                      <FaStar key={i} color="gray.300" />
-                    ))}
-                  </HStack>
-                </VStack>
-              </HStack>
-              <Text mt={2}>{comment.comment}</Text>
-            </Box>
-          ))}
-          <FormControl id="comment" isRequired>
-            <FormLabel>Nuevo Comentario</FormLabel>
-            <Textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Ingrese su comentario..."
-            />
-          </FormControl>
-          <FormControl id="rating" isRequired>
-            <FormLabel>Calificación</FormLabel>
-            <HStack spacing={1}>
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <FaStar
-                  key={rating}
-                  color={
-                    (hoverRating || newRating) >= rating
-                      ? "yellow.400"
-                      : "gray.300"
-                  }
-                  onMouseEnter={() => handleStarHover(rating)}
-                  onMouseLeave={handleStarLeave}
-                  onClick={() => handleStarClick(rating)}
-                />
-              ))}
-            </HStack>
-          </FormControl>
-          <Button
-            colorScheme="blue"
-            onClick={handleAddComment}
-            isLoading={loadingComentario}
-          >
-            Agregar Comentario
-          </Button>
-        </VStack>
-      </Box>
     </Box>
   );
 };
