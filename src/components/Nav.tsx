@@ -11,6 +11,7 @@ import {
   useBreakpointValue,
   useDisclosure,
   Input,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   FaBars,
@@ -85,18 +86,18 @@ function NavbarMartial() {
           <Image src={logo} alt="MartialApps Logo" boxSize="77px" />
         </Link>
         <Flex alignItems="center" ml="auto">
-          {user && userType === "gimnasio" ? (
-            <Flex alignItems="center" ml="auto">
+          {user && userType === "gimnasio" && (
+            <>
               <Input
                 placeholder="Buscar usuarios"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                mr={2}
+                mr={3}
               />
-              <Button onClick={handleSearch}>Buscar</Button>
-            </Flex>
-          ) : (
-            <></>
+              <Button onClick={handleSearch} isDisabled={loading} mr={4}>
+                {loading ? <Spinner size="sm" /> : "Buscar"}
+              </Button>
+            </>
           )}
           <IconButton
             size="md"

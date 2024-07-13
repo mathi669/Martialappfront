@@ -57,6 +57,7 @@ const GymProfile = () => {
   const [starSelected, setStarSelected] = useState(false);
   const [recommendationCount, setRecommendationCount] = useState<number>(0);
   const [gymStatus, setGymStatus] = useState<string>("");
+  const [hasRecommended, setHasRecommended] = useState(false);
 
   const toast = useToast();
 
@@ -86,7 +87,12 @@ const GymProfile = () => {
           gym_id
         );
         setRecommendationCount(recommendationCountData.recommendation_count);
-      } catch (error) {
+
+        const recommendResponse = await apiService.recommendGym(gym_id, user?.id);
+        if (recommendResponse.alreadyRecommended) {
+          setHasRecommended(true);
+        }
+
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
@@ -217,16 +223,27 @@ const GymProfile = () => {
 
   const handleRecommend = async () => {
     try {
-      await apiService.recommendGym(gym_id, user?.id);
-      toast({
-        title: "Recomendación exitosa",
-        description: "Has recomendado este gimnasio exitosamente",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      const updatedCount = await apiService.getRecommendationCount(gym_id);
-      setRecommendationCount(updatedCount.recommendation_count);
+      const response = await apiService.recommendGym(gym_id, user?.id);
+      if (response.alreadyRecommended) {
+        toast({
+          title: "Recomendación",
+          description: "Ya has recomendado este gimnasio",
+          status: "info",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Recomendación exitosa",
+          description: "Has recomendado este gimnasio exitosamente",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        const updatedCount = await apiService.getRecommendationCount(gym_id);
+        setRecommendationCount(updatedCount.recommendation_count);
+      }
+      setHasRecommended(true);
     } catch (error) {
       toast({
         title: "Error",
@@ -264,8 +281,12 @@ const GymProfile = () => {
               <Text>
                 Fecha de ingreso: {new Date(gym[6]).toLocaleDateString()}
               </Text>
-              <Button colorScheme="teal" onClick={handleRecommend}>
-                Recomendar
+              <Button
+                colorScheme="teal"
+                onClick={handleRecommend}
+                isDisabled={hasRecommended}
+              >
+                {hasRecommended ? "Ya recomendado" : "Recomendar"}
               </Button>
               <Text>{recommendationCount} usuarios recomiendan este gym</Text>
               <Text color={gymStatus === "abierto" ? "green" : "red"}>

@@ -85,9 +85,6 @@ function Home() {
           </Box>
           {/* Nuevas secciones */}
           <Box p={8}>
-            <Text fontSize="xl" textAlign="center" mb={4}>
-              Recursos adicionales sobre artes marciales:
-            </Text>
             <Flex
               direction={{ base: "column", md: "row" }}
               align="center"
@@ -101,10 +98,6 @@ function Home() {
                 mb={{ base: 4, md: 0 }}
                 mr={{ md: 4 }}
               >
-                <Text fontWeight="bold">Consejos de entrenamiento:</Text>
-                <Text>
-                  Descubre consejos útiles para mejorar tu técnica y rendimiento en las artes marciales.
-                </Text>
               </Box>
               {/* Aquí puedes agregar más secciones similares */}
             </Flex>
