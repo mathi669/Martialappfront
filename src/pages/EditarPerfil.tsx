@@ -42,15 +42,25 @@ const EditarPerfil: React.FC = () => {
     ubicacionGimnasio: "",
     horario: "",
     descripcion: "",
-    imagen_url: "",
     estadoId: 2,
     fechaIngreso: "",
     redSocial: "",
   });
 
-  // Estado para los campos del usuario
-  const [userName, setUserName] = useState("");
-  const [userPhone, setUserPhone] = useState("");
+  // Estado para almacenar la imagen como base64
+  const [imageFile, setImageFile] = useState<string | ArrayBuffer | null>(null);
+
+  // Función para manejar el cambio de archivo y convertir a base64
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageFile(reader.result); // Guardar el base64 en el estado
+      };
+      reader.readAsDataURL(file); // Leer el archivo como base64
+    }
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -59,9 +69,6 @@ const EditarPerfil: React.FC = () => {
     if (userData) {
       const parsedUser: User = JSON.parse(userData);
       setUser(parsedUser);
-      setUserName(parsedUser.dc_nombre);
-      setUserPhone(parsedUser.dc_telefono);
-
       if (userTypeData === "gimnasio") {
         setUserType(userTypeData);
         setGymData({
@@ -70,7 +77,6 @@ const EditarPerfil: React.FC = () => {
           ubicacionGimnasio: parsedUser.dc_ubicacion || "",
           horario: parsedUser.dc_horario || "",
           descripcion: parsedUser.dc_descripcion || "",
-          imagen_url: parsedUser.dc_imagen_url || "",
           estadoId: parsedUser.tb_gimnasio_estado_id || 2,
           fechaIngreso: parsedUser.df_fecha_ingreso || "",
           redSocial: parsedUser.dc_red_social || "",
@@ -108,33 +114,33 @@ const EditarPerfil: React.FC = () => {
     }
 
     try {
-      if (userType === "gimnasio" && user) {
-        const dataToUpdate = {
-          id: user?.id,
-          dc_nombre: gymData.nombreGimnasio,
-          dc_correo_electronico: user?.dc_correo_electronico,
-          dc_contrasena: newPassword || undefined,
-          dc_telefono: gymData.telefonoGimnasio,
-          dc_ubicacion: gymData.ubicacionGimnasio,
-          dc_horario: gymData.horario,
-          dc_descripcion: gymData.descripcion,
-          dc_imagen_url: gymData.imagen_url,
-          tb_gimnasio_estado_id: gymData.estadoId,
-          dc_red_social: gymData.redSocial,
-        };
-        await apiService.updateGym(dataToUpdate);
-      } else {
-        // const dataToUpdate = {
-        //   id: user?.id,
-        //   dc_nombre: userName,
-        //   dc_correo_electronico: user?.dc_correo_electronico,
-        //   dc_contrasena: newPassword || undefined, // Solo incluir la contraseña si se ha cambiado
-        //   dc_telefono: userPhone,
-        //   // Otros campos necesarios para actualizar el usuario
-        // };
-        // await apiService.updateUser(dataToUpdate);
+      let dataToUpdate: any = {
+        id: user?.id,
+        dc_nombre: gymData.nombreGimnasio,
+        dc_correo_electronico: user?.dc_correo_electronico,
+        dc_contrasena: newPassword || undefined,
+        dc_telefono: gymData.telefonoGimnasio,
+        dc_ubicacion: gymData.ubicacionGimnasio,
+        dc_horario: gymData.horario,
+        dc_descripcion: gymData.descripcion,
+        dc_imagen_base64: imageFile, // Aquí se envía la imagen como base64
+        tb_gimnasio_estado_id: gymData.estadoId,
+        dc_red_social: gymData.redSocial,
+      };
+
+      // Si no hay imagen nueva, se evita enviar dc_imagen_base64
+      if (!imageFile) {
+        delete dataToUpdate.dc_imagen_base64;
       }
-  
+
+      if (userType === "gimnasio" && user) {
+        await apiService.updateGym(dataToUpdate).then((res: any) => {
+          localStorage.setItem("user", JSON.stringify(res.gimnasio));
+        });
+      } else {
+        // Lógica para actualizar datos del usuario normal
+      }
+
       toast({
         title: "Éxito",
         description: "Datos actualizados correctamente.",
@@ -142,7 +148,7 @@ const EditarPerfil: React.FC = () => {
         duration: 5000,
         isClosable: true,
       });
-  
+
       setNewPassword("");
       setConfirmPassword("");
       setIsEditing(false);
@@ -202,15 +208,19 @@ const EditarPerfil: React.FC = () => {
                   <Input
                     type="text"
                     placeholder="Nombre"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
+                    value={gymData.nombreGimnasio}
+                    onChange={handleGymDataChange}
+                    name="nombreGimnasio"
                     isDisabled={!isEditing}
                   />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Apellido</FormLabel>
-                  <Input type="text" placeholder="Apellido" isDisabled={!isEditing} />
-                  
+                  <Input
+                    type="text"
+                    placeholder="Apellido"
+                    isDisabled={!isEditing}
+                  />
                 </FormControl>
               </Flex>
               <Flex mb={4} justify="space-between" gap={6}>
@@ -227,8 +237,9 @@ const EditarPerfil: React.FC = () => {
                   <Input
                     type="text"
                     placeholder="Número telefónico"
-                    value={userPhone}
-                    onChange={(e) => setUserPhone(e.target.value)}
+                    value={gymData.telefonoGimnasio}
+                    onChange={handleGymDataChange}
+                    name="telefonoGimnasio"
                     isDisabled={!isEditing}
                   />
                 </FormControl>
@@ -236,11 +247,14 @@ const EditarPerfil: React.FC = () => {
               <Flex mb={4} justify="space-between" gap={6}>
                 <FormControl>
                   <FormLabel>Fecha de Nacimiento</FormLabel>
-                  <Input type="date" isDisabled={!isEditing}/>
+                  <Input type="date" isDisabled={!isEditing} />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Género</FormLabel>
-                  <Select placeholder="Seleccione género" isDisabled={!isEditing}>
+                  <Select
+                    placeholder="Seleccione género"
+                    isDisabled={!isEditing}
+                  >
                     <option value="masculino">Masculino</option>
                     <option value="femenino">Femenino</option>
                     <option value="otro">Otro</option>
@@ -249,226 +263,146 @@ const EditarPerfil: React.FC = () => {
               </Flex>
               <FormControl mb={4}>
                 <FormLabel>Dirección</FormLabel>
-                <Input type="text" placeholder="Dirección" isDisabled={!isEditing} />
-              </FormControl>
-              <FormControl mb={6}>
-                <FormLabel>Foto de perfil</FormLabel>
-                <Input type="file" isDisabled={!isEditing} />
-              </FormControl>
-            </>
-          )}
-
-          <Button
-            colorScheme="blue"
-            leftIcon={<FaKey />}
-            onClick={onOpen}
-            mb={6}
-            isDisabled={!isEditing}
-          >
-            Cambiar Contraseña
-          </Button>
-
-          {user && userType === "gimnasio" ? (
-            <>
-              <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
-                Información del Gimnasio
-              </Text>
-              <FormControl mb={4}>
-                <FormLabel>Nombre del Gimnasio</FormLabel>
                 <Input
                   type="text"
-                  placeholder="Nombre del gimnasio"
-                  name="nombreGimnasio"
-                  value={gymData.nombreGimnasio}
-                  onChange={handleGymDataChange}
-                  isDisabled={!isEditing}
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>Teléfono del Gimnasio</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Teléfono del gimnasio"
-                  name="telefonoGimnasio"
-                  value={gymData.telefonoGimnasio}
-                  onChange={handleGymDataChange}
-                  isDisabled={!isEditing}
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>Ubicación del Gimnasio</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Ubicación del gimnasio"
-                  name="ubicacionGimnasio"
+                  placeholder="Dirección"
                   value={gymData.ubicacionGimnasio}
                   onChange={handleGymDataChange}
+                  name="ubicacionGimnasio"
                   isDisabled={!isEditing}
                 />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>Horario del Gimnasio</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="Horario del gimnasio"
-                  name="horario"
-                  value={gymData.horario}
-                  onChange={handleGymDataChange}
-                  isDisabled={!isEditing}
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>Fecha de Ingreso al Gimnasio</FormLabel>
-                <Input
-                  type="date"
-                  name="fechaIngreso"
-                  value={gymData.fechaIngreso}
-                  onChange={handleGymDataChange}
-                  isDisabled={!isEditing}
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>Descripción del Gimnasio</FormLabel>
-                <Textarea
-                  placeholder="Descripción del gimnasio"
-                  name="descripcion"
-                  value={gymData.descripcion}
-                  onChange={handleGymDataChange}
-                  isDisabled={!isEditing}
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>Red Social</FormLabel>
-                <Input
-                  placeholder="Red social"
-                  name="redSocial"
-                  value={gymData.redSocial}
-                  onChange={handleGymDataChange}
-                  isDisabled={!isEditing}
-                />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>URL de la Imagen del Gimnasio</FormLabel>
-                <Input
-                  type="text"
-                  placeholder="URL de la imagen del gimnasio"
-                  name="imagen_url"
-                  value={gymData.imagen_url}
-                  onChange={handleGymDataChange}
-                  isDisabled={!isEditing}
-                />
-              </FormControl>
-              <FormControl mb={6}>
-                <FormLabel>Foto de perfil</FormLabel>
-                <Input type="file" />
-              </FormControl>
-              <FormControl mb={4}>
-                <FormLabel>Estado del Gimnasio</FormLabel>
-                <Select
-                  name="estadoId"
-                  value={gymData.estadoId}
-                  onChange={handleGymDataChange}
-                  isDisabled={!isEditing}
-                >
-                  <option value={1}>Activo</option>
-                  <option value={0}>Inactivo</option>
-                </Select>
-              </FormControl>
-            </>
-          ) : null}
-
-          {user && userType !== "gimnasio" && (
-            <>
-              <Text fontSize="lg" fontWeight="bold" mb={2} mt={6}>
-                Información de Contacto de Emergencia
-              </Text>
-              <Flex mb={4} justify="space-between" gap={6}>
-                <FormControl>
-                  <FormLabel>Nombre</FormLabel>
-                  <Input type="text" placeholder="Nombre" />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>Apellido</FormLabel>
-                  <Input type="text" placeholder="Apellido" />
-                </FormControl>
-              </Flex>
-              <FormControl mb={6}>
-                <FormLabel>Relación con el Usuario</FormLabel>
-                <Input type="text" placeholder="Relación con el Usuario" />
-              </FormControl>
-              <FormControl mb={6}>
-                <FormLabel>Número telefónico</FormLabel>
-                <Input type="text" placeholder="Número telefónico" />
               </FormControl>
             </>
           )}
 
-          <Flex justify="space-between">
-            {isEditing ? (
-              <Button
-                colorScheme="blue"
-                leftIcon={isSaving ? <Spinner size="sm" /> : <FaSave />}
-                onClick={handleSaveChanges}
-                isDisabled={isSaving}
-              >
-                {isSaving ? "Guardando..." : "Guardar cambios"}
-              </Button>
-            ) : (
-              <Button
-                colorScheme="blue"
-                variant="outline"
-                leftIcon={<FaEdit />}
-                onClick={handleEdit}
-              >
-                Editar
-              </Button>
-            )}
-            <Button
-              colorScheme="blackAlpha"
-              leftIcon={<FaSave />}
-              onClick={handleSaveChanges}
-            >
-              Guardar cambios
-            </Button>
-          </Flex>
-        </form>
-      </Box>
+          {userType === "gimnasio" && (
+            <>
+              <Text fontSize="lg" fontWeight="bold" mb={2}>
+                Información del Gimnasio
+              </Text>
+              <Flex mt={6} mb={4} justify="space-between" gap={6}>
+                <FormControl>
+                  <FormLabel>Nombre del Gimnasio</FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="Nombre del Gimnasio"
+                    value={gymData.nombreGimnasio}
+                    onChange={handleGymDataChange}
+                    name="nombreGimnasio"
+                    isDisabled={!isEditing}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Teléfono del Gimnasio</FormLabel>
+                  <Input
+                    type="text"
+                    placeholder="Teléfono del Gimnasio"
+                    value={gymData.telefonoGimnasio}
+                    onChange={handleGymDataChange}
+                    name="telefonoGimnasio"
+                    isDisabled={!isEditing}
+                  />
+                </FormControl>
+              </Flex>
+              <FormControl mb={4}>
+                <FormLabel>Ubicación</FormLabel>
+                <Input
+                  type="text"
+                  placeholder="Ubicación del Gimnasio"
+                  value={gymData.ubicacionGimnasio}
+                  onChange={handleGymDataChange}
+                  name="ubicacionGimnasio"
+                  isDisabled={!isEditing}
+                />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Horario</FormLabel>
+                <Input
+                  type="text"
+                  placeholder="Horario del Gimnasio"
+                  value={gymData.horario}
+                  onChange={handleGymDataChange}
+                  name="horario"
+                  isDisabled={!isEditing}
+                />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Descripción</FormLabel>
+                <Textarea
+                  placeholder="Descripción del Gimnasio"
+                  value={gymData.descripcion}
+                  onChange={handleGymDataChange}
+                  name="descripcion"
+                  isDisabled={!isEditing}
+                />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Redes Sociales</FormLabel>
+                <Input
+                  type="text"
+                  placeholder="Redes Sociales del Gimnasio"
+                  value={gymData.redSocial}
+                  onChange={handleGymDataChange}
+                  name="redSocial"
+                  isDisabled={!isEditing}
+                />
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Estado</FormLabel>
+                <Select
+                  placeholder="Seleccione el estado del Gimnasio"
+                  value={gymData.estadoId.toString()}
+                  onChange={handleGymDataChange}
+                  name="estadoId"
+                  isDisabled={!isEditing}
+                >
+                  <option value="1">Activo</option>
+                  <option value="2">Inactivo</option>
+                </Select>
+              </FormControl>
+              <FormControl mb={4}>
+                <FormLabel>Imagen del Gimnasio</FormLabel>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange} // Manejar cambio de archivo para convertir a base64
+                  disabled={!isEditing}
+                />
+                {imageFile && (
+                  <Avatar size="md" src={imageFile as string} mt={2} />
+                )}
+              </FormControl>
+            </>
+          )}
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Cambiar Contraseña</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl mb={4}>
-              <FormLabel>Contraseña Nueva</FormLabel>
-              <Input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                isDisabled={!isEditing}
-              />
-            </FormControl>
-            <FormControl mb={4}>
-              <FormLabel>Repetir Contraseña Nueva</FormLabel>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                isDisabled={!isEditing}
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" onClick={handleSaveChanges} isDisabled={isSaving || !isEditing}>
-              Cambiar Contraseña
-            </Button>
-            <Button variant="ghost" onClick={onClose}>
-              Cancelar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          {isEditing && (
+            <Flex mt={6} justify="center">
+              <Button
+                leftIcon={<FaSave />}
+                colorScheme="blue"
+                variant="solid"
+                onClick={handleSaveChanges}
+                isLoading={isSaving}
+                loadingText="Guardando"
+              >
+                Guardar Cambios
+              </Button>
+            </Flex>
+          )}
+        </form>
+
+        {!isEditing && (
+          <Button
+            mt={6}
+            leftIcon={<FaEdit />}
+            colorScheme="blue"
+            variant="solid"
+            onClick={handleEdit}
+          >
+            Editar
+          </Button>
+        )}
+      </Box>
     </Flex>
   );
 };

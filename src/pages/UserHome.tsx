@@ -31,6 +31,7 @@ const UserHome = () => {
   const [user, setUser] = useState<User | null>(null);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [isLoadingReservas, setIsLoadingReservas] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
   const [favorites, setFavorites] = useState<any[]>([]);
@@ -68,6 +69,7 @@ const UserHome = () => {
   };
 
   const fetchFavorites = async () => {
+    setIsLoading(true);
     if (user) {
       try {
         const data = await apiService.getFavorites(user.id);
@@ -76,9 +78,11 @@ const UserHome = () => {
         console.error("Error fetching favorites:", error);
       }
     }
+    setIsLoading(false);
   };
 
   const removeFavorite = async (gymId: number) => {
+    setIsLoadingReservas(true);
     if (user) {
       try {
         await apiService.removeFavorite(user.id, gymId);
@@ -89,6 +93,7 @@ const UserHome = () => {
         console.error("Error removing favorite:", error);
       }
     }
+    setIsLoadingReservas(false);
   };
 
   const modal = () => {
@@ -336,7 +341,16 @@ const UserHome = () => {
           <ModalHeader>Mis Gimnasios Favoritos</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {favorites.length > 0 ? (
+            {isLoading ? (
+              <Flex justifyContent="center" alignItems="center" height="50vh">
+                <Spinner
+                  size="md"
+                  thickness="4px"
+                  speed="0.65s"
+                  color="blue.500"
+                />
+              </Flex>
+            ) : favorites.length > 0 ? (
               favorites.map((gym) => (
                 <Box
                   key={gym.id}
@@ -356,24 +370,34 @@ const UserHome = () => {
                     <Text fontWeight="bold">{gym.nombre}</Text>
                     <Text>Ubicación: {gym.ubicacion}</Text>
                   </Box>
-                  <IconButton
-                    aria-label="Remove Favorite Gym"
-                    icon={<FaTrash />}
-                    onClick={() => removeFavorite(gym.id)}
-                    variant="ghost"
-                    colorScheme="red"
-                    ml={2}
-                  />
+                  {isLoadingReservas ? (
+                    <Flex
+                      justifyContent="center"
+                      alignItems="center"
+                      height="50vh"
+                    >
+                      <Spinner
+                        size="md"
+                        thickness="4px"
+                        speed="0.65s"
+                        color="blue.500"
+                      />
+                    </Flex>
+                  ) : (
+                    <IconButton
+                      aria-label="Remove Favorite Gym"
+                      icon={<FaTrash />}
+                      onClick={() => removeFavorite(gym.id)}
+                      variant="ghost"
+                      colorScheme="red"
+                      ml={2}
+                    />
+                  )}
                 </Box>
               ))
             ) : (
               <Flex justifyContent="center" alignItems="center" height="50vh">
-                <Spinner
-                  size="md"
-                  thickness="4px"
-                  speed="0.65s"
-                  color="blue.500"
-                />
+                <Text fontSize="xl">Aún no ha agregado favoritos</Text>
               </Flex>
             )}
           </ModalBody>

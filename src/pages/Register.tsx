@@ -90,7 +90,8 @@ const Register: React.FC = () => {
       );
       toast({
         title: "Error",
-        description: error.message || "Ha ocurrido un error en el registro",
+        description:
+          error.response.data.error || "Ha ocurrido un error en el registro",
         status: "error",
         duration: 9000,
         isClosable: true,

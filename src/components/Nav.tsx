@@ -61,7 +61,6 @@ function NavbarMartial() {
     }
   };
 
-  
   const handleSearch = async () => {
     setLoading(true);
     try {
@@ -86,13 +85,19 @@ function NavbarMartial() {
           <Image src={logo} alt="MartialApps Logo" boxSize="77px" />
         </Link>
         <Flex alignItems="center" ml="auto">
-          <Input
-            placeholder="Buscar usuarios"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            mr={2}
-          />
-          <Button onClick={handleSearch}>Buscar</Button>
+          {user && userType === "gimnasio" ? (
+            <Flex alignItems="center" ml="auto">
+              <Input
+                placeholder="Buscar usuarios"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                mr={2}
+              />
+              <Button onClick={handleSearch}>Buscar</Button>
+            </Flex>
+          ) : (
+            <></>
+          )}
           <IconButton
             size="md"
             icon={<FaBars />}

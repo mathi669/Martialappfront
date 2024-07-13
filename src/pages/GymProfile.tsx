@@ -62,7 +62,6 @@ const GymProfile = () => {
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
-
     if (userData) {
       setUser(JSON.parse(userData));
     }
@@ -108,6 +107,7 @@ const GymProfile = () => {
         duration: 3000,
         isClosable: true,
       });
+      setLoadingReserva(false);
       return;
     }
 
@@ -120,8 +120,6 @@ const GymProfile = () => {
       fecha: selectedDate,
       hora: horaInicio,
     };
-
-    console.log("Payload:", payload);
 
     try {
       await apiService.reservarClase(payload);
@@ -141,7 +139,6 @@ const GymProfile = () => {
         duration: 3000,
         isClosable: true,
       });
-      setLoadingReserva(false);
     }
     setLoadingReserva(false);
   };
@@ -162,6 +159,7 @@ const GymProfile = () => {
         duration: 3000,
         isClosable: true,
       });
+      setLoadingComentario(false);
       return;
     }
 
@@ -299,77 +297,72 @@ const GymProfile = () => {
           <Box mt={-4} p={4} borderWidth="1px" borderRadius="md">
             <Tabs>
               <TabList>
-                <Tab>Comentarios y Calificaciones</Tab>
+                <Tab>Comentarios ({comments?.comments?.length}) </Tab>
                 <Tab>Clases Publicadas</Tab>
                 <Tab>Publicaciones del Gimnasio</Tab>
               </TabList>
               <TabPanels>
-                <TabPanel transition="opacity 0.3s ease-in-out">
-                  <VStack align="start" spacing={4} mt={4}>
-                    {comments?.comments?.map((comment: any, index: number) => (
-                      <Box
-                        key={index}
-                        borderWidth="1px"
-                        p={4}
-                        borderRadius="md"
-                        width="100%"
-                      >
-                        <HStack>
-                          <Avatar size="sm" name={comment.user} />
-                          <VStack align="start">
-                            <HStack>
-                              <Text fontWeight="bold">{comment.user}</Text>
-                              <Text fontSize="sm" color="gray.500">
-                                {comment.date}
-                              </Text>
-                            </HStack>
-                            <HStack>
-                              {[...Array(comment.rating)].map((_, i) => (
-                                <FaStar key={i} color="yellow.400" />
-                              ))}
-                              {[...Array(5 - comment.rating)].map((_, i) => (
-                                <FaStar key={i} color="gray.300" />
-                              ))}
-                            </HStack>
-                          </VStack>
+                <TabPanel>
+                  <VStack spacing={4} align="start">
+                    {comments?.comments?.map((comment) => (
+                      <Box key={comment.id} p={4} shadow="md" borderWidth="1px">
+                        <HStack justifyContent="space-between">
+                          <HStack>
+                            <Avatar size="sm" name={comment.user} />
+                            <Text>{comment.user}</Text>
+                          </HStack>
+                          <HStack>
+                            {[...Array(5)].map((_, index) => (
+                              <FaStar
+                                key={index}
+                                color={index < comment.rating ? "teal" : "gray"} // Fija el color basado en el 'rating' del comentario
+                                style={{ cursor: "default" }} // Desactiva el cursor pointer para comentarios existentes
+                              />
+                            ))}
+                          </HStack>
                         </HStack>
-                        <Text mt={2}>{comment.comment}</Text>
+                        <Text>{comment.comment}</Text>
+                        <Text>
+                          {new Date(comment.date).toLocaleDateString()}
+                        </Text>
                       </Box>
                     ))}
-                    <FormControl id="comment" isRequired>
-                      <FormLabel>Nuevo Comentario</FormLabel>
-                      <Textarea
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Ingrese su comentario..."
-                      />
-                    </FormControl>
-                    <FormControl id="rating" isRequired>
-                      <FormLabel>Calificación</FormLabel>
-                      <HStack spacing={1}>
-                        {[1, 2, 3, 4, 5].map((rating) => (
-                          <FaStar
-                            key={rating}
-                            color={
-                              (hoverRating || newRating) >= rating
-                                ? "yellow.400"
-                                : "gray.300"
-                            }
-                            onMouseEnter={() => handleStarHover(rating)}
-                            onMouseLeave={handleStarLeave}
-                            onClick={() => handleStarClick(rating)}
+                    {user && (
+                      <Box p={4} shadow="md" borderWidth="1px">
+                        <FormControl id="comment">
+                          <FormLabel>Nuevo Comentario</FormLabel>
+                          <Textarea
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            placeholder="Escribe tu comentario..."
+                            size="sm"
                           />
-                        ))}
-                      </HStack>
-                    </FormControl>
-                    <Button
-                      colorScheme="blue"
-                      onClick={handleAddComment}
-                      isLoading={loadingComentario}
-                      mt={4}
-                    >
-                      Agregar Comentario
-                    </Button>
+                        </FormControl>
+                        <HStack mt={2}>
+                          {[...Array(5)].map((_, index) => (
+                            <FaStar
+                              key={index}
+                              onClick={() => handleStarClick(index + 1)}
+                              onMouseEnter={() => handleStarHover(index + 1)}
+                              onMouseLeave={handleStarLeave}
+                              color={
+                                (hoverRating || newRating) > index
+                                  ? "teal"
+                                  : "gray"
+                              }
+                              style={{ cursor: "pointer" }}
+                            />
+                          ))}
+                          <Button
+                            colorScheme="teal"
+                            isLoading={loadingComentario}
+                            onClick={handleAddComment}
+                          >
+                            Comentar
+                          </Button>
+                        </HStack>
+                      </Box>
+                    )}
                   </VStack>
                 </TabPanel>
 
