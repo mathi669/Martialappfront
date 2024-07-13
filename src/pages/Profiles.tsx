@@ -94,10 +94,6 @@ const Profile: React.FC = () => {
                 <Icon as={FaBirthdayCake} />
                 <Text>Fecha de ingreso: {user?.df_fecha_ingreso}</Text>
               </HStack>
-              <HStack>
-                <Icon as={FaUser} />
-                <Text>Género: Masculino</Text>
-              </HStack>
             </VStack>
           </Box>
         </Box>
@@ -109,40 +105,14 @@ const Profile: React.FC = () => {
                 Información del Gimnasio
               </Text>
               <Box p={4} bg="gray.100" borderRadius="md">
-                <VStack align="start" spacing={2}>
-                  <HStack>
-                    <Icon as={FaMedal} />
-                    <Text>Nivel/Grado: Cinturón Negro</Text>
-                  </HStack>
-                  <HStack>
-                    <Icon as={FaDumbbell} />
-                    <Text>Estilo de Artes Marciales: Karate</Text>
-                  </HStack>
-                  <HStack>
-                    <Icon as={FaMapMarkerAlt} />
-                    <Text>Gimnasio: Gimnasio XYZ</Text>
-                  </HStack>
-                  <HStack>
-                    <Icon as={FaCalendarAlt} />
-                    <Text>Fecha de Ingreso al Gimnasio: 01/01/2015</Text>
-                  </HStack>
-                  <HStack>
-                    <Icon as={FaClock} />
-                    <Text>Horas de Entrenamiento Semanales: 10</Text>
-                  </HStack>
-                  <HStack>
-                    <Icon as={FaBook} />
-                    <Text>
-                      Clases Registradas: Clase de Kata, Clase de Kumite
-                    </Text>
-                  </HStack>
-                  <HStack>
-                    <Icon as={FaTrophy} />
-                    <Text>
-                      Próximos Eventos/Competencias: Campeonato Nacional
-                    </Text>
-                  </HStack>
-                </VStack>
+                <HStack>
+                <Icon as={FaPhone} />
+                <Text>Teléfono: {user?.dc_telefono}</Text>
+              </HStack>
+              <HStack>
+                <Icon as={FaHome} />
+                <Text>Dirección: {user?.dc_ubicacion}</Text>
+              </HStack>
               </Box>
             </Box>
           </>
